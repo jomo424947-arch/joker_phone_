@@ -140,11 +140,11 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#0B0E14',
         backgroundImage: `
-          radial-gradient(circle at 85% 15%, rgba(255, 149, 165, 0.18) 0%, transparent 48%),
-          radial-gradient(circle at 15% 85%, rgba(255, 149, 165, 0.08) 0%, transparent 50%),
-          #FFFFFF
+          radial-gradient(circle at 85% 15%, rgba(255, 184, 0, 0.12) 0%, transparent 48%),
+          radial-gradient(circle at 15% 85%, rgba(255, 184, 0, 0.05) 0%, transparent 50%),
+          #0B0E14
         `,
         backdropFilter: 'blur(28px)',
         WebkitBackdropFilter: 'blur(28px)',
@@ -152,7 +152,7 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
         alignItems: 'center',
         justifyContent: 'center',
         direction: 'rtl',
-        color: '#111827',
+        color: '#F8FAFC',
         userSelect: 'none',
         padding: 20,
         fontFamily: 'var(--font-family, system-ui, sans-serif)',
@@ -163,13 +163,13 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
         style={{
           width: '100%',
           maxWidth: 410,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
           borderRadius: 28,
-          border: '1.5px solid rgba(255, 149, 165, 0.25)',
+          border: '1.5px solid rgba(255, 184, 0, 0.25)',
           boxShadow: `
-            0 25px 60px -15px rgba(255, 149, 165, 0.18),
-            0 12px 28px -6px rgba(0, 0, 0, 0.04),
-            0 0 0 1px #F3F4F6
+            0 25px 60px -15px rgba(0, 0, 0, 0.7),
+            0 12px 28px -6px rgba(0, 0, 0, 0.4),
+            0 0 20px rgba(255, 184, 0, 0.1)
           `,
           padding: '32px 28px',
           display: 'flex',
@@ -182,28 +182,28 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
         <div
           style={{
             fontSize: 13,
-            color: '#4B5563',
+            color: '#CBD5E1',
             fontWeight: 600,
             letterSpacing: '0.2px',
-            backgroundColor: '#F9FAFB',
+            backgroundColor: '#12161F',
             padding: '4px 14px',
             borderRadius: 20,
-            border: '1.5px solid #E5E7EB',
+            border: '1.5px solid #262E3D',
           }}
         >
           {currentTime}
         </div>
 
-        {/* Boutique Gouri Logo Badge with Lock Badge */}
+        {/* Joker Phone Logo Badge with Lock Badge */}
         <div style={{ position: 'relative', marginTop: 2 }}>
           <div
             style={{
-              width: 76,
-              height: 76,
-              borderRadius: '50%',
+              width: 78,
+              height: 78,
+              borderRadius: '20px',
               padding: 2.5,
-              background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-              boxShadow: '0 10px 24px -4px rgba(255, 112, 136, 0.4)',
+              background: 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)',
+              boxShadow: '0 10px 24px -4px rgba(255, 184, 0, 0.45)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -211,13 +211,13 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
           >
             <img
               src={logoImg}
-              alt="Boutique Gouri Logo"
+              alt="شعار الجوكر فون"
               style={{
                 width: '100%',
                 height: '100%',
-                borderRadius: '50%',
+                borderRadius: '17px',
                 objectFit: 'cover',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#0B0E14',
               }}
             />
           </div>
@@ -229,24 +229,24 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
               width: 26,
               height: 26,
               borderRadius: '50%',
-              backgroundColor: '#FF6584',
-              color: '#FFFFFF',
+              backgroundColor: '#FFB800',
+              color: '#000000',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-              border: '2px solid #FFFFFF',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+              border: '2px solid #0B0E14',
             }}
           >
-            <Lock size={13} color="#FFFFFF" strokeWidth={2.6} />
+            <Lock size={13} color="#000000" strokeWidth={2.6} />
           </div>
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: '#111827' }}>
-            Boutique Gouri • الشاشة مقفلة
+          <h2 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: '#FFFFFF' }}>
+            الجوكر فون • الشاشة مقفلة
           </h2>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: '#FF6584', fontWeight: 600 }}>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: '#FFB800', fontWeight: 600 }}>
             أدخل رمز PIN لاستئناف العمل بالوردية
           </p>
         </div>
@@ -255,14 +255,14 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
         <div
           style={{
             width: '100%',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#12161F',
             borderRadius: 14,
             padding: '10px 14px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             boxSizing: 'border-box',
-            border: '1.5px solid #E5E7EB',
+            border: '1.5px solid #262E3D',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -271,18 +271,18 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
                 width: 32,
                 height: 32,
                 borderRadius: 10,
-                backgroundColor: '#F9FAFB',
-                border: '1px solid #E5E7EB',
+                backgroundColor: '#1C222D',
+                border: '1px solid #30394A',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <User size={16} color="#FF7088" />
+              <User size={16} color="#FFB800" />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 13.5, color: '#111827' }}>{currentUser.display_name}</div>
-              <div style={{ fontSize: 11.5, color: '#6B7280', fontWeight: 600 }}>
+              <div style={{ fontWeight: 700, fontSize: 13.5, color: '#FFFFFF' }}>{currentUser.display_name}</div>
+              <div style={{ fontSize: 11.5, color: '#94A3B8', fontWeight: 600 }}>
                 {ROLE_LABELS[currentUser.role] || currentUser.role}
               </div>
             </div>
@@ -297,11 +297,11 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
               display: 'flex',
               alignItems: 'center',
               gap: 5,
-              background: '#FFFFFF',
-              border: '1.5px solid #E5E7EB',
+              background: '#1C222D',
+              border: '1.5px solid #30394A',
               borderRadius: 8,
               padding: '6px 10px',
-              color: '#BE123C',
+              color: '#FFB800',
               fontSize: 12,
               cursor: 'pointer',
               fontWeight: 700,
@@ -317,11 +317,11 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
             className="animate-slide-up"
             style={{
               width: '100%',
-              backgroundColor: '#FFF1F2',
-              border: '1.5px solid #FECDD3',
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              border: '1.5px solid rgba(239, 68, 68, 0.4)',
               borderRadius: 10,
               padding: '8px 12px',
-              color: '#BE123C',
+              color: '#F87171',
               fontSize: 12.5,
               fontWeight: 700,
               textAlign: 'center',
@@ -331,7 +331,7 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
               gap: 6,
             }}
           >
-            <AlertCircle size={15} color="#E11D48" />
+            <AlertCircle size={15} color="#EF4444" />
             <span>{error}</span>
           </div>
         )}
@@ -345,10 +345,10 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
             gap: 18,
             height: 48,
             width: '100%',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#12161F',
             borderRadius: 14,
-            border: '1.5px solid #E5E7EB',
-            boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.02)',
+            border: '1.5px solid #262E3D',
+            boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3)',
           }}
         >
           {[0, 1, 2, 3].map((idx) => {
@@ -361,11 +361,11 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
                   height: 15,
                   borderRadius: '50%',
                   background: isFilled
-                    ? 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)'
-                    : '#FFFFFF',
-                  border: isFilled ? 'none' : '1.5px solid #D1D5DB',
+                    ? 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)'
+                    : '#1C222D',
+                  border: isFilled ? 'none' : '1.5px solid #475569',
                   boxShadow: isFilled
-                    ? '0 0 12px rgba(255, 149, 165, 0.95), 0 2px 4px rgba(255, 101, 132, 0.4)'
+                    ? '0 0 12px rgba(255, 184, 0, 0.95), 0 2px 4px rgba(255, 149, 0, 0.4)'
                     : 'none',
                   transform: isFilled ? 'scale(1.25)' : 'scale(1)',
                   transition: 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -394,20 +394,20 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
                 fontSize: 22,
                 fontWeight: 700,
                 borderRadius: 12,
-                border: '1.5px solid #EAE5DC',
-                backgroundColor: '#FFFFFF',
-                color: '#111827',
+                border: '1.5px solid #262E3D',
+                backgroundColor: '#1C222D',
+                color: '#F8FAFC',
                 cursor: 'pointer',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.03)',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#FFF8F9';
-                e.currentTarget.style.borderColor = '#FF95A5';
+                e.currentTarget.style.backgroundColor = '#262E3D';
+                e.currentTarget.style.borderColor = '#FFB800';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#FFFFFF';
-                e.currentTarget.style.borderColor = '#EAE5DC';
+                e.currentTarget.style.backgroundColor = '#1C222D';
+                e.currentTarget.style.borderColor = '#262E3D';
               }}
             >
               {d}
@@ -421,17 +421,19 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
               fontSize: 13.5,
               fontWeight: 700,
               borderRadius: 12,
-              border: '1.5px solid #FECDD3',
-              backgroundColor: '#FFFFFF',
-              color: '#BE123C',
+              border: '1.5px solid rgba(239, 68, 68, 0.35)',
+              backgroundColor: '#1C222D',
+              color: '#F87171',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFF1F2';
+              e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+              e.currentTarget.style.borderColor = '#EF4444';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFFFF';
+              e.currentTarget.style.backgroundColor = '#1C222D';
+              e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.35)';
             }}
           >
             مسح
@@ -444,20 +446,20 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
               fontSize: 22,
               fontWeight: 700,
               borderRadius: 12,
-              border: '1.5px solid #EAE5DC',
-              backgroundColor: '#FFFFFF',
-              color: '#111827',
+              border: '1.5px solid #262E3D',
+              backgroundColor: '#1C222D',
+              color: '#F8FAFC',
               cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.03)',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
               transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFDF5';
-              e.currentTarget.style.borderColor = '#FF95A5';
+              e.currentTarget.style.backgroundColor = '#262E3D';
+              e.currentTarget.style.borderColor = '#FFB800';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFFFF';
-              e.currentTarget.style.borderColor = '#EAE5DC';
+              e.currentTarget.style.backgroundColor = '#1C222D';
+              e.currentTarget.style.borderColor = '#262E3D';
             }}
           >
             0
@@ -470,23 +472,25 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
               fontSize: 19,
               fontWeight: 700,
               borderRadius: 12,
-              border: '1.5px solid #EAE5DC',
-              backgroundColor: '#FFFFFF',
-              color: '#111827',
+              border: '1.5px solid #262E3D',
+              backgroundColor: '#1C222D',
+              color: '#94A3B8',
               cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.03)',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
               transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFDF5';
-              e.currentTarget.style.borderColor = '#FF95A5';
+              e.currentTarget.style.backgroundColor = '#262E3D';
+              e.currentTarget.style.borderColor = '#FFB800';
+              e.currentTarget.style.color = '#F8FAFC';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFFFF';
-              e.currentTarget.style.borderColor = '#EAE5DC';
+              e.currentTarget.style.backgroundColor = '#1C222D';
+              e.currentTarget.style.borderColor = '#262E3D';
+              e.currentTarget.style.color = '#94A3B8';
             }}
           >
-            <Delete size={20} color="#6B7280" />
+            <Delete size={20} color="#94A3B8" />
           </button>
         </div>
 
@@ -501,13 +505,13 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
             border: 'none',
             background:
               pin.length === 4
-                ? 'linear-gradient(135deg, #FF95A5 0%, #FF6B8B 100%)'
-                : '#F3F4F6',
-            color: pin.length === 4 ? '#FFFFFF' : '#9CA3AF',
+                ? 'linear-gradient(135deg, #FFB800 0%, #FFA800 100%)'
+                : '#1E2430',
+            color: pin.length === 4 ? '#000000' : '#64748B',
             cursor: pin.length === 4 && !isVerifying ? 'pointer' : 'not-allowed',
             boxShadow:
               pin.length === 4
-                ? '0 8px 24px -4px rgba(255, 107, 139, 0.5), 0 2px 6px rgba(0, 0, 0, 0.06)'
+                ? '0 8px 24px -4px rgba(255, 184, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2)'
                 : 'none',
             fontSize: 15.5,
             fontWeight: 700,

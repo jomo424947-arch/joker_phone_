@@ -6,6 +6,7 @@ import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from '../../../shared/constants/ipc-channels';
 import { purchasesService } from '../../services/purchases.service';
 import { suppliersService } from '../../services/suppliers.service';
+import { sessionService } from '../../services/session.service';
 import {
   CreatePurchaseInput,
   CreateSupplierInput,
@@ -56,9 +57,10 @@ export function registerPurchasesIpcHandlers(): void {
   // إنشاء مورد
   ipcMain.handle(
     IPC_CHANNELS.SUPPLIERS_CREATE,
-    async (_event, params: { data: CreateSupplierInput; userId: number }) => {
+    async (_event, params: { data: CreateSupplierInput; userId?: number }) => {
       try {
-        const data = await suppliersService.create(params.data, params.userId);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        const data = await suppliersService.create(params.data, effectiveUserId);
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -69,9 +71,10 @@ export function registerPurchasesIpcHandlers(): void {
   // تحديث مورد
   ipcMain.handle(
     IPC_CHANNELS.SUPPLIERS_UPDATE,
-    async (_event, params: { id: number; data: UpdateSupplierInput; userId: number }) => {
+    async (_event, params: { id: number; data: UpdateSupplierInput; userId?: number }) => {
       try {
-        const data = await suppliersService.update(params.id, params.data, params.userId);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        const data = await suppliersService.update(params.id, params.data, effectiveUserId);
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -82,9 +85,10 @@ export function registerPurchasesIpcHandlers(): void {
   // أرشفة مورد
   ipcMain.handle(
     IPC_CHANNELS.SUPPLIERS_ARCHIVE,
-    async (_event, params: { id: number; userId: number }) => {
+    async (_event, params: { id: number; userId?: number }) => {
       try {
-        await suppliersService.archive(params.id, params.userId);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        await suppliersService.archive(params.id, effectiveUserId);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -116,12 +120,16 @@ export function registerPurchasesIpcHandlers(): void {
       amount: number;
       paymentMethod: string;
       note?: string | null;
-      userId: number;
+      userId?: number;
       shiftId?: number | null;
     }
   ) => {
     try {
-      const data = await suppliersService.recordPayment(params);
+      const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+      const data = await suppliersService.recordPayment({
+        ...params,
+        userId: effectiveUserId,
+      });
       return { success: true, data };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -140,7 +148,11 @@ export function registerPurchasesIpcHandlers(): void {
     IPC_CHANNELS.PURCHASES_CREATE_INVOICE,
     async (_event, input: CreatePurchaseInput) => {
       try {
-        const data = await purchasesService.create(input);
+        const effectiveUserId = input.user_id || sessionService.getCurrentUserId() || 1;
+        const data = await purchasesService.create({
+          ...input,
+          user_id: effectiveUserId,
+        });
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };

@@ -287,18 +287,25 @@ export class SuppliersService {
           targetShiftId = openShift?.id;
         }
 
-        if (targetShiftId) {
-          db.prepare(`
-            INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
-            VALUES (?, ?, 'withdrawal', ?, 'supplier_payment', ?, ?, datetime('now'))
-          `).run(
-            targetShiftId,
-            params.userId,
-            params.amount,
-            paymentId,
-            `سداد للمورد: ${supplier.name} ${params.note ? `(${params.note})` : ''}`.trim()
-          );
+        if (!targetShiftId) {
+          // فتح وردية تلقائية للمستخدم لضمان عدم تعطل السداد للمورد
+          const shiftUuid = crypto.randomUUID();
+          const shiftRes = db
+            .prepare("INSERT INTO shifts (uuid, user_id, opening_balance, status, opened_at, notes) VALUES (?, ?, 0, 'open', datetime('now'), 'وردية تلقائية')")
+            .run(shiftUuid, params.userId);
+          targetShiftId = Number(shiftRes.lastInsertRowid);
         }
+
+        db.prepare(`
+          INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
+          VALUES (?, ?, 'withdrawal', ?, 'supplier_payment', ?, ?, datetime('now'))
+        `).run(
+          targetShiftId,
+          params.userId,
+          params.amount,
+          paymentId,
+          `سداد للمورد: ${supplier.name} ${params.note ? `(${params.note})` : ''}`.trim()
+        );
       }
 
       this.auditService.log(

@@ -22,20 +22,25 @@ function normalizeArabic(text: string): string {
     .replace(/[\u064B-\u065F]/g, '');
 }
 
-// قائمة أيقونات مقترحة للتصنيفات لتبدو الواجهة فائقة الجمال مثل أنظمة نقاط البيع الحديثة
 const categoryIconMap: Record<string, string> = {
   الكل: 'grid_view',
-  'العناية بالبشرة': 'spa',
-  المكياج: 'palette',
-  'مكياج وتجميل': 'brush',
-  العطور: 'auto_awesome',
-  'العناية بالشعر': 'water_drop',
-  'العناية بالجسم': 'sanitizer',
-  'أدوات وإكسسوارات': 'content_cut',
+  'هواتف ذكية': 'smartphone',
+  'هواتف مستعملة': 'phone_android',
+  'شواحن وكابلات': 'power',
+  'سماعات وايرلس': 'headphones',
+  'جرابات وحماية': 'shield',
+  'باور بانك': 'battery_charging_full',
+  'قطع غيار': 'build',
+  'ساعات ذكية': 'watch',
+  صيانة: 'home_repair_service',
+  'محافظ وكروت': 'account_balance_wallet',
+  إكسسوارات: 'cable',
   عام: 'inventory_2',
 };
 
-export function ProductCatalog({
+const PAGE_SIZE = 48;
+
+export function ProductCatalogComponent({
   onSelectProduct,
   className = '',
   style = {},
@@ -47,6 +52,7 @@ export function ProductCatalog({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('الكل');
   const [variantModalProduct, setVariantModalProduct] = useState<any | null>(null);
+  const [displayLimit, setDisplayLimit] = useState<number>(PAGE_SIZE);
 
   // تحميل المنتجات الحقيقية المسجلة من قاعدة البيانات
   const fetchCatalog = async () => {
@@ -72,6 +78,11 @@ export function ProductCatalog({
   useEffect(() => {
     fetchCatalog();
   }, [refreshTrigger]);
+
+  // إعادة ضبط حد العرض عند تغيير البحث أو التصنيف
+  useEffect(() => {
+    setDisplayLimit(PAGE_SIZE);
+  }, [searchQuery, selectedCategory]);
 
   // استخراج قائمة التصنيفات الفريدة مع حساب عدد المنتجات في كل تصنيف
   const categoriesWithCounts = useMemo(() => {
@@ -113,6 +124,11 @@ export function ProductCatalog({
     });
   }, [products, selectedCategory, searchQuery]);
 
+  // المنتجات المعروضة فقط لتخفيف الحمل على DOM والذاكرة
+  const displayedProducts = useMemo(() => {
+    return filteredProducts.slice(0, displayLimit);
+  }, [filteredProducts, displayLimit]);
+
   // إضافة المنتج للسلة بنقرة زر
   const handleProductClick = (product: any) => {
     const variants = product.variants || [];
@@ -140,13 +156,13 @@ export function ProductCatalog({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#161B22',
         borderRadius: 14,
         padding: 14,
         gap: 12,
         overflow: 'hidden',
         boxSizing: 'border-box',
-        border: '1px solid var(--border-light)',
+        border: '1px solid #262E3D',
         ...style,
       }}
     >
@@ -160,15 +176,15 @@ export function ProductCatalog({
             display: 'flex',
             alignItems: 'center',
             gap: 8,
-            backgroundColor: '#F8FAF9',
-            border: '1px solid var(--border-input)',
+            backgroundColor: '#0B0E14',
+            border: '1px solid #262E3D',
             borderRadius: 10,
             padding: '0 12px',
             height: 38,
             transition: 'border-color 0.15s ease',
           }}
         >
-          <AppIcon name="search" size={17} color="var(--text-muted)" />
+          <AppIcon name="search" size={17} color="#94A3B8" />
           <input
             type="text"
             placeholder="بحث سريع في قائمة المنتجات..."
@@ -181,7 +197,7 @@ export function ProductCatalog({
               background: 'transparent',
               fontSize: 13,
               fontFamily: 'var(--font-family)',
-              color: 'var(--text-main)',
+              color: '#F8FAFC',
             }}
           />
           {searchQuery && (
@@ -192,7 +208,7 @@ export function ProductCatalog({
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: 'var(--text-muted)',
+                color: '#94A3B8',
                 padding: 2,
               }}
             >
@@ -206,8 +222,8 @@ export function ProductCatalog({
           <span
             style={{
               fontSize: 12,
-              color: 'var(--text-muted)',
-              fontWeight: 500,
+              color: '#94A3B8',
+              fontWeight: 600,
               fontFamily: 'Space Grotesk, sans-serif',
             }}
           >
@@ -222,17 +238,17 @@ export function ProductCatalog({
               width: 34,
               height: 34,
               borderRadius: 8,
-              border: '1px solid var(--border-input)',
-              backgroundColor: '#FFFFFF',
+              border: '1px solid #262E3D',
+              backgroundColor: '#0B0E14',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              color: 'var(--text-secondary)',
+              color: '#FFB800',
               transition: 'background 0.15s ease',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F0F3F1')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1C222D')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0B0E14')}
           >
             <AppIcon name="sync" size={16} />
           </button>
@@ -268,26 +284,28 @@ export function ProductCatalog({
                 gap: 6,
                 padding: '6px 12px',
                 borderRadius: 20,
-                border: isSelected ? '1px solid var(--color-primary)' : '1px solid var(--border-light)',
-                backgroundColor: isSelected ? 'var(--color-primary-light)' : '#FFFFFF',
-                color: isSelected ? 'var(--color-brand-deep)' : 'var(--text-secondary)',
+                border: isSelected ? '1px solid #FFB800' : '1px solid #262E3D',
+                backgroundColor: isSelected ? 'rgba(255, 184, 0, 0.15)' : '#0B0E14',
+                color: isSelected ? '#FFB800' : '#CBD5E1',
                 fontWeight: isSelected ? 700 : 500,
                 fontSize: 12,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
-                boxShadow: isSelected ? '0 1px 4px rgba(79, 107, 94, 0.15)' : 'none',
+                boxShadow: isSelected ? '0 1px 6px rgba(255, 184, 0, 0.25)' : 'none',
               }}
             >
-              <AppIcon name={icon} size={15} color={isSelected ? 'var(--color-brand-deep)' : 'var(--color-primary)'} />
+              <AppIcon name={icon} size={15} color={isSelected ? '#FFB800' : '#94A3B8'} />
               <span>{cat}</span>
               <span
                 style={{
                   fontSize: 10,
-                  opacity: 0.75,
+                  opacity: 0.9,
                   padding: '1px 5px',
                   borderRadius: 10,
-                  backgroundColor: isSelected ? '#FFFFFF' : '#EDF0EE',
+                  backgroundColor: isSelected ? '#FFB800' : '#161B22',
+                  color: isSelected ? '#0B0E14' : '#CBD5E1',
+                  fontWeight: 700,
                   fontFamily: 'Space Grotesk, sans-serif',
                 }}
               >
@@ -315,7 +333,7 @@ export function ProductCatalog({
               justifyContent: 'center',
               height: '100%',
               gap: 12,
-              color: 'var(--text-muted)',
+              color: '#94A3B8',
               padding: 40,
               textAlign: 'center',
             }}
@@ -325,19 +343,19 @@ export function ProductCatalog({
                 width: 60,
                 height: 60,
                 borderRadius: '50%',
-                backgroundColor: 'rgba(255, 112, 136, 0.12)',
+                backgroundColor: 'rgba(255, 184, 0, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 4,
               }}
             >
-              <AppIcon name="inventory_2" size={30} color="var(--color-primary)" />
+              <AppIcon name="inventory_2" size={30} color="#FFB800" />
             </div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-main)' }}>
-              قاعدة البيانات نظيفة وجاهزة للبدء
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#F8FAFC' }}>
+              قاعدة البيانات جاهزة للبدء
             </div>
-            <div style={{ fontSize: 13, color: 'var(--text-muted)', maxWidth: 360, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 13, color: '#94A3B8', maxWidth: 360, lineHeight: 1.6 }}>
               لا توجد منتجات مسجلة في المتجر حالياً. يمكنك البدء بإضافة منتجاتك وأسعارك من شاشة المنتجات والباركود.
             </div>
           </div>
@@ -350,13 +368,13 @@ export function ProductCatalog({
               justifyContent: 'center',
               height: '100%',
               gap: 10,
-              color: 'var(--text-muted)',
+              color: '#94A3B8',
               padding: 40,
               textAlign: 'center',
             }}
           >
-            <AppIcon name="search_off" size={40} color="#B0B8B3" />
-            <div style={{ fontSize: 14, fontWeight: 600 }}>لم يتم العثور على منتجات تطابق البحث</div>
+            <AppIcon name="search_off" size={40} color="#64748B" />
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#F8FAFC' }}>لم يتم العثور على منتجات تطابق البحث</div>
             <button
               type="button"
               className="btn btn-secondary"
@@ -377,7 +395,7 @@ export function ProductCatalog({
               gap: 12,
             }}
           >
-            {filteredProducts.map((product) => {
+            {displayedProducts.map((product) => {
               const primaryVariant = product.variants?.[0] || {};
               const price = primaryVariant.sale_price ?? product.price ?? 0;
               const totalStock =
@@ -386,7 +404,7 @@ export function ProductCatalog({
                 999;
               const hasMultipleVariants = (product.variants?.length || 0) > 1;
               const catName = product.category_name || product.category || 'عام';
-              const catIcon = categoryIconMap[catName] || 'spa';
+              const catIcon = categoryIconMap[catName] || 'smartphone';
 
               const isOutOfStock = totalStock <= 0;
               const isLowStock = totalStock > 0 && totalStock <= 5;
@@ -404,13 +422,13 @@ export function ProductCatalog({
                   }}
                   className="glass-card"
                   style={{
-                    backgroundColor: isOutOfStock ? '#FAFBF9' : '#FFFFFF',
+                    backgroundColor: isOutOfStock ? '#12161F' : '#161B22',
                     borderRadius: 12,
                     padding: 12,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    border: '1px solid var(--border-light)',
+                    border: '1px solid #262E3D',
                     cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                     opacity: isOutOfStock ? 0.65 : 1,
                     transition: 'all 0.16s ease',
@@ -420,15 +438,15 @@ export function ProductCatalog({
                   onMouseEnter={(e) => {
                     if (!isOutOfStock) {
                       e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.borderColor = 'rgba(255, 149, 165, 0.45)';
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 149, 165, 0.16)';
+                      e.currentTarget.style.borderColor = '#FFB800';
+                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 184, 0, 0.18)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isOutOfStock) {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.borderColor = 'var(--border-light)';
-                      e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                      e.currentTarget.style.borderColor = '#262E3D';
+                      e.currentTarget.style.boxShadow = 'none';
                     }
                   }}
                 >
@@ -439,33 +457,33 @@ export function ProductCatalog({
                         width: 28,
                         height: 28,
                         borderRadius: 7,
-                        backgroundColor: 'rgba(255, 149, 165, 0.14)',
+                        backgroundColor: 'rgba(255, 184, 0, 0.12)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
                     >
-                      <AppIcon name={catIcon} size={15} color="var(--color-primary)" />
+                      <AppIcon name={catIcon} size={15} color="#FFB800" />
                     </div>
 
                     {/* شارة المخزون */}
                     <span
                       style={{
                         fontSize: 10,
-                        fontWeight: 600,
+                        fontWeight: 700,
                         padding: '2px 6px',
                         borderRadius: 6,
                         fontFamily: 'Space Grotesk, sans-serif',
                         backgroundColor: isOutOfStock
-                          ? '#FCE8E8'
+                          ? 'rgba(239, 68, 68, 0.15)'
                           : isLowStock
-                          ? '#FEF3D6'
-                          : '#FFF0F3',
+                          ? 'rgba(245, 158, 11, 0.15)'
+                          : 'rgba(16, 185, 129, 0.15)',
                         color: isOutOfStock
-                          ? '#962B34'
+                          ? '#EF4444'
                           : isLowStock
-                          ? '#A87910'
-                          : '#D63B5E',
+                          ? '#F59E0B'
+                          : '#10B981',
                       }}
                     >
                       {isOutOfStock ? 'نفد' : isLowStock ? `باقي ${totalStock}` : `متوفر ${totalStock}`}
@@ -478,7 +496,7 @@ export function ProductCatalog({
                       style={{
                         fontSize: 13,
                         fontWeight: 700,
-                        color: 'var(--color-brand-deep)',
+                        color: '#F8FAFC',
                         margin: 0,
                         lineHeight: 1.35,
                         display: '-webkit-box',
@@ -493,7 +511,7 @@ export function ProductCatalog({
                     <div
                       style={{
                         fontSize: 11,
-                        color: 'var(--text-muted)',
+                        color: '#94A3B8',
                         marginTop: 3,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -511,22 +529,22 @@ export function ProductCatalog({
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       paddingTop: 8,
-                      borderTop: '1px dashed #F5EAEB',
+                      borderTop: '1px dashed #262E3D',
                     }}
                   >
                     <div>
                       <div
                         style={{
-                          fontSize: 14.5,
+                          fontSize: 15,
                           fontWeight: 800,
-                          color: 'var(--color-brand-deep)',
+                          color: '#FFB800',
                           fontFamily: 'Space Grotesk, sans-serif',
                         }}
                       >
                         {formatMoney(price)}
                       </div>
                       {hasMultipleVariants && (
-                        <div style={{ fontSize: 9.5, color: '#D63B5E', fontWeight: 600 }}>
+                        <div style={{ fontSize: 9.5, color: '#FFB800', fontWeight: 600 }}>
                           {product.variants.length} درجات / خيارات
                         </div>
                       )}
@@ -544,29 +562,64 @@ export function ProductCatalog({
                         width: 30,
                         height: 30,
                         borderRadius: 8,
-                        backgroundColor: 'var(--color-primary)',
+                        backgroundColor: '#FFB800',
                         border: 'none',
-                        color: '#FFFFFF',
+                        color: '#0B0E14',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                         transition: 'all 0.15s ease',
-                        boxShadow: '0 2px 8px rgba(255, 149, 165, 0.4)',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isOutOfStock) e.currentTarget.style.backgroundColor = 'var(--color-primary-hover)';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isOutOfStock) e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                        boxShadow: '0 2px 8px rgba(255, 184, 0, 0.3)',
                       }}
                     >
-                      <AppIcon name="add" size={17} />
+                      <AppIcon name="add" size={17} color="#0B0E14" />
                     </button>
                   </div>
                 </div>
               );
             })}
+
+            {filteredProducts.length > displayLimit && (
+              <div
+                style={{
+                  gridColumn: '1 / -1',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  padding: '16px 0',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setDisplayLimit((prev) => prev + PAGE_SIZE)}
+                  style={{
+                    padding: '9px 24px',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    borderRadius: 10,
+                    background: 'rgba(255, 184, 0, 0.1)',
+                    border: '1.5px solid rgba(255, 184, 0, 0.35)',
+                    color: '#FFB800',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 184, 0, 0.2)';
+                    e.currentTarget.style.borderColor = '#FFB800';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 184, 0, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 184, 0, 0.35)';
+                  }}
+                >
+                  <AppIcon name="expand_more" size={16} />
+                  <span>عرض المزيد من المنتجات ({filteredProducts.length - displayLimit} متبقي)</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -577,7 +630,7 @@ export function ProductCatalog({
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(20, 30, 25, 0.45)',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             backdropFilter: 'blur(6px)',
             zIndex: 9999,
             display: 'flex',
@@ -592,19 +645,20 @@ export function ProductCatalog({
             style={{
               width: '100%',
               maxWidth: 420,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#161B22',
+              border: '1px solid #262E3D',
               borderRadius: 16,
               padding: 20,
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-brand-deep)', margin: 0 }}>
-                  اختر الدرجة أو الحجم المطلوب
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+                  اختر النوع أو السعة المطلوبة
                 </h3>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: 12, color: '#94A3B8' }}>
                   {variantModalProduct.name_ar || variantModalProduct.name}
                 </span>
               </div>
@@ -615,7 +669,7 @@ export function ProductCatalog({
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: 'var(--text-muted)',
+                  color: '#94A3B8',
                   padding: 4,
                 }}
               >
@@ -638,25 +692,25 @@ export function ProductCatalog({
                       justifyContent: 'space-between',
                       padding: '10px 14px',
                       borderRadius: 10,
-                      border: '1px solid var(--border-light)',
-                      backgroundColor: '#FAFAF9',
+                      border: '1px solid #262E3D',
+                      backgroundColor: '#0B0E14',
                       cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                       opacity: isOutOfStock ? 0.5 : 1,
                       textAlign: 'right',
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      if (!isOutOfStock) e.currentTarget.style.backgroundColor = 'var(--color-primary-light)';
+                      if (!isOutOfStock) e.currentTarget.style.backgroundColor = '#1C222D';
                     }}
                     onMouseLeave={(e) => {
-                      if (!isOutOfStock) e.currentTarget.style.backgroundColor = '#FAFAF9';
+                      if (!isOutOfStock) e.currentTarget.style.backgroundColor = '#0B0E14';
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-brand-deep)' }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#F8FAFC' }}>
                         {v.name || v.variant_name || 'الافتراضي'}
                       </div>
-                      <div style={{ fontSize: 11, color: isOutOfStock ? '#962B34' : 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 11, color: isOutOfStock ? '#EF4444' : '#94A3B8' }}>
                         {isOutOfStock ? 'غير متوفر بالمخزون' : `المتوفر: ${v.total_stock ?? 0} قطعة`}
                       </div>
                     </div>
@@ -666,13 +720,13 @@ export function ProductCatalog({
                         style={{
                           fontSize: 14,
                           fontWeight: 800,
-                          color: 'var(--color-brand-deep)',
+                          color: '#FFB800',
                           fontFamily: 'Space Grotesk, sans-serif',
                         }}
                       >
                         {formatMoney(v.sale_price ?? 0)}
                       </span>
-                      <AppIcon name="add_circle" size={20} color="var(--color-primary)" />
+                      <AppIcon name="add_circle" size={20} color="#FFB800" />
                     </div>
                   </button>
                 );
@@ -685,4 +739,5 @@ export function ProductCatalog({
   );
 }
 
+export const ProductCatalog = React.memo(ProductCatalogComponent);
 export default ProductCatalog;

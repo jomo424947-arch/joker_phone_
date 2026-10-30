@@ -5,6 +5,7 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from '../../../shared/constants/ipc-channels';
 import { customersService } from '../../services/customers.service';
+import { sessionService } from '../../services/session.service';
 import {
   CreateCustomerInput,
   UpdateCustomerInput,
@@ -40,9 +41,10 @@ export function registerCustomersIpcHandlers(): void {
   // إنشاء عميل
   ipcMain.handle(
     IPC_CHANNELS.CUSTOMERS_CREATE,
-    async (_event, params: { data: CreateCustomerInput; userId: number }) => {
+    async (_event, params: { data: CreateCustomerInput; userId?: number }) => {
       try {
-        const data = await customersService.create(params.data, params.userId);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        const data = await customersService.create(params.data, effectiveUserId);
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -53,9 +55,10 @@ export function registerCustomersIpcHandlers(): void {
   // تحديث بيانات عميل
   ipcMain.handle(
     IPC_CHANNELS.CUSTOMERS_UPDATE,
-    async (_event, params: { id: number; data: UpdateCustomerInput; userId: number }) => {
+    async (_event, params: { id: number; data: UpdateCustomerInput; userId?: number }) => {
       try {
-        const data = await customersService.update(params.id, params.data, params.userId);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        const data = await customersService.update(params.id, params.data, effectiveUserId);
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -66,9 +69,10 @@ export function registerCustomersIpcHandlers(): void {
   // أرشفة عميل
   ipcMain.handle(
     IPC_CHANNELS.CUSTOMERS_ARCHIVE,
-    async (_event, params: { id: number; userId: number }) => {
+    async (_event, params: { id: number; userId?: number }) => {
       try {
-        await customersService.archive(params.id, params.userId);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        await customersService.archive(params.id, effectiveUserId);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -86,12 +90,16 @@ export function registerCustomersIpcHandlers(): void {
         amount: number;
         paymentMethod: string;
         note?: string | null;
-        userId: number;
+        userId?: number;
         shiftId?: number | null;
       }
     ) => {
       try {
-        const data = await customersService.recordPayment(params);
+        const effectiveUserId = params?.userId || sessionService.getCurrentUserId() || 1;
+        const data = await customersService.recordPayment({
+          ...params,
+          userId: effectiveUserId,
+        });
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };

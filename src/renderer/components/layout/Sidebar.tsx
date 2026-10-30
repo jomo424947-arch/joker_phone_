@@ -25,14 +25,15 @@ interface NavItemDef {
 const navItems: NavItemDef[] = [
   { id: 'pos', label: 'شاشة البيع (POS)', icon: 'point_of_sale', variant: 'brand' },
   { id: 'invoices', label: 'سجل الفواتير', icon: 'receipt_long', variant: 'brand' },
+  { id: 'repairs', label: 'الصيانة والورشة', icon: 'build', variant: 'brand' },
+  { id: 'customers', label: 'العملاء والديون', icon: 'people', variant: 'brand' },
   { id: 'products', label: 'المنتجات والباركود', icon: 'sell', variant: 'brand' },
-  { id: 'inventory', label: 'المخزون والصلاحية', icon: 'inventory_2', variant: 'brand' },
+  { id: 'inventory', label: 'المخزون والضمان', icon: 'inventory_2', variant: 'brand' },
   { id: 'purchases', label: 'المشتريات والموردين', icon: 'local_shipping', variant: 'brand' },
   { id: 'returns', label: 'المرتجعات والبدائل', icon: 'assignment_return', variant: 'brand' },
   { id: 'cash', label: 'الخزنة والورديات', icon: 'payments', variant: 'brand' },
   { id: 'reports', label: 'التقارير والإحصائيات', icon: 'query_stats', variant: 'brand' },
   { id: 'settings', label: 'الإعدادات والمستخدمين', icon: 'settings', variant: 'brand' },
-  { id: 'db-inspector', label: 'فحص واستعراض الداتا بيز', icon: 'storage', variant: 'brand' },
 ];
 
 export function Sidebar({
@@ -103,7 +104,7 @@ export function Sidebar({
         className="glass-sidebar"
         style={{
           width: 270,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#12161F',
           borderLeft: '1px solid var(--border-light)',
           display: 'flex',
           flexDirection: 'column',
@@ -120,19 +121,19 @@ export function Sidebar({
             display: 'flex',
             alignItems: 'center',
             gap: 12,
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF5F7 100%)',
+            background: 'linear-gradient(180deg, #161B22 0%, #12161F 100%)',
           }}
         >
           <div
             style={{
               position: 'relative',
-              width: 46,
-              height: 46,
-              minWidth: 46,
-              borderRadius: '50%',
+              width: 48,
+              height: 48,
+              minWidth: 48,
+              borderRadius: '12px',
               padding: 2,
-              background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-              boxShadow: '0 4px 14px rgba(255, 112, 136, 0.32)',
+              background: 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)',
+              boxShadow: '0 4px 14px rgba(255, 184, 0, 0.35)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -140,13 +141,13 @@ export function Sidebar({
           >
             <img
               src={logoImg}
-              alt="Boutique Gouri Logo"
+              alt="شعار الجوكر فون"
               style={{
                 width: '100%',
                 height: '100%',
-                borderRadius: '50%',
+                borderRadius: '10px',
                 objectFit: 'cover',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#0B0E14',
               }}
             />
           </div>
@@ -155,25 +156,25 @@ export function Sidebar({
               style={{
                 fontSize: 16,
                 fontWeight: 800,
-                color: 'var(--color-brand-deep)',
+                color: 'var(--text-main)',
                 margin: 0,
                 lineHeight: 1.25,
                 fontFamily: 'var(--font-family)',
                 letterSpacing: '-0.2px',
               }}
             >
-              Boutique Gouri
+              الجوكر فون
             </h2>
             <span
               style={{
                 fontSize: 11,
-                color: '#FF6584',
+                color: '#FFB800',
                 fontWeight: 600,
                 display: 'block',
                 marginTop: 2,
               }}
             >
-              بوتيك جوري • كوزمتكس
+              JOKER PHONE • هواتف وصيانة
             </span>
           </div>
         </div>
@@ -203,15 +204,15 @@ export function Sidebar({
                   padding: '10px 14px',
                   borderRadius: 10,
                   borderRight: isActive
-                    ? '3px solid #FF95A5'
+                    ? '3px solid #FFB800'
                     : '3px solid transparent',
                   borderTop: '1px solid transparent',
                   borderBottom: '1px solid transparent',
                   borderLeft: '1px solid transparent',
                   background: isActive
-                    ? 'linear-gradient(to left, rgba(255, 149, 165, 0.16) 0%, rgba(255, 149, 165, 0.02) 100%)'
+                    ? 'linear-gradient(to left, rgba(255, 184, 0, 0.16) 0%, rgba(255, 184, 0, 0.02) 100%)'
                     : 'transparent',
-                  color: isActive ? '#D63B5E' : 'var(--text-secondary)',
+                  color: isActive ? '#FFB800' : 'var(--text-secondary)',
                   fontWeight: isActive ? 700 : 500,
                   fontSize: 14,
                   cursor: 'pointer',
@@ -222,7 +223,7 @@ export function Sidebar({
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.backgroundColor = '#FFF8F9';
+                    e.currentTarget.style.backgroundColor = '#1C222D';
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -253,7 +254,7 @@ export function Sidebar({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: '#FAFAF9',
+            backgroundColor: '#141923',
           }}
         >
           <span style={{ fontSize: 11.5, color: 'var(--text-muted)', fontWeight: 500 }}>
@@ -288,7 +289,7 @@ export function Sidebar({
           style={{
             padding: '12px 14px',
             borderTop: '1px solid var(--border-light)',
-            backgroundColor: '#F8F9F8',
+            backgroundColor: '#161B22',
             display: 'flex',
             flexDirection: 'column',
             gap: 10,
@@ -300,7 +301,7 @@ export function Sidebar({
                 style={{
                   fontSize: 13,
                   fontWeight: 700,
-                  color: 'var(--color-brand-deep)',
+                  color: 'var(--text-main)',
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
@@ -320,7 +321,7 @@ export function Sidebar({
                 onClick={handleManualLock}
                 title="قفل الشاشة فورياً لحماية المحل (F12)"
                 style={{
-                  background: '#FFFFFF',
+                  background: '#1C222D',
                   border: '1px solid var(--border-input)',
                   borderRadius: 8,
                   padding: '6px',
@@ -328,11 +329,11 @@ export function Sidebar({
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  color: '#4A514D',
+                  color: '#CBD5E1',
                   transition: 'all 0.15s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEFEA')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#262E3D')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1C222D')}
               >
                 <AppIcon name="lock" size={17} />
               </button>
@@ -342,8 +343,8 @@ export function Sidebar({
                 onClick={() => setShowLogoutConfirm(true)}
                 title="تسجيل الخروج"
                 style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #F5C6CB',
+                  background: '#1C222D',
+                  border: '1px solid rgba(220, 38, 38, 0.4)',
                   borderRadius: 8,
                   padding: '6px',
                   display: 'flex',
@@ -353,8 +354,8 @@ export function Sidebar({
                   color: 'var(--color-danger)',
                   transition: 'all 0.15s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FBEAEB')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.2)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1C222D')}
               >
                 <AppIcon name="logout" size={17} />
               </button>

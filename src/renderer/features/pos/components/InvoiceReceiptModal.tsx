@@ -36,11 +36,11 @@ export function InvoiceReceiptModal({
   const [isPrinting, setIsPrinting] = useState(false);
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
   const [storeSettings, setStoreSettings] = useState({
-    storeName: 'بوتيك جوري - Boutique Gouri',
-    storeAddress: 'شارع التحرير، الدقي، الجيزة',
-    storePhone: '01012345678',
-    taxNumber: '300-456-789',
-    receiptFooter: 'شكراً لزيارتكم ونسعد بخدمتكم دائماً',
+    storeName: 'الجوكر فون - JOKER PHONE',
+    storeAddress: 'إدارة محلات التليفونات واكسسواراتها وصيانة',
+    storePhone: '01000000000',
+    taxNumber: '',
+    receiptFooter: 'شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز',
   });
 
   const hasAutoPrintedRef = useRef(false);
@@ -60,11 +60,11 @@ export function InvoiceReceiptModal({
           if (res?.success && res.data) {
             const map = res.data;
             setStoreSettings({
-              storeName: map.store_name || 'بوتيك جوري (Boutique Gouri)',
-              storeAddress: map.store_address || 'شارع التحرير، الدقي، الجيزة',
-              storePhone: map.store_phone || map.store_whatsapp || '01012345678',
+              storeName: map.store_name || 'الجوكر فون (JOKER PHONE)',
+              storeAddress: map.store_address || 'إدارة محلات التليفونات واكسسواراتها وصيانة',
+              storePhone: map.store_phone || map.store_whatsapp || '01000000000',
               taxNumber: map.tax_registration_no || map.tax_number || '',
-              receiptFooter: map.receipt_footer || 'شكراً لزيارتكم ونسعد بخدمتكم دائماً',
+              receiptFooter: map.receipt_footer || 'شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز',
             });
           }
         }
@@ -173,30 +173,30 @@ export function InvoiceReceiptModal({
           width: '100%',
           maxWidth: 580,
           maxHeight: '92vh',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
           borderRadius: 20,
-          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.35)',
+          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.5)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          border: '1.5px solid rgba(255, 149, 165, 0.3)',
+          border: '1.5px solid #262E3D',
         }}
       >
         {/* شريط الإجراءات والترويسة العلوية */}
         <div
           style={{
             padding: '14px 20px',
-            backgroundColor: '#F8FAF9',
-            borderBottom: '1.5px solid var(--border-light)',
+            backgroundColor: '#1C222D',
+            borderBottom: '1.5px solid #262E3D',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <GlassIcon icon={FileText} size="sm" variant="brand" />
+            <GlassIcon icon={FileText} size="sm" variant="gold" />
             <div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--color-brand-deep)' }}>
+              <div style={{ fontSize: 16, fontWeight: 800, color: '#F8FAFC' }}>
                 معاينة الفاتورة قبل الطباعة
               </div>
               <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
@@ -261,11 +261,11 @@ export function InvoiceReceiptModal({
                 style={{
                   width: 64,
                   height: 64,
-                  borderRadius: '50%',
+                  borderRadius: '12px',
                   margin: '0 auto 8px auto',
                   padding: 2,
-                  background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-                  boxShadow: '0 4px 14px rgba(255, 112, 136, 0.35)',
+                  background: 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)',
+                  boxShadow: '0 4px 14px rgba(255, 184, 0, 0.35)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -277,9 +277,9 @@ export function InvoiceReceiptModal({
                   style={{
                     width: '100%',
                     height: '100%',
-                    borderRadius: '50%',
+                    borderRadius: '10px',
                     objectFit: 'cover',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: '#0B0E14',
                   }}
                 />
               </div>
@@ -288,7 +288,7 @@ export function InvoiceReceiptModal({
                 style={{
                   fontSize: 18,
                   fontWeight: 900,
-                  color: 'var(--color-brand-deep)',
+                  color: '#111827',
                   letterSpacing: '-0.3px',
                 }}
               >
@@ -565,7 +565,7 @@ export function InvoiceReceiptModal({
               </div>
 
               <div style={{ fontSize: 9, color: '#9CA3AF', marginTop: 6 }}>
-                نظام بيع وإدارة مستحضرات التجميل | Boutique Gouri POS
+                نظام إدارة محلات التليفونات والاكسسوارات والصيانة | الجوكر فون - JOKER PHONE
               </div>
             </div>
           </div>
@@ -575,8 +575,8 @@ export function InvoiceReceiptModal({
         <div
           style={{
             padding: '14px 20px',
-            backgroundColor: '#FFFFFF',
-            borderTop: '1.5px solid var(--border-light)',
+            backgroundColor: '#161B22',
+            borderTop: '1.5px solid #262E3D',
             display: 'flex',
             gap: 10,
             alignItems: 'center',

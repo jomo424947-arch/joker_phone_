@@ -22,6 +22,42 @@ export interface SalesFilterOptions {
   limit?: number;
 }
 
+function resolveUserId(db: Database.Database, userId?: number | null): number {
+  if (userId && userId > 0) {
+    const exists = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
+    if (exists) return userId;
+  }
+  const firstUser = db.prepare('SELECT id FROM users ORDER BY id ASC LIMIT 1').get() as { id: number } | undefined;
+  if (firstUser) return firstUser.id;
+
+  try {
+    db.prepare(`
+      INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
+      VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+    `).run();
+    return 1;
+  } catch {
+    return 1;
+  }
+}
+
+function resolveShiftId(db: Database.Database, shiftId?: number | null, userId?: number): number {
+  if (shiftId) {
+    const exists = db.prepare("SELECT id FROM shifts WHERE id = ?").get(shiftId);
+    if (exists) return shiftId;
+  }
+  const openShift = db.prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1").get() as { id: number } | undefined;
+  if (openShift) return openShift.id;
+
+  const effectiveUserId = resolveUserId(db, userId);
+  const uuid = crypto.randomUUID();
+  const res = db.prepare(`
+    INSERT INTO shifts (uuid, user_id, opening_balance, status, opened_at, notes)
+    VALUES (?, ?, 0, 'open', datetime('now'), 'وردية تلقائية لبدء عمليات البيع')
+  `).run(uuid, effectiveUserId);
+  return Number(res.lastInsertRowid);
+}
+
 export class SalesService {
   private db?: Database.Database;
   private auditService: AuditService;
@@ -135,14 +171,9 @@ export class SalesService {
     let createdSaleId = 0;
 
     const saleTx = db.transaction(() => {
-      // 1. التحقق من أن الوردية مفتوحة
-      const shift = db
-        .prepare("SELECT id, status FROM shifts WHERE id = ? AND status = 'open'")
-        .get(shiftId) as { id: number; status: string } | undefined;
-
-      if (!shift) {
-        throw new Error(`الوردية رقم ${shiftId} غير موجودة أو مغلقة`);
-      }
+      // 1. التحقق من أن الوردية والمستخدم متاحان وصحيحان
+      const effectiveUserId = resolveUserId(db, userId);
+      const effectiveShiftId = resolveShiftId(db, shiftId, effectiveUserId);
 
       // 2. قراءة إعداد السماح بالبيع مع رصيد صفر والضريبة
       const zeroStockSetting = db
@@ -236,11 +267,44 @@ export class SalesService {
       const taxAmount = taxRate > 0 ? Math.round((subtotalAfterDiscount * taxRate) / 100) : 0;
       const totalAmount = subtotalAfterDiscount + taxAmount;
 
-      // 6. التحقق من المدفوعات
+      // 6. التحقق من المدفوعات والبيع الآجل
       const totalPaid = input.payments.reduce((acc, p) => acc + p.amount, 0);
       if (totalPaid < totalAmount) {
         throw new Error(
           `المبلغ المدفوع (${totalPaid / 100} ج.م) أقل من إجمالي الفاتورة (${totalAmount / 100} ج.م)`
+        );
+      }
+
+      // التحقق من حساب العميل والحد الائتماني عند وجود دفع آجل
+      const creditPayments = input.payments.filter((p) => p.method === 'credit');
+      const totalCreditAmount = creditPayments.reduce((acc, p) => acc + p.amount, 0);
+
+      if (totalCreditAmount > 0) {
+        if (!input.customer_id) {
+          throw new Error('لا يمكن إتمام البيع الآجل دون تحديد عميل مسجل في النظام');
+        }
+
+        const customer = db
+          .prepare('SELECT id, name, balance, credit_limit FROM customers WHERE id = ?')
+          .get(input.customer_id) as
+          | { id: number; name: string; balance: number; credit_limit: number }
+          | undefined;
+
+        if (!customer) {
+          throw new Error(`العميل رقم ${input.customer_id} غير موجود في النظام`);
+        }
+
+        if (customer.credit_limit > 0 && customer.balance + totalCreditAmount > customer.credit_limit) {
+          const availableCredit = Math.max(0, customer.credit_limit - customer.balance);
+          throw new Error(
+            `المبلغ الآجل المطلوب (${totalCreditAmount / 100} ج.م) يتجاوز الحد الائتماني المتاح للعميل (${availableCredit / 100} ج.م من أصل ${customer.credit_limit / 100} ج.م)`
+          );
+        }
+
+        // زيادة رصيد العميل المدين
+        db.prepare('UPDATE customers SET balance = balance + ? WHERE id = ?').run(
+          totalCreditAmount,
+          input.customer_id
         );
       }
 
@@ -256,8 +320,8 @@ export class SalesService {
         saleUuid,
         seqNo,
         invoiceNo,
-        userId,
-        shiftId,
+        effectiveUserId,
+        effectiveShiftId,
         input.customer_id ?? null,
         subtotal,
         globalDiscount,
@@ -300,7 +364,7 @@ export class SalesService {
           pItem.batch_id,
           -Math.abs(pItem.qty),
           createdSaleId,
-          userId,
+          effectiveUserId,
           `مبيعات فاتورة #${invoiceNo}`
         );
       }
@@ -323,8 +387,8 @@ export class SalesService {
         // إذا كان الدفع نقدياً، نسجل حركة بالخزنة
         if (p.method === 'cash') {
           insertCashMovementStmt.run(
-            shiftId,
-            userId,
+            effectiveShiftId,
+            effectiveUserId,
             p.amount,
             createdSaleId,
             `مبيعات فاتورة نقدي #${invoiceNo}`
@@ -334,7 +398,7 @@ export class SalesService {
 
       // 10. تسجيل الرقابة والتدقيق
       this.auditService.log({
-        userId,
+        userId: effectiveUserId,
         action: 'CREATE_SALE',
         entityType: 'sales',
         entityId: createdSaleId,
@@ -439,13 +503,77 @@ export class SalesService {
   }
 
   /**
+   * استخراج بيانات العرض من payload المخزّن
+   */
+  private parseHeldPayload(payload: string): {
+    cart_data: string;
+    total_amount: number;
+    item_count: number;
+    customer_name: string;
+  } {
+    try {
+      let parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;
+
+      // حالة نص JSON مغلف مرتين (string inside string)
+      if (typeof parsed === 'string') {
+        try {
+          parsed = JSON.parse(parsed);
+        } catch {}
+      }
+
+      // الحالة الجديدة: payload يحتوي على { cart, customerName }
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.cart) {
+        let cartItems = parsed.cart;
+        if (typeof cartItems === 'string') {
+          try {
+            cartItems = JSON.parse(cartItems);
+          } catch {
+            cartItems = [];
+          }
+        }
+        cartItems = Array.isArray(cartItems) ? cartItems : [];
+
+        const totalAmount = cartItems.reduce(
+          (sum: number, item: any) => sum + ((item.unitPrice || 0) * (item.qty || 1) - (item.discount || 0)),
+          0
+        );
+        return {
+          cart_data: JSON.stringify(cartItems),
+          total_amount: Math.max(0, totalAmount),
+          item_count: cartItems.reduce((sum: number, item: any) => sum + (item.qty || 1), 0),
+          customer_name: parsed.customerName || 'عميل نقدي سريع',
+        };
+      }
+
+      // الحالة القديمة: payload هو مصفوفة cart مباشرة (بيانات قديمة محفوظة مسبقاً)
+      if (Array.isArray(parsed)) {
+        const totalAmount = parsed.reduce(
+          (sum: number, item: any) => sum + ((item.unitPrice || 0) * (item.qty || 1) - (item.discount || 0)),
+          0
+        );
+        return {
+          cart_data: JSON.stringify(parsed),
+          total_amount: Math.max(0, totalAmount),
+          item_count: parsed.reduce((sum: number, item: any) => sum + (item.qty || 1), 0),
+          customer_name: 'عميل نقدي سريع',
+        };
+      }
+
+      return { cart_data: typeof payload === 'string' ? payload : JSON.stringify(payload), total_amount: 0, item_count: 0, customer_name: 'عميل نقدي سريع' };
+    } catch {
+      return { cart_data: '[]', total_amount: 0, item_count: 0, customer_name: 'عميل نقدي سريع' };
+    }
+  }
+
+  /**
    * تعليق فاتورة حالية (Hold Sale)
+   * يخزّن بيانات السلة واسم العميل داخل payload واحد منظم
    */
   async holdSale(
-    cartData: Record<string, unknown>,
+    cartData: Record<string, unknown> | any[] | string,
     _shiftId: number,
     _userId: number,
-    _customerName?: string
+    customerName?: string
   ): Promise<string> {
     const db = this.getDb();
     const holdId = crypto.randomUUID();
@@ -455,52 +583,87 @@ export class SalesService {
     };
     const holdNo = maxHoldRow.max_no + 1;
 
+    let finalCart = cartData;
+    if (typeof cartData === 'string') {
+      try {
+        finalCart = JSON.parse(cartData);
+      } catch {}
+    }
+
+    // تخزين البيانات بهيكل منظم يتضمن اسم العميل
+    const structuredPayload = JSON.stringify({
+      cart: finalCart,
+      customerName: customerName || 'عميل نقدي سريع',
+    });
+
     db.prepare(`
       INSERT INTO held_sales (id, hold_no, payload, created_at)
       VALUES (?, ?, ?, datetime('now'))
-    `).run(holdId, holdNo, JSON.stringify(cartData));
+    `).run(holdId, holdNo, structuredPayload);
 
     return holdId;
   }
 
   /**
-   * جلب قائمة الفواتير المعلقة
+   * جلب قائمة الفواتير المعلقة مع بيانات العرض المحسوبة
    */
-  async getHeldSales(): Promise<HeldSale[]> {
+  async getHeldSales(): Promise<any[]> {
     const db = this.getDb();
     const rows = db
       .prepare('SELECT id, hold_no, payload, created_at FROM held_sales ORDER BY hold_no DESC')
       .all() as { id: string; hold_no: number; payload: string; created_at: string }[];
 
-    return rows.map((r) => ({
-      id: r.id,
-      hold_no: r.hold_no,
-      payload: r.payload,
-      created_at: r.created_at,
-    }));
+    return rows.map((r) => {
+      const parsed = this.parseHeldPayload(r.payload);
+      return {
+        id: r.id,
+        hold_no: r.hold_no,
+        payload: r.payload,
+        created_at: r.created_at,
+        // حقول إضافية تحتاجها الواجهة
+        cart_data: parsed.cart_data,
+        total_amount: parsed.total_amount,
+        item_count: parsed.item_count,
+        customer_name: parsed.customer_name,
+      };
+    });
   }
 
   /**
    * استئناف وحذف فاتورة معلقة (Resume Held Sale)
    */
-  async resumeHeldSale(holdId: string): Promise<HeldSale> {
+  async resumeHeldSale(holdId: string): Promise<any> {
     const db = this.getDb();
     const row = db
       .prepare('SELECT id, hold_no, payload, created_at FROM held_sales WHERE id = ?')
-      .get(holdId) as { id: string; hold_no: number; payload: string; created_at: string } | undefined;
+      .get(String(holdId)) as { id: string; hold_no: number; payload: string; created_at: string } | undefined;
 
     if (!row) {
       throw new Error(`الفاتورة المعلقة برقم ${holdId} غير موجودة`);
     }
 
-    db.prepare('DELETE FROM held_sales WHERE id = ?').run(holdId);
+    db.prepare('DELETE FROM held_sales WHERE id = ?').run(String(holdId));
 
+    const parsed = this.parseHeldPayload(row.payload);
     return {
       id: row.id,
       hold_no: row.hold_no,
       payload: row.payload,
       created_at: row.created_at,
+      cart_data: parsed.cart_data,
+      total_amount: parsed.total_amount,
+      item_count: parsed.item_count,
+      customer_name: parsed.customer_name,
     };
+  }
+
+  /**
+   * حذف فاتورة معلقة دون استئنافها
+   */
+  async deleteHeldSale(holdId: string): Promise<boolean> {
+    const db = this.getDb();
+    db.prepare('DELETE FROM held_sales WHERE id = ?').run(String(holdId));
+    return true;
   }
 
   /**
@@ -532,17 +695,23 @@ export class SalesService {
         ) VALUES (?, 'sale_return', ?, 'sale_void', ?, ?, ?, datetime('now'))
       `);
 
+      const effectiveUserId = resolveUserId(db, userId);
       for (const item of sale.items ?? []) {
         insertMovementStmt.run(
           item.batch_id,
           Math.abs(item.qty),
           saleId,
-          userId,
+          effectiveUserId,
           `استرجاع إلغاء فاتورة #${sale.invoice_no}: ${reason}`
         );
       }
 
       // 3. عكس حركات الخزنة النقدية
+      const activeShift = db
+        .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
+        .get() as { id: number } | undefined;
+      const refundShiftId = resolveShiftId(db, activeShift ? activeShift.id : sale.shift_id, effectiveUserId);
+
       const cashPayments = (sale.payments ?? []).filter((p) => p.method === 'cash');
       for (const cp of cashPayments) {
         db.prepare(`
@@ -550,21 +719,31 @@ export class SalesService {
             shift_id, user_id, type, amount, ref_type, ref_id, note, created_at
           ) VALUES (?, ?, 'refund', ?, 'sale_void', ?, ?, datetime('now'))
         `).run(
-          sale.shift_id,
-          userId,
+          refundShiftId,
+          effectiveUserId,
           -Math.abs(cp.amount),
           saleId,
           `استرداد نقدي لإلغاء فاتورة #${sale.invoice_no}`
         );
       }
 
-      // 4. تسجيل الرقابة والتدقيق
+      // 4. عكس مديونية العميل إن وُجد بيع آجل في الفاتورة الملغاة
+      const creditPayments = (sale.payments ?? []).filter((p) => p.method === 'credit');
+      const totalCredit = creditPayments.reduce((acc, p) => acc + p.amount, 0);
+      if (totalCredit > 0 && sale.customer_id) {
+        db.prepare('UPDATE customers SET balance = balance - ? WHERE id = ?').run(
+          totalCredit,
+          sale.customer_id
+        );
+      }
+
+      // 5. تسجيل الرقابة والتدقيق
       this.auditService.log({
-        userId,
+        userId: effectiveUserId,
         action: 'VOID_SALE',
         entityType: 'sales',
         entityId: saleId,
-        details: { invoice_no: sale.invoice_no, reason },
+        details: { invoice_no: sale.invoice_no, reason, totalCreditReversed: totalCredit },
       });
     });
 

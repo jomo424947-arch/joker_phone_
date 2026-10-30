@@ -8,6 +8,7 @@ import { productsService } from '../../services/products.service';
 import { promotionsService } from '../../services/promotions.service';
 import { importService } from '../../services/import.service';
 import { barcodePrinter } from '../../printing/barcode-printer';
+import { sessionService } from '../../services/session.service';
 
 export function registerProductsIpcHandlers(): void {
   // بحث المنتجات
@@ -53,7 +54,8 @@ export function registerProductsIpcHandlers(): void {
   // إنشاء منتج
   ipcMain.handle(IPC_CHANNELS.PRODUCTS_CREATE, async (_event, input, actorUserId) => {
     try {
-      const product = await productsService.createProduct(input, actorUserId);
+      const effectiveUserId = actorUserId || sessionService.getCurrentUserId() || 1;
+      const product = await productsService.createProduct(input, effectiveUserId);
       return { success: true, data: product };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -63,7 +65,8 @@ export function registerProductsIpcHandlers(): void {
   // تحديث منتج وأسعاره وباركوده
   ipcMain.handle(IPC_CHANNELS.PRODUCTS_UPDATE, async (_event, id, input, actorUserId) => {
     try {
-      const product = await productsService.updateProduct(id, input, actorUserId);
+      const effectiveUserId = actorUserId || sessionService.getCurrentUserId() || 1;
+      const product = await productsService.updateProduct(id, input, effectiveUserId);
       return { success: true, data: product };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -73,7 +76,8 @@ export function registerProductsIpcHandlers(): void {
   // حذف منتج (ذكي: حذف نهائي إذا لم تكن له مبيعات، أو أرشفة آمنة إذا كانت له مبيعات سابقة)
   ipcMain.handle(IPC_CHANNELS.PRODUCTS_DELETE, async (_event, id, actorUserId) => {
     try {
-      const result = await productsService.deleteProduct(id, actorUserId);
+      const effectiveUserId = actorUserId || sessionService.getCurrentUserId() || 1;
+      const result = await productsService.deleteProduct(id, effectiveUserId);
       return { success: true, data: result };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -103,7 +107,8 @@ export function registerProductsIpcHandlers(): void {
   // أرشفة منتج
   ipcMain.handle(IPC_CHANNELS.PRODUCTS_ARCHIVE, async (_event, id, actorUserId) => {
     try {
-      await productsService.archiveProduct(id, actorUserId);
+      const effectiveUserId = actorUserId || sessionService.getCurrentUserId() || 1;
+      await productsService.archiveProduct(id, effectiveUserId);
       return { success: true };
     } catch (err: any) {
       return { success: false, error: err.message };

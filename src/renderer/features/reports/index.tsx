@@ -184,10 +184,11 @@ export function ReportsScreen(): React.ReactElement {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
-        <div style={{ display: 'flex', gap: 6, backgroundColor: '#F0F3F1', padding: 4, borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 6, backgroundColor: '#0B0E14', border: '1px solid #262E3D', padding: 4, borderRadius: 10 }}>
           <button
             type="button"
             onClick={() => {
@@ -198,11 +199,13 @@ export function ReportsScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: period === 'today' ? '#FFFFFF' : 'transparent',
-              fontWeight: period === 'today' ? 700 : 500,
-              color: period === 'today' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: period === 'today' ? '#FFB800' : 'transparent',
+              fontWeight: period === 'today' ? 800 : 600,
+              color: period === 'today' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
+              boxShadow: period === 'today' ? '0 2px 10px rgba(255, 184, 0, 0.35)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             تقرير اليوم
@@ -217,11 +220,13 @@ export function ReportsScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: period === 'week' ? '#FFFFFF' : 'transparent',
-              fontWeight: period === 'week' ? 700 : 500,
-              color: period === 'week' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: period === 'week' ? '#FFB800' : 'transparent',
+              fontWeight: period === 'week' ? 800 : 600,
+              color: period === 'week' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
+              boxShadow: period === 'week' ? '0 2px 10px rgba(255, 184, 0, 0.35)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             هذا الأسبوع
@@ -236,11 +241,13 @@ export function ReportsScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: period === 'month' ? '#FFFFFF' : 'transparent',
-              fontWeight: period === 'month' ? 700 : 500,
-              color: period === 'month' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: period === 'month' ? '#FFB800' : 'transparent',
+              fontWeight: period === 'month' ? 800 : 600,
+              color: period === 'month' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
+              boxShadow: period === 'month' ? '0 2px 10px rgba(255, 184, 0, 0.35)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             هذا الشهر
@@ -273,40 +280,40 @@ export function ReportsScreen(): React.ReactElement {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي المبيعات</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>إجمالي المبيعات</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {formatMoney(stats.totalSales)}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>عدد الفواتير الصادرة</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>عدد الفواتير الصادرة</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#F8FAFC', marginTop: 4 }}>
             {stats.invoiceCount} فاتورة
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>صافي الربح التقديري</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: '#21633D', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>صافي الربح التقديري</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
             {formatMoney(stats.totalProfit)}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>متوسط الفاتورة للعميل</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: '#A87910', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>متوسط الفاتورة للعميل</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {formatMoney(stats.avgTicket)}
           </div>
         </div>
@@ -319,7 +326,8 @@ export function ReportsScreen(): React.ReactElement {
           className="glass-card"
           style={{
             padding: 20,
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#161B22',
+            border: '1px solid #262E3D',
             display: 'flex',
             flexDirection: 'column',
             gap: 16,
@@ -337,18 +345,18 @@ export function ReportsScreen(): React.ReactElement {
               style={{
                 padding: '14px 16px',
                 borderRadius: 12,
-                backgroundColor: '#FAFBF9',
-                border: '1px solid var(--border-light)',
+                backgroundColor: 'rgba(255, 184, 0, 0.12)',
+                border: '1px solid rgba(255, 184, 0, 0.35)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Coins size={18} color="var(--color-primary)" />
-                <span style={{ fontSize: 14, fontWeight: 600 }}>الدفع النقدي (كاش)</span>
+                <Coins size={18} color="#FFB800" />
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#F8FAFC' }}>الدفع النقدي (كاش)</span>
               </div>
-              <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--color-brand-deep)' }}>
+              <div style={{ fontWeight: 800, fontSize: 16, color: '#FFB800' }}>
                 {formatMoney(stats.cashSales)}
               </div>
             </div>
@@ -357,18 +365,18 @@ export function ReportsScreen(): React.ReactElement {
               style={{
                 padding: '14px 16px',
                 borderRadius: 12,
-                backgroundColor: '#FAFBF9',
-                border: '1px solid var(--border-light)',
+                backgroundColor: 'rgba(255, 184, 0, 0.12)',
+                border: '1px solid rgba(255, 184, 0, 0.35)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <CreditCard size={18} color="var(--color-brand-deep)" />
-                <span style={{ fontSize: 14, fontWeight: 600 }}>البطاقات والفيزا (شبكة)</span>
+                <CreditCard size={18} color="#FFB800" />
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#F8FAFC' }}>البطاقات والفيزا (شبكة)</span>
               </div>
-              <div style={{ fontWeight: 800, fontSize: 15, color: 'var(--color-brand-deep)' }}>
+              <div style={{ fontWeight: 800, fontSize: 16, color: '#FFB800' }}>
                 {formatMoney(stats.cardSales)}
               </div>
             </div>
@@ -377,17 +385,17 @@ export function ReportsScreen(): React.ReactElement {
               style={{
                 padding: '12px 16px',
                 borderRadius: 12,
-                backgroundColor: 'rgba(246, 235, 211, 0.4)',
-                border: '1px solid rgba(122, 90, 18, 0.2)',
+                backgroundColor: 'rgba(255, 184, 0, 0.06)',
+                border: '1px solid rgba(255, 184, 0, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
-              <span style={{ fontSize: 13, color: '#7A5A12', fontWeight: 600 }}>
+              <span style={{ fontSize: 13, color: '#FFB800', fontWeight: 700 }}>
                 إجمالي الخصومات الممنوحة
               </span>
-              <span style={{ fontWeight: 700, fontSize: 14, color: '#7A5A12' }}>
+              <span style={{ fontWeight: 800, fontSize: 15, color: '#FFB800' }}>
                 {formatMoney(stats.discountsGiven)}
               </span>
             </div>
@@ -400,7 +408,9 @@ export function ReportsScreen(): React.ReactElement {
           style={{
             padding: 0,
             overflow: 'hidden',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#161B22',
+            border: '1px solid #262E3D',
+            borderRadius: 14,
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -408,15 +418,15 @@ export function ReportsScreen(): React.ReactElement {
           <div
             style={{
               padding: '16px 20px',
-              borderBottom: '1px solid var(--border-light)',
+              borderBottom: '1px solid #262E3D',
               display: 'flex',
               alignItems: 'center',
               gap: 10,
-              backgroundColor: '#FAFBF9',
+              backgroundColor: '#1C222D',
             }}
           >
             <GlassIcon icon={Award} size="sm" variant="gold" glow />
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-brand-deep)', margin: 0 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
               أكثر المنتجات مبيعاً وطلباً (Top Sellers)
             </h3>
           </div>
@@ -431,10 +441,10 @@ export function ReportsScreen(): React.ReactElement {
                   justifyContent: 'center',
                   padding: 48,
                   gap: 12,
-                  color: 'var(--text-muted)',
+                  color: '#94A3B8',
                 }}
               >
-                <Package size={42} opacity={0.4} />
+                <Package size={42} opacity={0.4} color="#94A3B8" />
                 <div style={{ fontSize: 15, fontWeight: 600 }}>
                   لا توجد مبيعات مسجلة في هذه الفترة بعد
                 </div>
@@ -445,17 +455,17 @@ export function ReportsScreen(): React.ReactElement {
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                    <th style={{ width: '8%', padding: '12px 16px', textAlign: 'center' }}>الترتيب</th>
-                    <th style={{ width: '42%', padding: '12px 16px' }}>اسم المنتج</th>
-                    <th style={{ width: '20%', padding: '12px 16px' }}>القسم</th>
-                    <th style={{ width: '15%', padding: '12px 16px', textAlign: 'center' }}>الكمية المباعة</th>
-                    <th style={{ width: '15%', padding: '12px 16px', textAlign: 'left' }}>الإيراد المحقق</th>
+                  <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D' }}>
+                    <th style={{ width: '8%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الترتيب</th>
+                    <th style={{ width: '42%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>اسم المنتج</th>
+                    <th style={{ width: '20%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>القسم</th>
+                    <th style={{ width: '15%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الكمية المباعة</th>
+                    <th style={{ width: '15%', padding: '12px 16px', textAlign: 'left', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الإيراد المحقق</th>
                   </tr>
                 </thead>
                 <tbody>
                   {topProducts.map((p, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                    <tr key={idx} style={{ borderBottom: '1px solid #262E3D' }}>
                       <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                         <span
                           style={{
@@ -474,7 +484,7 @@ export function ReportsScreen(): React.ReactElement {
                           {idx + 1}
                         </span>
                       </td>
-                      <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--color-brand-deep)' }}>
+                      <td style={{ padding: '12px 16px', fontWeight: 700, color: '#F8FAFC' }}>
                         {p.name}
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--text-muted)' }}>

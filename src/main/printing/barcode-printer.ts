@@ -65,9 +65,9 @@ export class BarcodePrinter {
       const row = db.prepare("SELECT value FROM settings WHERE key = 'store_name'").get() as
         | { value: string }
         | undefined;
-      return row?.value || 'بوتيك جوري';
+      return row?.value || 'الجوكر فون';
     } catch {
-      return 'بوتيك جوري';
+      return 'الجوكر فون';
     }
   }
 

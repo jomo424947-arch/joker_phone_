@@ -250,13 +250,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
         justifyContent: 'center',
         minHeight: '100vh',
         width: '100vw',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#0B0E14',
         backgroundImage: `
-          radial-gradient(circle at 85% 15%, rgba(255, 149, 165, 0.18) 0%, transparent 48%),
-          radial-gradient(circle at 15% 85%, rgba(255, 149, 165, 0.08) 0%, transparent 50%),
-          #FFFFFF
+          radial-gradient(circle at 85% 15%, rgba(255, 184, 0, 0.12) 0%, transparent 48%),
+          radial-gradient(circle at 15% 85%, rgba(255, 184, 0, 0.05) 0%, transparent 50%),
+          #0B0E14
         `,
-        color: '#111827',
+        color: '#F8FAFC',
         direction: 'rtl',
         padding: '24px 16px',
         boxSizing: 'border-box',
@@ -275,8 +275,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           width: 440,
           height: 440,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255, 149, 165, 0.22) 0%, rgba(255, 149, 165, 0) 70%)',
-          filter: 'blur(60px)',
+          background: 'radial-gradient(circle, rgba(255, 184, 0, 0.18) 0%, rgba(255, 184, 0, 0) 70%)',
+          filter: 'blur(70px)',
           pointerEvents: 'none',
         }}
       />
@@ -289,13 +289,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           width: 500,
           height: 500,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255, 149, 165, 0.1) 0%, rgba(255, 149, 165, 0) 70%)',
-          filter: 'blur(70px)',
+          background: 'radial-gradient(circle, rgba(255, 184, 0, 0.1) 0%, rgba(255, 184, 0, 0) 70%)',
+          filter: 'blur(80px)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* البطاقة الرئيسية الفاخرة (Elevated White Luxury Card) */}
+      {/* البطاقة الرئيسية الفاخرة (Elevated Dark Cyber Card) */}
       <div
         className={isShaking ? 'animate-shake' : 'animate-scale-in'}
         style={{
@@ -304,13 +304,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           maxWidth: 460,
           maxHeight: '96vh',
           overflowY: 'auto',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
           borderRadius: 28,
-          border: '1.5px solid rgba(255, 149, 165, 0.25)',
+          border: '1.5px solid rgba(255, 184, 0, 0.25)',
           boxShadow: `
-            0 25px 60px -15px rgba(255, 149, 165, 0.18),
-            0 12px 28px -6px rgba(0, 0, 0, 0.04),
-            0 0 0 1px #F3F4F6
+            0 25px 60px -15px rgba(0, 0, 0, 0.7),
+            0 12px 28px -6px rgba(0, 0, 0, 0.4),
+            0 0 20px rgba(255, 184, 0, 0.1)
           `,
           padding: '26px 26px 20px',
           display: 'flex',
@@ -319,16 +319,16 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           zIndex: 10,
         }}
       >
-        {/* رأس البطاقة وشعار Boutique Gouri */}
+        {/* رأس البطاقة وشعار الجوكر فون */}
         <div style={{ textAlign: 'center' }}>
           <div
             style={{
-              width: 76,
-              height: 76,
-              borderRadius: '50%',
+              width: 80,
+              height: 80,
+              borderRadius: '20px',
               padding: 3,
-              background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-              boxShadow: '0 12px 30px -4px rgba(255, 112, 136, 0.4), 0 4px 10px rgba(0, 0, 0, 0.04)',
+              background: 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)',
+              boxShadow: '0 12px 30px -4px rgba(255, 184, 0, 0.45)',
               margin: '0 auto 10px',
               display: 'flex',
               alignItems: 'center',
@@ -338,13 +338,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           >
             <img
               src={logoImg}
-              alt="Boutique Gouri Logo"
+              alt="شعار الجوكر فون"
               style={{
                 width: '100%',
                 height: '100%',
-                borderRadius: '50%',
+                borderRadius: '17px',
                 objectFit: 'cover',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#0B0E14',
               }}
             />
           </div>
@@ -354,22 +354,22 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
               margin: 0,
               fontSize: 22,
               fontWeight: 800,
-              color: '#111827',
+              color: '#FFFFFF',
               letterSpacing: '-0.3px',
               lineHeight: 1.3,
             }}
           >
-            Boutique Gouri • بوتيك جوري
+            الجوكر فون • JOKER PHONE
           </h1>
           <p
             style={{
               margin: '4px 0 0',
               fontSize: 12.5,
-              color: '#FF6584',
+              color: '#FFB800',
               fontWeight: 700,
             }}
           >
-            BEAUTY & COSMETICS • نظام المبيعات ونقاط البيع
+            إدارة محلات التليفونات واكسسواراتها وصيانة
           </p>
         </div>
 
@@ -377,11 +377,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
         <div
           style={{
             display: 'flex',
-            backgroundColor: '#F9FAFB',
+            backgroundColor: '#12161F',
             borderRadius: 14,
             padding: 5,
             gap: 6,
-            border: '1.5px solid #E5E7EB',
+            border: '1.5px solid #262E3D',
           }}
         >
           <button
@@ -398,18 +398,18 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
               justifyContent: 'center',
               gap: 8,
               padding: '9px 0',
-              border: mode === 'pin' ? '1px solid rgba(255, 149, 165, 0.25)' : '1px solid transparent',
+              border: mode === 'pin' ? '1px solid rgba(255, 184, 0, 0.35)' : '1px solid transparent',
               borderRadius: 10,
               fontSize: 13,
               fontWeight: 700,
               cursor: 'pointer',
-              backgroundColor: mode === 'pin' ? '#FFFFFF' : 'transparent',
-              color: mode === 'pin' ? '#111827' : '#4B5563',
-              boxShadow: mode === 'pin' ? '0 3px 10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(255, 149, 165, 0.2)' : 'none',
+              backgroundColor: mode === 'pin' ? '#1C222D' : 'transparent',
+              color: mode === 'pin' ? '#FFB800' : '#94A3B8',
+              boxShadow: mode === 'pin' ? '0 3px 10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(255, 184, 0, 0.2)' : 'none',
               transition: 'all 0.18s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           >
-            <KeyRound size={16} color={mode === 'pin' ? '#FF7088' : '#6B7280'} strokeWidth={2.2} />
+            <KeyRound size={16} color={mode === 'pin' ? '#FFB800' : '#64748B'} strokeWidth={2.2} />
             <span>رمز PIN السريع (كاشير)</span>
           </button>
 
@@ -427,18 +427,18 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
               justifyContent: 'center',
               gap: 8,
               padding: '9px 0',
-              border: mode === 'password' ? '1px solid rgba(255, 149, 165, 0.25)' : '1px solid transparent',
+              border: mode === 'password' ? '1px solid rgba(255, 184, 0, 0.35)' : '1px solid transparent',
               borderRadius: 10,
               fontSize: 13,
               fontWeight: 700,
               cursor: 'pointer',
-              backgroundColor: mode === 'password' ? '#FFFFFF' : 'transparent',
-              color: mode === 'password' ? '#111827' : '#4B5563',
-              boxShadow: mode === 'password' ? '0 3px 10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(255, 149, 165, 0.2)' : 'none',
+              backgroundColor: mode === 'password' ? '#1C222D' : 'transparent',
+              color: mode === 'password' ? '#FFB800' : '#94A3B8',
+              boxShadow: mode === 'password' ? '0 3px 10px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(255, 184, 0, 0.2)' : 'none',
               transition: 'all 0.18s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           >
-            <User size={16} color={mode === 'password' ? '#FF7088' : '#6B7280'} strokeWidth={2.2} />
+            <User size={16} color={mode === 'password' ? '#FFB800' : '#64748B'} strokeWidth={2.2} />
             <span>اسم المستخدم (إدارة)</span>
           </button>
         </div>
@@ -468,21 +468,21 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   gap: 6,
                   fontSize: 13,
                   fontWeight: 700,
-                  color: '#374151',
+                  color: '#F8FAFC',
                 }}
               >
-                <Users size={15} color="#FF7088" />
+                <Users size={15} color="#FFB800" />
                 <span>اختر الحساب المسجل:</span>
               </div>
               {selectedUser && (
                 <span
                   style={{
                     fontSize: 11.5,
-                    color: '#6B7280',
+                    color: '#94A3B8',
                     fontWeight: 600,
                   }}
                 >
-                  المحدد: <strong style={{ color: '#FF6584' }}>{selectedUser.display_name}</strong>
+                  المحدد: <strong style={{ color: '#FFB800' }}>{selectedUser.display_name}</strong>
                 </span>
               )}
             </div>
@@ -514,11 +514,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                       padding: '10px 6px',
                       borderRadius: 14,
                       border: isSelected
-                        ? '2px solid #FF7088'
-                        : '1.5px solid #F3F4F6',
-                      backgroundColor: isSelected ? '#FFF5F7' : '#FAFAFA',
+                        ? '2px solid #FFB800'
+                        : '1.5px solid #262E3D',
+                      backgroundColor: isSelected ? '#1C222D' : '#12161F',
                       boxShadow: isSelected
-                        ? '0 4px 12px rgba(255, 112, 136, 0.22), 0 1px 3px rgba(0, 0, 0, 0.04)'
+                        ? '0 4px 12px rgba(255, 184, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.4)'
                         : 'none',
                       cursor: 'pointer',
                       transition: 'all 0.18s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -528,14 +528,14 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     }}
                     onMouseEnter={(e) => {
                       if (!isSelected) {
-                        e.currentTarget.style.borderColor = '#FECDD3';
-                        e.currentTarget.style.backgroundColor = '#FFF8F9';
+                        e.currentTarget.style.borderColor = '#FFB800';
+                        e.currentTarget.style.backgroundColor = '#1C222D';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isSelected) {
-                        e.currentTarget.style.borderColor = '#F3F4F6';
-                        e.currentTarget.style.backgroundColor = '#FAFAFA';
+                        e.currentTarget.style.borderColor = '#262E3D';
+                        e.currentTarget.style.backgroundColor = '#12161F';
                       }
                     }}
                   >
@@ -549,12 +549,12 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                           width: 17,
                           height: 17,
                           borderRadius: '50%',
-                          backgroundColor: '#FF7088',
-                          color: '#FFFFFF',
+                          backgroundColor: '#FFB800',
+                          color: '#000000',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          boxShadow: '0 2px 4px rgba(255, 112, 136, 0.4)',
+                          boxShadow: '0 2px 4px rgba(255, 184, 0, 0.4)',
                         }}
                       >
                         <Check size={10} strokeWidth={3} />
@@ -569,18 +569,18 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                         borderRadius: '50%',
                         background:
                           user.role === 'owner'
-                            ? 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%)'
+                            ? 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)'
                             : user.role === 'manager'
-                            ? 'linear-gradient(135deg, #C7D2FE 0%, #6366F1 100%)'
-                            : 'linear-gradient(135deg, #FFCCD5 0%, #FF7088 100%)',
+                            ? 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)'
+                            : 'linear-gradient(135deg, #FBBF24 0%, #D97706 100%)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         marginBottom: 5,
                         boxShadow: isSelected
-                          ? '0 3px 8px rgba(255, 112, 136, 0.35)'
-                          : '0 2px 4px rgba(0, 0, 0, 0.04)',
-                        color: user.role === 'owner' ? '#78350F' : '#FFFFFF',
+                          ? '0 3px 8px rgba(255, 184, 0, 0.35)'
+                          : '0 2px 4px rgba(0, 0, 0, 0.3)',
+                        color: '#000000',
                       }}
                     >
                       {user.role === 'owner' && <Crown size={18} strokeWidth={2.2} />}
@@ -593,7 +593,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                       style={{
                         fontSize: 12.5,
                         fontWeight: 800,
-                        color: isSelected ? '#111827' : '#374151',
+                        color: isSelected ? '#FFFFFF' : '#CBD5E1',
                         textAlign: 'center',
                         width: '100%',
                         overflow: 'hidden',
@@ -621,8 +621,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                           fontWeight: 700,
                           padding: '1px 5px',
                           borderRadius: 6,
-                          backgroundColor: isSelected ? 'rgba(255, 112, 136, 0.15)' : '#F3F4F6',
-                          color: isSelected ? '#BE123C' : '#6B7280',
+                          backgroundColor: isSelected ? 'rgba(255, 184, 0, 0.2)' : '#1E2430',
+                          color: isSelected ? '#FFB800' : '#94A3B8',
                         }}
                       >
                         {ROLE_LABELS[user.role] || user.role}
@@ -636,8 +636,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                             fontWeight: 700,
                             padding: '1px 4px',
                             borderRadius: 4,
-                            backgroundColor: '#FEF3C7',
-                            color: '#92400E',
+                            backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                            color: '#FBBF24',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 2,
@@ -679,7 +679,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
         {/* نمط إدخال رمز الـ PIN (PIN Keypad Mode) */}
         {mode === 'pin' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {/* شريط نقاط الـ PIN المضيئة (Luminous Pearl Dots) */}
+            {/* شريط نقاط الـ PIN المضيئة (Luminous Gold Dots) */}
             <div
               style={{
                 display: 'flex',
@@ -687,10 +687,10 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                 alignItems: 'center',
                 gap: 20,
                 height: 56,
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#12161F',
                 borderRadius: 16,
-                border: '1.5px solid #E5E7EB',
-                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.02)',
+                border: '1.5px solid #262E3D',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3)',
               }}
             >
               {[0, 1, 2, 3].map((index) => {
@@ -703,13 +703,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                       height: 16,
                       borderRadius: '50%',
                       background: isFilled
-                        ? 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)'
-                        : '#FFFFFF',
-                      border: isFilled ? 'none' : '1.5px solid #D1D5DB',
+                        ? 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)'
+                        : '#1C222D',
+                      border: isFilled ? 'none' : '1.5px solid #475569',
                       transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                       transform: isFilled ? 'scale(1.28)' : 'scale(1)',
                       boxShadow: isFilled
-                        ? '0 0 14px rgba(255, 149, 165, 0.95), 0 2px 6px rgba(255, 101, 132, 0.45)'
+                        ? '0 0 14px rgba(255, 184, 0, 0.95), 0 2px 6px rgba(255, 149, 0, 0.45)'
                         : 'none',
                     }}
                   />
@@ -735,11 +735,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     fontSize: 24,
                     fontWeight: 700,
                     borderRadius: 14,
-                    border: '1.5px solid #EAE5DC',
-                    backgroundColor: '#FFFFFF',
-                    color: '#111827',
+                    border: '1.5px solid #262E3D',
+                    backgroundColor: '#1C222D',
+                    color: '#F8FAFC',
                     cursor: 'pointer',
-                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.03)',
+                    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
                     transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                     display: 'flex',
                     alignItems: 'center',
@@ -748,16 +748,16 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     userSelect: 'none',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#FFF8F9';
-                    e.currentTarget.style.borderColor = '#FF95A5';
+                    e.currentTarget.style.backgroundColor = '#262E3D';
+                    e.currentTarget.style.borderColor = '#FFB800';
                     e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 149, 165, 0.28)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 184, 0, 0.28)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#FFFFFF';
-                    e.currentTarget.style.borderColor = '#EAE5DC';
+                    e.currentTarget.style.backgroundColor = '#1C222D';
+                    e.currentTarget.style.borderColor = '#262E3D';
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.03)';
+                    e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
                   }}
                   onMouseDown={(e) => {
                     e.currentTarget.style.transform = 'scale(0.95)';
@@ -779,9 +779,9 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   fontSize: 14,
                   fontWeight: 700,
                   borderRadius: 14,
-                  border: '1.5px solid #FECDD3',
-                  backgroundColor: '#FFFFFF',
-                  color: '#BE123C',
+                  border: '1.5px solid rgba(239, 68, 68, 0.35)',
+                  backgroundColor: '#1C222D',
+                  color: '#F87171',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                   display: 'flex',
@@ -790,14 +790,14 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   outline: 'none',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFF1F2';
-                  e.currentTarget.style.borderColor = '#FF95A5';
+                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                  e.currentTarget.style.borderColor = '#EF4444';
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 149, 165, 0.25)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(239, 68, 68, 0.25)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
-                  e.currentTarget.style.borderColor = '#FECDD3';
+                  e.currentTarget.style.backgroundColor = '#1C222D';
+                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.35)';
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
@@ -820,11 +820,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   fontSize: 24,
                   fontWeight: 700,
                   borderRadius: 14,
-                  border: '1.5px solid #EAE5DC',
-                  backgroundColor: '#FFFFFF',
-                  color: '#111827',
+                  border: '1.5px solid #262E3D',
+                  backgroundColor: '#1C222D',
+                  color: '#F8FAFC',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.03)',
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
                   transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                   display: 'flex',
                   alignItems: 'center',
@@ -833,16 +833,16 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   userSelect: 'none',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFDF5';
-                  e.currentTarget.style.borderColor = '#FF95A5';
+                  e.currentTarget.style.backgroundColor = '#262E3D';
+                  e.currentTarget.style.borderColor = '#FFB800';
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 149, 165, 0.28)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 184, 0, 0.28)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
-                  e.currentTarget.style.borderColor = '#EAE5DC';
+                  e.currentTarget.style.backgroundColor = '#1C222D';
+                  e.currentTarget.style.borderColor = '#262E3D';
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.03)';
+                  e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
                 }}
                 onMouseDown={(e) => {
                   e.currentTarget.style.transform = 'scale(0.95)';
@@ -864,11 +864,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   fontSize: 21,
                   fontWeight: 700,
                   borderRadius: 14,
-                  border: '1.5px solid #EAE5DC',
-                  backgroundColor: '#FFFFFF',
-                  color: '#111827',
+                  border: '1.5px solid #262E3D',
+                  backgroundColor: '#1C222D',
+                  color: '#94A3B8',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.03)',
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
                   transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                   display: 'flex',
                   alignItems: 'center',
@@ -877,16 +877,18 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   userSelect: 'none',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFDF5';
-                  e.currentTarget.style.borderColor = '#FF95A5';
+                  e.currentTarget.style.backgroundColor = '#262E3D';
+                  e.currentTarget.style.borderColor = '#FFB800';
+                  e.currentTarget.style.color = '#F8FAFC';
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 149, 165, 0.28)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px -2px rgba(255, 184, 0, 0.28)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
-                  e.currentTarget.style.borderColor = '#EAE5DC';
+                  e.currentTarget.style.backgroundColor = '#1C222D';
+                  e.currentTarget.style.borderColor = '#262E3D';
+                  e.currentTarget.style.color = '#94A3B8';
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.03)';
+                  e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
                 }}
                 onMouseDown={(e) => {
                   e.currentTarget.style.transform = 'scale(0.95)';
@@ -895,11 +897,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
               >
-                <Delete size={20} color="#6B7280" />
+                <Delete size={20} color="#94A3B8" />
               </button>
             </div>
 
-            {/* الزر الرئيسي لدخول الوردية (Luxury Rose CTA) */}
+            {/* الزر الرئيسي لدخول الوردية (Cyber Gold CTA) */}
             <button
               type="button"
               onClick={() => handlePinSubmit()}
@@ -913,13 +915,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                 border: 'none',
                 background:
                   pin.length === 4
-                    ? 'linear-gradient(135deg, #FF95A5 0%, #FF6B8B 100%)'
-                    : '#F3F4F6',
-                color: pin.length === 4 ? '#FFFFFF' : '#9CA3AF',
+                    ? 'linear-gradient(135deg, #FFB800 0%, #FFA800 100%)'
+                    : '#1E2430',
+                color: pin.length === 4 ? '#000000' : '#64748B',
                 cursor: pin.length === 4 && !isLoading ? 'pointer' : 'not-allowed',
                 boxShadow:
                   pin.length === 4
-                    ? '0 8px 24px -4px rgba(255, 107, 139, 0.5), 0 2px 6px rgba(0, 0, 0, 0.06)'
+                    ? '0 8px 24px -4px rgba(255, 184, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2)'
                     : 'none',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 display: 'flex',
@@ -927,19 +929,18 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                 justifyContent: 'center',
                 gap: 8,
                 outline: 'none',
-                textShadow: pin.length === 4 ? '0 1px 2px rgba(0, 0, 0, 0.15)' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (pin.length === 4 && !isLoading) {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 12px 28px -4px rgba(255, 107, 139, 0.6)';
+                  e.currentTarget.style.boxShadow = '0 12px 28px -4px rgba(255, 184, 0, 0.6)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (pin.length === 4 && !isLoading) {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow =
-                    '0 8px 24px -4px rgba(255, 107, 139, 0.5), 0 2px 6px rgba(0, 0, 0, 0.06)';
+                    '0 8px 24px -4px rgba(255, 184, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2)';
                 }
               }}
             >
@@ -962,7 +963,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   fontSize: 13.5,
                   fontWeight: 700,
                   marginBottom: 8,
-                  color: '#111827',
+                  color: '#F8FAFC',
                 }}
               >
                 اسم المستخدم
@@ -979,9 +980,9 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     height: 48,
                     padding: '0 42px 0 14px',
                     borderRadius: 12,
-                    border: '1.5px solid #E5E7EB',
-                    backgroundColor: '#FFFFFF',
-                    color: '#111827',
+                    border: '1.5px solid #30394A',
+                    backgroundColor: '#12161F',
+                    color: '#F8FAFC',
                     fontSize: 15,
                     fontWeight: 600,
                     boxSizing: 'border-box',
@@ -989,17 +990,17 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     transition: 'all 0.18s ease',
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#FF95A5';
-                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(255, 149, 165, 0.2)';
+                    e.currentTarget.style.borderColor = '#FFB800';
+                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(255, 184, 0, 0.2)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.borderColor = '#30394A';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
                 <User
                   size={18}
-                  color="#9CA3AF"
+                  color="#94A3B8"
                   style={{
                     position: 'absolute',
                     right: 14,
@@ -1018,7 +1019,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                   fontSize: 13.5,
                   fontWeight: 700,
                   marginBottom: 8,
-                  color: '#111827',
+                  color: '#F8FAFC',
                 }}
               >
                 كلمة المرور
@@ -1034,9 +1035,9 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     height: 48,
                     padding: '0 42px 0 14px',
                     borderRadius: 12,
-                    border: '1.5px solid #E5E7EB',
-                    backgroundColor: '#FFFFFF',
-                    color: '#111827',
+                    border: '1.5px solid #30394A',
+                    backgroundColor: '#12161F',
+                    color: '#F8FAFC',
                     fontSize: 15,
                     fontWeight: 600,
                     boxSizing: 'border-box',
@@ -1044,17 +1045,17 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                     transition: 'all 0.18s ease',
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#FF95A5';
-                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(255, 149, 165, 0.2)';
+                    e.currentTarget.style.borderColor = '#FFB800';
+                    e.currentTarget.style.boxShadow = '0 0 0 4px rgba(255, 184, 0, 0.2)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.borderColor = '#30394A';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
                 <Lock
                   size={18}
-                  color="#9CA3AF"
+                  color="#94A3B8"
                   style={{
                     position: 'absolute',
                     right: 14,
@@ -1078,32 +1079,31 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                 border: 'none',
                 background:
                   username.trim() && password
-                    ? 'linear-gradient(135deg, #FF95A5 0%, #FF6B8B 100%)'
-                    : '#F3F4F6',
-                color: username.trim() && password ? '#FFFFFF' : '#9CA3AF',
+                    ? 'linear-gradient(135deg, #FFB800 0%, #FFA800 100%)'
+                    : '#1E2430',
+                color: username.trim() && password ? '#000000' : '#64748B',
                 cursor: username.trim() && password && !isLoading ? 'pointer' : 'not-allowed',
                 boxShadow:
                   username.trim() && password
-                    ? '0 8px 24px -4px rgba(255, 107, 139, 0.5), 0 2px 6px rgba(0, 0, 0, 0.06)'
+                    ? '0 8px 24px -4px rgba(255, 184, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2)'
                     : 'none',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 outline: 'none',
-                textShadow: username.trim() && password ? '0 1px 2px rgba(0, 0, 0, 0.15)' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (username.trim() && password && !isLoading) {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 12px 28px -4px rgba(255, 107, 139, 0.6)';
+                  e.currentTarget.style.boxShadow = '0 12px 28px -4px rgba(255, 184, 0, 0.6)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (username.trim() && password && !isLoading) {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow =
-                    '0 8px 24px -4px rgba(255, 107, 139, 0.5), 0 2px 6px rgba(0, 0, 0, 0.06)';
+                    '0 8px 24px -4px rgba(255, 184, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2)';
                 }
               }}
             >

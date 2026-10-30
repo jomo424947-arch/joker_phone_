@@ -47,6 +47,15 @@ class SoundManager {
     return this.isMuted;
   }
 
+  private attachCleanup(osc: OscillatorNode, gain: GainNode) {
+    osc.onended = () => {
+      try {
+        osc.disconnect();
+        gain.disconnect();
+      } catch {}
+    };
+  }
+
   /**
    * نقرة زر ناعمة خفيفة
    */
@@ -58,6 +67,7 @@ class SoundManager {
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      this.attachCleanup(osc, gain);
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(600, ctx.currentTime);
@@ -87,6 +97,7 @@ class SoundManager {
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      this.attachCleanup(osc, gain);
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(1400, ctx.currentTime);
@@ -116,6 +127,7 @@ class SoundManager {
         const startTime = ctx.currentTime + index * 0.07;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
+        this.attachCleanup(osc, gain);
 
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, startTime);
@@ -133,6 +145,13 @@ class SoundManager {
   }
 
   /**
+   * صوت نجاح العملية (Chime)
+   */
+  public playSuccess() {
+    this.playSaleSuccess();
+  }
+
+  /**
    * صوت درج النقدية أو حفظ السجل (صوت ميكانيكي راقي)
    */
   public playCashRegister() {
@@ -147,6 +166,7 @@ class SoundManager {
         const time = ctx.currentTime + idx * 0.08;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
+        this.attachCleanup(osc, gain);
 
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, time);
@@ -174,6 +194,7 @@ class SoundManager {
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      this.attachCleanup(osc, gain);
 
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(180, ctx.currentTime);
@@ -201,6 +222,7 @@ class SoundManager {
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      this.attachCleanup(osc, gain);
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(440, ctx.currentTime);
@@ -228,6 +250,7 @@ class SoundManager {
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      this.attachCleanup(osc, gain);
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(450, ctx.currentTime);

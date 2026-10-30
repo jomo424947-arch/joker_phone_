@@ -355,9 +355,28 @@ export class ReportsService {
     const grossProfit = netRevenue - cogs;
     const grossMarginPercent = netRevenue > 0 ? Number(((grossProfit / netRevenue) * 100).toFixed(2)) : 0;
 
+    // 5. عمولات المحافظ الإلكترونية وشحن الرصيد السابقة (إن وجدت)
+    let walletCommissions = 0;
+    try {
+      const walletCommissionsRow = db
+        .prepare(`
+          SELECT COALESCE(SUM(fee_commission), 0) AS total_commission
+          FROM wallet_transactions
+          WHERE date(created_at) >= ? AND date(created_at) <= ?
+        `)
+        .get(filter.startDate, filter.endDate) as { total_commission: number } | undefined;
+      walletCommissions = walletCommissionsRow?.total_commission ?? 0;
+    } catch {
+      walletCommissions = 0;
+    }
+
     const operatingExpensesTotal = expenseRows.reduce((sum, e) => sum + e.amount, 0);
-    const netProfit = grossProfit - operatingExpensesTotal;
-    const netProfitMarginPercent = netRevenue > 0 ? Number(((netProfit / netRevenue) * 100).toFixed(2)) : 0;
+    const netProfit = grossProfit + walletCommissions - operatingExpensesTotal;
+    const totalRevenueWithCommissions = netRevenue + walletCommissions;
+    const netProfitMarginPercent =
+      totalRevenueWithCommissions > 0
+        ? Number(((netProfit / totalRevenueWithCommissions) * 100).toFixed(2))
+        : 0;
 
     return {
       start_date: filter.startDate,
@@ -368,6 +387,7 @@ export class ReportsService {
       cogs,
       gross_profit: grossProfit,
       gross_profit_margin_percent: grossMarginPercent,
+      wallet_commissions_revenue: walletCommissions,
       operating_expenses_total: operatingExpensesTotal,
       expenses_breakdown: expenseRows.map((e) => ({
         category: e.category,
@@ -492,17 +512,28 @@ export class ReportsService {
       `)
       .get(filter.startDate, filter.endDate) as { total: number };
 
-    // 3. الإيداعات بالخزنة (بخلاف الافتتاحي)
+    // 3. الإيداعات النقدية الأخرى بالخزنة (استبعاد سداد ديون العملاء وإيداعات المحافظ لمنع الازدواج، واستبعاد الافتتاحي)
     const depositsRow = db
       .prepare(`
         SELECT COALESCE(SUM(amount), 0) AS total
         FROM cash_movements
         WHERE type = 'deposit' AND note != 'رصيد افتتاحي للوردية'
+          AND (ref_type IS NULL OR ref_type NOT IN ('customer_payment', 'wallet_cash_in'))
           AND date(created_at) >= ? AND date(created_at) <= ?
       `)
       .get(filter.startDate, filter.endDate) as { total: number };
 
-    // 4. مرتجعات النقد
+    // 4. إيداعات كاش للمحافظ الإلكترونية (مبالغ استلمها المحل نقداً من العملاء لتحويلها)
+    const walletCashInRow = db
+      .prepare(`
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM cash_movements
+        WHERE type = 'deposit' AND ref_type = 'wallet_cash_in'
+          AND date(created_at) >= ? AND date(created_at) <= ?
+      `)
+      .get(filter.startDate, filter.endDate) as { total: number };
+
+    // 5. مرتجعات النقد للزبائن
     const refundsRow = db
       .prepare(`
         SELECT COALESCE(SUM(ABS(amount)), 0) AS total
@@ -512,7 +543,7 @@ export class ReportsService {
       `)
       .get(filter.startDate, filter.endDate) as { total: number };
 
-    // 5. المصروفات التشغيلية
+    // 6. المصروفات التشغيلية
     const expensesRow = db
       .prepare(`
         SELECT COALESCE(SUM(amount), 0) AS total
@@ -521,7 +552,7 @@ export class ReportsService {
       `)
       .get(filter.startDate, filter.endDate) as { total: number };
 
-    // 6. سداد مستحقات الموردين نقداً
+    // 7. سداد مستحقات الموردين نقداً
     const supplierPaymentsRow = db
       .prepare(`
         SELECT COALESCE(SUM(amount), 0) AS total
@@ -531,19 +562,51 @@ export class ReportsService {
       `)
       .get(filter.startDate, filter.endDate) as { total: number };
 
-    // 7. سحوبات نقدية / توريد للمالك
+    // 8. مشتريات بضاعة نقدية من الدرج
+    const cashPurchasesRow = db
+      .prepare(`
+        SELECT COALESCE(SUM(ABS(amount)), 0) AS total
+        FROM cash_movements
+        WHERE type = 'withdrawal' AND ref_type = 'purchase'
+          AND date(created_at) >= ? AND date(created_at) <= ?
+      `)
+      .get(filter.startDate, filter.endDate) as { total: number };
+
+    // 9. سحوبات كاش للمحافظ الإلكترونية (مبالغ كاش خرجت من الدرج للعميل مقابل استلام رصيد محفظة)
+    const walletCashOutRow = db
+      .prepare(`
+        SELECT COALESCE(SUM(ABS(amount)), 0) AS total
+        FROM cash_movements
+        WHERE type = 'withdrawal' AND ref_type = 'wallet_cash_out'
+          AND date(created_at) >= ? AND date(created_at) <= ?
+      `)
+      .get(filter.startDate, filter.endDate) as { total: number };
+
+    // 10. سحوبات نقدية عامة / توريد للمالك (استبعاد سداد الموردين والمشتريات والمحافظ لمنع الازدواج)
     const withdrawalsRow = db
       .prepare(`
         SELECT COALESCE(SUM(ABS(amount)), 0) AS total
         FROM cash_movements
         WHERE type = 'withdrawal'
+          AND (ref_type IS NULL OR ref_type NOT IN ('supplier_payment', 'purchase', 'wallet_cash_out'))
           AND date(created_at) >= ? AND date(created_at) <= ?
       `)
       .get(filter.startDate, filter.endDate) as { total: number };
 
-    const totalInflow = cashSalesRow.total + debtCollectionsRow.total + depositsRow.total;
+    const totalInflow =
+      cashSalesRow.total +
+      debtCollectionsRow.total +
+      depositsRow.total +
+      walletCashInRow.total;
+
     const totalOutflow =
-      refundsRow.total + expensesRow.total + supplierPaymentsRow.total + withdrawalsRow.total;
+      refundsRow.total +
+      expensesRow.total +
+      supplierPaymentsRow.total +
+      cashPurchasesRow.total +
+      walletCashOutRow.total +
+      withdrawalsRow.total;
+
     const netCashFlow = totalInflow - totalOutflow;
 
     return {
@@ -553,12 +616,15 @@ export class ReportsService {
         cash_sales: cashSalesRow.total,
         customer_debt_collections: debtCollectionsRow.total,
         cash_deposits: depositsRow.total,
+        wallet_cash_in: walletCashInRow.total,
         total_inflow: totalInflow,
       },
       outflows: {
         cash_refunds: refundsRow.total,
         operating_expenses: expensesRow.total,
         supplier_debt_payments: supplierPaymentsRow.total,
+        cash_purchases: cashPurchasesRow.total,
+        wallet_cash_out: walletCashOutRow.total,
         cash_withdrawals: withdrawalsRow.total,
         total_outflow: totalOutflow,
       },

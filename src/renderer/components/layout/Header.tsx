@@ -43,7 +43,7 @@ export function Header({ title }: HeaderProps): React.ReactElement {
       className="glass-header"
       style={{
         height: 60,
-        backgroundColor: 'rgba(255, 255, 255, 0.94)',
+        backgroundColor: 'rgba(11, 14, 20, 0.94)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border-light)',
         padding: '0 24px',
@@ -51,7 +51,7 @@ export function Header({ title }: HeaderProps): React.ReactElement {
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 10,
-        boxShadow: '0 1px 4px rgba(0, 0, 0, 0.02)',
+        boxShadow: '0 1px 6px rgba(0, 0, 0, 0.4)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -59,7 +59,7 @@ export function Header({ title }: HeaderProps): React.ReactElement {
           style={{
             fontSize: 18,
             fontWeight: 700,
-            color: 'var(--color-brand-deep)',
+            color: 'var(--text-main)',
             margin: 0,
             letterSpacing: '-0.2px',
             fontFamily: 'var(--font-family)',
@@ -79,14 +79,14 @@ export function Header({ title }: HeaderProps): React.ReactElement {
             fontSize: 12,
             fontWeight: 500,
             color: 'var(--text-muted)',
-            backgroundColor: '#FFF9FA',
+            backgroundColor: '#161B22',
             padding: '5px 12px',
             borderRadius: 20,
-            border: '1px solid #F5EAEB',
+            border: '1px solid #262E3D',
           }}
         >
-          <AppIcon name="schedule" size={15} color="#FF7088" />
-          <span style={{ fontFamily: 'var(--font-family)' }}>{currentTime}</span>
+          <AppIcon name="schedule" size={15} color="#FFB800" />
+          <span style={{ fontFamily: 'var(--font-family)', color: '#CBD5E1' }}>{currentTime}</span>
         </div>
 
         {/* زر قفل الشاشة السريع */}

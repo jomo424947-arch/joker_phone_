@@ -25,6 +25,25 @@ import {
 } from '../../shared/types/inventory.types';
 import { auditService as globalAuditService, AuditService } from './audit.service';
 
+function resolveUserId(db: Database.Database, userId?: number | null): number {
+  if (userId && userId > 0) {
+    const exists = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
+    if (exists) return userId;
+  }
+  const firstUser = db.prepare('SELECT id FROM users ORDER BY id ASC LIMIT 1').get() as { id: number } | undefined;
+  if (firstUser) return firstUser.id;
+
+  try {
+    db.prepare(`
+      INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
+      VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+    `).run();
+    return 1;
+  } catch {
+    return 1;
+  }
+}
+
 export class InventoryService {
   private db?: Database.Database;
   private auditService: AuditService;
@@ -272,6 +291,7 @@ export class InventoryService {
         throw new Error(`رصيد الدفعة الحالى (${batch.qty_remaining}) غير كافٍ لخصم (${Math.abs(params.qty)})`);
       }
 
+      const effectiveUserId = resolveUserId(db, params.userId);
       const stmt = db.prepare(`
         INSERT INTO stock_movements (batch_id, type, qty, ref_type, ref_id, user_id, note, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
@@ -283,7 +303,7 @@ export class InventoryService {
         params.qty,
         params.refType ?? null,
         params.refId ?? null,
-        params.userId,
+        effectiveUserId,
         params.note ?? null
       );
 
@@ -311,6 +331,7 @@ export class InventoryService {
     }
 
     const db = this.getDb();
+    const effectiveUserId = resolveUserId(db, userId);
     db.transaction(() => {
       this.recordMovement(
         {
@@ -318,7 +339,7 @@ export class InventoryService {
           type: 'expired',
           qty: -Math.abs(qty),
           refType: 'manual_expired',
-          userId,
+          userId: effectiveUserId,
           note: note ?? 'إهلاك منتهي الصلاحية',
         },
         db
@@ -326,7 +347,7 @@ export class InventoryService {
 
       this.auditService.log(
         {
-          userId,
+          userId: effectiveUserId,
           action: 'INVENTORY_MARK_EXPIRED',
           entityType: 'batch',
           entityId: batchId,
@@ -351,6 +372,7 @@ export class InventoryService {
     }
 
     const db = this.getDb();
+    const effectiveUserId = resolveUserId(db, userId);
     db.transaction(() => {
       this.recordMovement(
         {
@@ -358,7 +380,7 @@ export class InventoryService {
           type: 'tester',
           qty: -Math.abs(qty),
           refType: 'manual_tester',
-          userId,
+          userId: effectiveUserId,
           note: note ?? 'استخدام تستر / عينة',
         },
         db
@@ -366,7 +388,7 @@ export class InventoryService {
 
       this.auditService.log(
         {
-          userId,
+          userId: effectiveUserId,
           action: 'INVENTORY_MARK_TESTER',
           entityType: 'batch',
           entityId: batchId,
@@ -429,6 +451,7 @@ export class InventoryService {
   }): Promise<StockCount> {
     const db = this.getDb();
     const countUuid = crypto.randomUUID();
+    const effectiveUserId = resolveUserId(db, params.userId);
 
     return db.transaction(() => {
       const insertCount = db.prepare(`
@@ -440,7 +463,7 @@ export class InventoryService {
         countUuid,
         params.scope,
         params.scopeId ?? null,
-        params.userId
+        effectiveUserId
       );
       const countId = Number(res.lastInsertRowid);
 
@@ -617,9 +640,10 @@ export class InventoryService {
 
       db.prepare(`UPDATE stock_counts SET status = 'reviewed' WHERE id = ?`).run(countId);
 
+      const effectiveUserId = resolveUserId(db, userId);
       this.auditService.log(
         {
-          userId,
+          userId: effectiveUserId,
           action: 'STOCK_COUNT_SUBMITTED',
           entityType: 'stock_count',
           entityId: countId,
@@ -657,6 +681,7 @@ export class InventoryService {
         `)
         .all(countId) as StockCountItem[];
 
+      const effectiveApproverId = resolveUserId(db, approverId);
       for (const item of diffItems) {
         const diff = item.difference ?? 0;
         if (diff > 0) {
@@ -669,7 +694,7 @@ export class InventoryService {
               qty: diff,
               refType: 'stock_count',
               refId: countId,
-              userId: approverId,
+              userId: effectiveApproverId,
               note: `تسوية جرد بالزيادة (دورة #${countId}): ${item.note ?? ''}`.trim(),
             },
             db
@@ -687,7 +712,7 @@ export class InventoryService {
                 qty: -alloc.qty,
                 refType: 'stock_count',
                 refId: countId,
-                userId: approverId,
+                userId: effectiveApproverId,
                 note: `تسوية جرد بالنقص (دورة #${countId}): ${item.note ?? ''}`.trim(),
               },
               db
@@ -700,11 +725,11 @@ export class InventoryService {
         UPDATE stock_counts 
         SET status = 'approved', approved_by = ?, completed_at = datetime('now')
         WHERE id = ?
-      `).run(approverId, countId);
+      `).run(effectiveApproverId, countId);
 
       this.auditService.log(
         {
-          userId: approverId,
+          userId: effectiveApproverId,
           action: 'STOCK_COUNT_APPROVED',
           entityType: 'stock_count',
           entityId: countId,
@@ -733,6 +758,7 @@ export class InventoryService {
         throw new Error('لا يمكن إلغاء دورة جرد معتمدة بالفعل');
       }
 
+      const effectiveUserId = resolveUserId(db, userId);
       db.prepare(`
         UPDATE stock_counts 
         SET status = 'cancelled', completed_at = datetime('now')
@@ -741,7 +767,7 @@ export class InventoryService {
 
       this.auditService.log(
         {
-          userId,
+          userId: effectiveUserId,
           action: 'STOCK_COUNT_CANCELLED',
           entityType: 'stock_count',
           entityId: countId,

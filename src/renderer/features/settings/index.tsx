@@ -41,11 +41,11 @@ export function SettingsScreen(): React.ReactElement {
   const [activeSubTab, setActiveSubTab] = useState<SettingsTab>('store');
 
   // بيانات المحل
-  const [storeName, setStoreName] = useState('بوتيك جوري - Boutique Gouri');
-  const [storeAddress, setStoreAddress] = useState('شارع التحرير، الدقي، الجيزة');
-  const [storePhone, setStorePhone] = useState('01012345678');
-  const [taxNumber, setTaxNumber] = useState('300-456-789');
-  const [receiptFooter, setReceiptFooter] = useState('شكراً لزيارتكم - نتمنى لكم يوماً جميلاً');
+  const [storeName, setStoreName] = useState('الجوكر فون - JOKER PHONE');
+  const [storeAddress, setStoreAddress] = useState('إدارة محلات التليفونات واكسسواراتها وصيانة');
+  const [storePhone, setStorePhone] = useState('01000000000');
+  const [taxNumber, setTaxNumber] = useState('');
+  const [receiptFooter, setReceiptFooter] = useState('شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز');
 
   // سياسات الأمان
   const [autoLockMinutes, setAutoLockMinutes] = useState('5');
@@ -127,7 +127,9 @@ export function SettingsScreen(): React.ReactElement {
         className="glass-card"
         style={{
           display: 'flex',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
+          borderRadius: 14,
           padding: 6,
           gap: 6,
         }}
@@ -144,11 +146,11 @@ export function SettingsScreen(): React.ReactElement {
               style={{
                 flex: 1,
                 padding: '10px 14px',
-                border: isActive ? '1px solid rgba(79, 107, 94, 0.25)' : '1px solid transparent',
+                border: isActive ? '1px solid rgba(255, 184, 0, 0.35)' : '1px solid transparent',
                 borderRadius: 10,
-                backgroundColor: isActive ? 'var(--color-primary-light)' : 'transparent',
-                color: isActive ? 'var(--color-brand-deep)' : 'var(--text-secondary)',
-                fontWeight: isActive ? 700 : 500,
+                backgroundColor: isActive ? 'rgba(255, 184, 0, 0.15)' : 'transparent',
+                color: isActive ? '#FFB800' : '#94A3B8',
+                fontWeight: isActive ? 800 : 600,
                 fontSize: 14,
                 cursor: 'pointer',
                 display: 'flex',
@@ -175,7 +177,9 @@ export function SettingsScreen(): React.ReactElement {
                 className="glass-card"
                 style={{
                   padding: 24,
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: '#161B22',
+                  border: '1px solid #262E3D',
+                  borderRadius: 16,
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 16,
@@ -183,7 +187,7 @@ export function SettingsScreen(): React.ReactElement {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
                   <GlassIcon icon={Store} size="sm" variant="brand" />
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-brand-deep)', margin: 0 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#FFB800', margin: 0 }}>
                     بيانات المتجر والترويسة للإيصالات
                   </h3>
                 </div>
@@ -196,19 +200,19 @@ export function SettingsScreen(): React.ReactElement {
                     gap: 14,
                     padding: '12px 16px',
                     borderRadius: 14,
-                    backgroundColor: '#FFF5F7',
-                    border: '1px solid rgba(255, 149, 165, 0.35)',
+                    backgroundColor: '#0B0E14',
+                    border: '1px solid #262E3D',
                   }}
                 >
                   <div
                     style={{
-                      width: 52,
-                      height: 52,
-                      minWidth: 52,
-                      borderRadius: '50%',
+                      width: 54,
+                      height: 54,
+                      minWidth: 54,
+                      borderRadius: '14px',
                       padding: 2,
-                      background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-                      boxShadow: '0 4px 12px rgba(255, 112, 136, 0.3)',
+                      background: 'linear-gradient(135deg, #FFB800 0%, #FFA800 100%)',
+                      boxShadow: '0 4px 14px rgba(255, 184, 0, 0.35)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -216,35 +220,35 @@ export function SettingsScreen(): React.ReactElement {
                   >
                     <img
                       src={logoImg}
-                      alt="Boutique Gouri Logo"
+                      alt="الجوكر فون - JOKER PHONE"
                       style={{
                         width: '100%',
                         height: '100%',
-                        borderRadius: '50%',
+                        borderRadius: '12px',
                         objectFit: 'cover',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: '#0B0E14',
                       }}
                     />
                   </div>
                   <div>
-                    <div style={{ fontSize: 13.5, fontWeight: 700, color: '#111827' }}>
-                      الشعار المعتمد: Boutique Gouri
+                    <div style={{ fontSize: 14, fontWeight: 800, color: '#FFB800' }}>
+                      الشعار المعتمد: الجوكر فون (JOKER PHONE)
                     </div>
-                    <div style={{ fontSize: 11.5, color: '#6B7280', marginTop: 2 }}>
-                      مدمج كأيقونة أساسية للتطبيق، ملف الـ .exe، وشاشات البيع وتسجيل الدخول
+                    <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>
+                      مدمج كأيقونة وهوية معتمدة للتطبيق، ملف الـ .exe، إيصالات الصيانة والمبيعات
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     اسم المحل / العلامة التجارية
                   </label>
                   <Input value={storeName} onChange={(e) => setStoreName(e.target.value)} required />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     العنوان المطبوع بالإيصال
                   </label>
                   <Input value={storeAddress} onChange={(e) => setStoreAddress(e.target.value)} required />
@@ -252,14 +256,14 @@ export function SettingsScreen(): React.ReactElement {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                       رقم الهاتف للتواصل
                     </label>
                     <Input value={storePhone} onChange={(e) => setStorePhone(e.target.value)} required />
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                       الرقم الضريبي / السجل
                     </label>
                     <Input value={taxNumber} onChange={(e) => setTaxNumber(e.target.value)} />
@@ -267,7 +271,7 @@ export function SettingsScreen(): React.ReactElement {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     رسالة تذييل الإيصال الحراري
                   </label>
                   <Input value={receiptFooter} onChange={(e) => setReceiptFooter(e.target.value)} />
@@ -286,7 +290,9 @@ export function SettingsScreen(): React.ReactElement {
                 className="glass-card"
                 style={{
                   padding: 24,
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: '#161B22',
+                  border: '1px solid #262E3D',
+                  borderRadius: 16,
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 16,
@@ -294,13 +300,13 @@ export function SettingsScreen(): React.ReactElement {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
                   <GlassIcon icon={Lock} size="sm" variant="gold" />
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-brand-deep)', margin: 0 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#FFB800', margin: 0 }}>
                     سياسات الأمان والقفل التلقائي
                   </h3>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     مهلة القفل التلقائي للشاشة عند خمول الكاشير (بالدقائق)
                   </label>
                   <Input
@@ -312,7 +318,7 @@ export function SettingsScreen(): React.ReactElement {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     الحد الأقصى لمحاولات تسجيل الدخول الفاشلة قبل التجميد
                   </label>
                   <Input
@@ -324,7 +330,7 @@ export function SettingsScreen(): React.ReactElement {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     مدة تجميد الحساب عند تكرار إدخال PIN خاطئ (بالدقائق)
                   </label>
                   <Input
@@ -336,7 +342,7 @@ export function SettingsScreen(): React.ReactElement {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
                     مدة الاحتفاظ بالنسخ الاحتياطية وتدويرها تلقائياً (بالأيام)
                   </label>
                   <Input

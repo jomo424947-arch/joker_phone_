@@ -95,6 +95,8 @@ export function CashScreen(): React.ReactElement {
   }, []);
 
   // حساب الإجماليات من الحركات الفعلية
+  const openingBalance = activeShift?.opening_balance || 0;
+
   const totalSalesCash = movements
     .filter((m) => m.type === 'sale')
     .reduce((sum, m) => sum + (m.amount || 0), 0);
@@ -104,10 +106,11 @@ export function CashScreen(): React.ReactElement {
     .reduce((sum, m) => sum + Math.abs(m.amount || 0), 0);
 
   const totalDeposits = movements
-    .filter((m) => m.type === 'deposit')
+    .filter((m) => m.type === 'deposit' && m.note !== 'رصيد افتتاحي للوردية')
     .reduce((sum, m) => sum + (m.amount || 0), 0);
 
-  const currentDrawerCash = (activeShift?.opening_balance || 0) + totalSalesCash + totalDeposits - totalExpenses;
+  // إجمالي نقدية الدرج الفعلية المحسوبة
+  const currentDrawerCash = movements.reduce((sum, m) => sum + (m.amount || 0), 0);
 
   // فتح وردية جديدة
   const handleOpenShift = async (e: React.FormEvent) => {
@@ -288,17 +291,18 @@ export function CashScreen(): React.ReactElement {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#161B22',
+            border: '1px solid #262E3D',
             padding: 40,
             gap: 20,
           }}
         >
           <GlassIcon icon={Lock} size="xl" variant="gold" glow />
           <div style={{ textAlign: 'center' }}>
-            <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', margin: '0 0 8px 0' }}>
+            <h2 style={{ fontSize: 24, fontWeight: 800, color: '#F8FAFC', margin: '0 0 8px 0' }}>
               الوردية مغلقة حالياً
             </h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: 0, maxWidth: 450 }}>
+            <p style={{ color: '#94A3B8', fontSize: 14, margin: 0, maxWidth: 450 }}>
               لبدء عمليات البيع واستلام النقدية في الدرج وتتبع المبيعات بدقة، يرجى إدخال الرصيد الافتتاحي وافتتاح الوردية.
             </p>
           </div>
@@ -324,40 +328,40 @@ export function CashScreen(): React.ReactElement {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             <div
               className="glass-card"
-              style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+              style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
             >
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>نقدية الدرج الحالية</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#A87910', marginTop: 4 }}>
+              <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>نقدية الدرج الحالية</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
                 {formatMoney(currentDrawerCash)}
               </div>
             </div>
 
             <div
               className="glass-card"
-              style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+              style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
             >
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي مبيعات الكاش</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#21633D', marginTop: 4 }}>
+              <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>إجمالي مبيعات الكاش</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
                 {formatMoney(totalSalesCash)}
               </div>
             </div>
 
             <div
               className="glass-card"
-              style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+              style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
             >
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>المصروفات والسحوبات</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#962B34', marginTop: 4 }}>
+              <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>المصروفات والسحوبات</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#EF4444', marginTop: 4 }}>
                 {formatMoney(totalExpenses)}
               </div>
             </div>
 
             <div
               className="glass-card"
-              style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+              style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
             >
-              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>الرصيد الافتتاحي</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+              <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>الرصيد الافتتاحي</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#38BDF8', marginTop: 4 }}>
                 {formatMoney(activeShift.opening_balance || 0)}
               </div>
             </div>
@@ -371,12 +375,13 @@ export function CashScreen(): React.ReactElement {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#161B22',
+              border: '1px solid #262E3D',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span className="badge badge-success">الوردية #{activeShift.id} مفتوحة نشطة</span>
-              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: 13, color: '#94A3B8' }}>
                 افتتحت في: {activeShift.opened_at?.slice(0, 16)}
               </span>
             </div>
@@ -441,7 +446,8 @@ export function CashScreen(): React.ReactElement {
               flex: 1,
               padding: 0,
               overflow: 'hidden',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#161B22',
+              border: '1px solid #262E3D',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -449,11 +455,11 @@ export function CashScreen(): React.ReactElement {
             <div
               style={{
                 padding: '14px 20px',
-                borderBottom: '1px solid var(--border-light)',
-                backgroundColor: '#FAFBF9',
+                borderBottom: '1px solid #262E3D',
+                backgroundColor: '#1C222D',
                 fontWeight: 700,
                 fontSize: 15,
-                color: 'var(--color-brand-deep)',
+                color: '#F8FAFC',
               }}
             >
               سجل حركات الخزنة والدرج للوردية الحالية
@@ -469,30 +475,30 @@ export function CashScreen(): React.ReactElement {
                     justifyContent: 'center',
                     padding: 48,
                     gap: 12,
-                    color: 'var(--text-muted)',
+                    color: '#94A3B8',
                   }}
                 >
-                  <Coins size={42} opacity={0.4} />
-                  <div style={{ fontSize: 15, fontWeight: 600 }}>لا توجد حركات نقدية مسجلة في هذه الوردية بعد</div>
-                  <div style={{ fontSize: 12 }}>
+                  <Coins size={42} style={{ color: '#FFB800', opacity: 0.7 }} />
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#F8FAFC' }}>لا توجد حركات نقدية مسجلة في هذه الوردية بعد</div>
+                  <div style={{ fontSize: 13, color: '#94A3B8' }}>
                     تظهر هنا المبيعات النقدية والمصروفات والإيداعات لحظة بلحظة
                   </div>
                 </div>
               ) : (
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                   <thead>
-                    <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                      <th style={{ width: '8%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-                      <th style={{ width: '18%', padding: '12px 16px' }}>نوع الحركة</th>
-                      <th style={{ width: '18%', padding: '12px 16px', textAlign: 'left' }}>المبلغ</th>
-                      <th style={{ width: '38%', padding: '12px 16px' }}>البيان / الملاحظات</th>
-                      <th style={{ width: '18%', padding: '12px 16px', textAlign: 'center' }}>الوقت</th>
+                    <tr style={{ background: '#1C222D', borderBottom: '1.5px solid #262E3D' }}>
+                      <th style={{ width: '8%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>#</th>
+                      <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>نوع الحركة</th>
+                      <th style={{ width: '18%', padding: '12px 16px', textAlign: 'left', color: '#94A3B8', fontWeight: 600 }}>المبلغ</th>
+                      <th style={{ width: '38%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>البيان / الملاحظات</th>
+                      <th style={{ width: '18%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>الوقت</th>
                     </tr>
                   </thead>
                   <tbody>
                     {movements.map((m, idx) => (
-                      <tr key={m.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                        <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+                      <tr key={m.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>
                           {idx + 1}
                         </td>
                         <td style={{ padding: '12px 16px' }}>
@@ -510,17 +516,17 @@ export function CashScreen(): React.ReactElement {
                           style={{
                             padding: '12px 16px',
                             textAlign: 'left',
-                            fontWeight: 700,
-                            fontSize: 14,
-                            color: m.type === 'sale' || m.type === 'deposit' ? '#21633D' : '#962B34',
+                            fontWeight: 800,
+                            fontSize: 15,
+                            color: m.type === 'sale' || m.type === 'deposit' ? '#10B981' : '#EF4444',
                           }}
                         >
                           {m.type === 'sale' || m.type === 'deposit' ? '+' : '-'} {formatMoney(Math.abs(m.amount))}
                         </td>
-                        <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                        <td style={{ padding: '12px 16px', fontSize: 13, color: '#F8FAFC' }}>
                           {m.note || '---'}
                         </td>
-                        <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: 13, color: '#94A3B8' }}>
                           {m.created_at?.slice(11, 16) || '---'}
                         </td>
                       </tr>

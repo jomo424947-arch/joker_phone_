@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { CartLineItem } from '../types';
 import { sounds } from '../../../lib/sounds';
 import { MESSAGES } from '../../../lib/messages';
@@ -10,6 +10,12 @@ export function usePos() {
   const [customerName, setCustomerName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [lastScannedItem, setLastScannedItem] = useState<CartLineItem | null>(null);
+
+  // مرجع للسلة الحالية لتجنب إعادة إنشاء callbacks عند كل تغيير في السلة
+  const cartRef = useRef<CartLineItem[]>(cart);
+  useEffect(() => {
+    cartRef.current = cart;
+  }, [cart]);
 
   // حساب الإجمالي والفرعي
   const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
@@ -30,11 +36,12 @@ export function usePos() {
       setIsLoading(true);
       try {
         const electron = (window as any).electron;
+        const currentCart = cartRef.current;
 
         // التحقق أولاً إذا كان المنتج موجوداً مسبقاً في السلة لزيادة الكمية فوراً
-        const existingIndex = cart.findIndex((i) => i.barcode === cleanBarcode);
+        const existingIndex = currentCart.findIndex((i) => i.barcode === cleanBarcode);
         if (existingIndex >= 0) {
-          const item = cart[existingIndex];
+          const item = currentCart[existingIndex];
           if (item.availableStock !== undefined && item.qty + 1 > item.availableStock) {
             sounds.playError();
             return {
@@ -45,13 +52,18 @@ export function usePos() {
           sounds.playBarcodeBeep();
           setCart((prev) => {
             const next = [...prev];
-            const newQty = item.qty + 1;
-            next[existingIndex] = {
-              ...item,
+            const idx = next.findIndex((i) => i.barcode === cleanBarcode);
+            if (idx < 0) return prev;
+            const existing = next[idx];
+            const newQty = existing.qty + 1;
+            const updated = {
+              ...existing,
               qty: newQty,
-              total: Math.max(0, item.unitPrice * newQty - (item.discount || 0)),
+              total: Math.max(0, existing.unitPrice * newQty - (existing.discount || 0)),
             };
-            setLastScannedItem(next[existingIndex]);
+            next[idx] = updated;
+            // تحديث آخر صنف ممسوح بعد setCart لتجنب double render
+            queueMicrotask(() => setLastScannedItem(updated));
             return next;
           });
           return { success: true };
@@ -106,7 +118,7 @@ export function usePos() {
         setIsLoading(false);
       }
     },
-    [cart]
+    [] // ← لا تعتمد على cart بعد الآن - تستخدم cartRef بدلاً منها
   );
 
   /**
@@ -123,7 +135,8 @@ export function usePos() {
   const updateQuantity = useCallback((id: string, newQty: number) => {
     sounds.playClick();
     if (newQty <= 0) {
-      removeItem(id);
+      sounds.playDelete();
+      setCart((prev) => prev.filter((item) => item.id !== id));
       return;
     }
 
@@ -143,7 +156,7 @@ export function usePos() {
         return item;
       })
     );
-  }, [removeItem]);
+  }, []);
 
   /**
    * تطبيق خصم على صنف محدد
@@ -207,10 +220,12 @@ export function usePos() {
       const barcode = targetVariant?.barcodes?.[0] || (product as any).primaryBarcode || `SKU-${variantId}`;
       const availableStock = targetVariant?.total_stock !== undefined ? targetVariant.total_stock : (product as any).totalStock ?? 999;
 
+      const currentCart = cartRef.current;
+
       // فحص إذا كان الصنف موجوداً مسبقاً في السلة لزيادة الكمية
-      const existingIndex = cart.findIndex((i) => i.variantId === variantId);
+      const existingIndex = currentCart.findIndex((i) => i.variantId === variantId);
       if (existingIndex >= 0) {
-        const item = cart[existingIndex];
+        const item = currentCart[existingIndex];
         if (item.availableStock !== undefined && item.qty + 1 > item.availableStock) {
           sounds.playError();
           return {
@@ -221,13 +236,17 @@ export function usePos() {
         sounds.playBarcodeBeep();
         setCart((prev) => {
           const next = [...prev];
-          const newQty = item.qty + 1;
-          next[existingIndex] = {
-            ...item,
+          const idx = next.findIndex((i) => i.variantId === variantId);
+          if (idx < 0) return prev;
+          const existing = next[idx];
+          const newQty = existing.qty + 1;
+          const updated = {
+            ...existing,
             qty: newQty,
-            total: Math.max(0, item.unitPrice * newQty - (item.discount || 0)),
+            total: Math.max(0, existing.unitPrice * newQty - (existing.discount || 0)),
           };
-          setLastScannedItem(next[existingIndex]);
+          next[idx] = updated;
+          queueMicrotask(() => setLastScannedItem(updated));
           return next;
         });
         return { success: true };
@@ -260,7 +279,7 @@ export function usePos() {
       setLastScannedItem(newItem);
       return { success: true };
     },
-    [cart]
+    [] // ← لا تعتمد على cart بعد الآن - تستخدم cartRef
   );
 
   return {
@@ -288,3 +307,4 @@ export function usePos() {
 }
 
 export default usePos;
+

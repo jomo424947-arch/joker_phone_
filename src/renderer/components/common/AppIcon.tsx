@@ -42,14 +42,14 @@ const variantStyles: Record<
     color: 'inherit',
   },
   brand: {
-    bg: 'rgba(255, 149, 165, 0.14)',
-    border: 'rgba(255, 149, 165, 0.3)',
-    color: '#FF6584',
+    bg: 'rgba(255, 184, 0, 0.14)',
+    border: 'rgba(255, 184, 0, 0.3)',
+    color: '#FFB800',
   },
   primary: {
-    bg: 'rgba(255, 149, 165, 0.12)',
-    border: 'rgba(255, 149, 165, 0.25)',
-    color: '#FF7088',
+    bg: 'rgba(255, 184, 0, 0.12)',
+    border: 'rgba(255, 184, 0, 0.25)',
+    color: '#FFB800',
   },
   cyan: {
     bg: 'rgba(2, 132, 199, 0.1)',

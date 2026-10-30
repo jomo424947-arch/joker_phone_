@@ -1,14 +1,16 @@
 import React from 'react';
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
+  prefix?: React.ReactNode;
   actionButton?: React.ReactNode;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, actionButton, className = '', ...props }, ref) => {
+  ({ label, error, icon, prefix, actionButton, className = '', ...props }, ref) => {
+    const displayIcon = icon || prefix;
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
         {label && (
@@ -23,7 +25,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
-          {icon && (
+          {displayIcon && (
             <div
               style={{
                 position: 'absolute',
@@ -35,18 +37,19 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 pointerEvents: 'none',
               }}
             >
-              {icon}
+              {displayIcon}
             </div>
           )}
           <input
             ref={ref}
             className={`in ${error ? 'animate-shake' : ''} ${className}`}
+            {...props}
             style={{
-              paddingRight: icon ? 40 : 14,
+              paddingRight: displayIcon ? 40 : 14,
               paddingLeft: actionButton ? 44 : 14,
               borderColor: error ? 'var(--color-danger)' : undefined,
+              ...props.style,
             }}
-            {...props}
           />
           {actionButton && (
             <div

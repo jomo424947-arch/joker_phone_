@@ -229,40 +229,40 @@ export function PurchasesScreen(): React.ReactElement {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي المشتريات</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>إجمالي المشتريات</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {formatMoney(totalPurchases)}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>عدد الموردين النشطين</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>عدد الموردين النشطين</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#F8FAFC', marginTop: 4 }}>
             {suppliers.length}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>مستحقات آجلة للموردين</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: '#A87910', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>مستحقات آجلة للموردين</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: '#F59E0B', marginTop: 4 }}>
             {formatMoney(totalPayableToSuppliers)}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>عدد الفواتير المستلمة</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>عدد الفواتير المستلمة</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#F8FAFC', marginTop: 4 }}>
             {invoices.length}
           </div>
         </div>
@@ -276,10 +276,11 @@ export function PurchasesScreen(): React.ReactElement {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
-        <div style={{ display: 'flex', gap: 6, backgroundColor: '#F0F3F1', padding: 4, borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 6, backgroundColor: '#0B0E14', border: '1px solid #262E3D', padding: 4, borderRadius: 10 }}>
           <button
             type="button"
             onClick={() => {
@@ -290,11 +291,13 @@ export function PurchasesScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: activeTab === 'invoices' ? '#FFFFFF' : 'transparent',
-              fontWeight: activeTab === 'invoices' ? 700 : 500,
-              color: activeTab === 'invoices' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: activeTab === 'invoices' ? '#FFB800' : 'transparent',
+              fontWeight: activeTab === 'invoices' ? 800 : 600,
+              color: activeTab === 'invoices' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
+              boxShadow: activeTab === 'invoices' ? '0 2px 10px rgba(255, 184, 0, 0.35)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             فواتير المشتريات
@@ -310,11 +313,13 @@ export function PurchasesScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: activeTab === 'suppliers' ? '#FFFFFF' : 'transparent',
-              fontWeight: activeTab === 'suppliers' ? 700 : 500,
-              color: activeTab === 'suppliers' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: activeTab === 'suppliers' ? '#FFB800' : 'transparent',
+              fontWeight: activeTab === 'suppliers' ? 800 : 600,
+              color: activeTab === 'suppliers' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
+              boxShadow: activeTab === 'suppliers' ? '0 2px 10px rgba(255, 184, 0, 0.35)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             دليل وأرصدة الموردين
@@ -380,7 +385,9 @@ export function PurchasesScreen(): React.ReactElement {
           flex: 1,
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
+          borderRadius: 14,
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -396,25 +403,25 @@ export function PurchasesScreen(): React.ReactElement {
                   justifyContent: 'center',
                   padding: 48,
                   gap: 12,
-                  color: 'var(--text-muted)',
+                  color: '#94A3B8',
                 }}
               >
-                <Truck size={42} opacity={0.4} />
+                <Truck size={42} opacity={0.4} color="#94A3B8" />
                 <div style={{ fontSize: 15, fontWeight: 600 }}>لا توجد فواتير مشتريات مسجلة بعد</div>
                 <div style={{ fontSize: 12 }}>
-                  يمكنك تسجيل فواتير المشتريات لتوريد وتحديث كميات المخزون وتواريخ الصلاحية
+                  يمكنك تسجيل فواتير المشتريات لتوريد وتحديث كميات الهواتف والاكسسوارات وقطع الغيار
                 </div>
               </div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '18%', padding: '12px 16px' }}>رقم الفاتورة</th>
-                    <th style={{ width: '26%', padding: '12px 16px' }}>المورد</th>
-                    <th style={{ width: '16%', padding: '12px 16px' }}>تاريخ الاستلام</th>
-                    <th style={{ width: '16%', padding: '12px 16px', textAlign: 'left' }}>إجمالي الفاتورة</th>
-                    <th style={{ width: '18%', padding: '12px 16px', textAlign: 'center' }}>حالة السداد</th>
+                  <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D' }}>
+                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>#</th>
+                    <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>رقم الفاتورة</th>
+                    <th style={{ width: '26%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>المورد</th>
+                    <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>تاريخ الاستلام</th>
+                    <th style={{ width: '16%', padding: '12px 16px', textAlign: 'left', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>إجمالي الفاتورة</th>
+                    <th style={{ width: '18%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>حالة السداد</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -486,21 +493,21 @@ export function PurchasesScreen(): React.ReactElement {
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '34%', padding: '12px 16px' }}>اسم المورد / الشركة</th>
-                    <th style={{ width: '24%', padding: '12px 16px' }}>رقم الهاتف للتواصل</th>
-                    <th style={{ width: '20%', padding: '12px 16px', textAlign: 'left' }}>الرصيد المستحق للمورد</th>
-                    <th style={{ width: '16%', padding: '12px 16px', textAlign: 'center' }}>الحالة</th>
+                  <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D' }}>
+                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>#</th>
+                    <th style={{ width: '34%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>اسم المورد / الشركة</th>
+                    <th style={{ width: '24%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>رقم الهاتف للتواصل</th>
+                    <th style={{ width: '20%', padding: '12px 16px', textAlign: 'left', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الرصيد المستحق للمورد</th>
+                    <th style={{ width: '16%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الحالة</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredSuppliers.map((s, idx) => (
-                    <tr key={s.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                      <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+                    <tr key={s.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                      <td style={{ padding: '12px 16px', textAlign: 'center', color: '#64748B', fontSize: 13 }}>
                         {idx + 1}
                       </td>
-                      <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--color-brand-deep)' }}>
+                      <td style={{ padding: '12px 16px', fontWeight: 700, color: '#F8FAFC' }}>
                         {s.name}
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 13, fontFamily: 'monospace' }}>
@@ -689,7 +696,7 @@ export function PurchasesScreen(): React.ReactElement {
             <Input
               value={newSupplierName}
               onChange={(e) => setNewSupplierName(e.target.value)}
-              placeholder="مثال: شركة النقاء لمستحضرات التجميل"
+              placeholder="مثال: شركة النقاء لتوزيع الهواتف والاكسسوارات"
               required
             />
           </div>

@@ -1,9 +1,9 @@
 {
-  "name": "cosmetics-pos-system",
-  "version": "1.0.0",
-  "description": "نظام بيع وجرد لمحل مستحضرات التجميل - Windows Desktop Offline POS & Inventory System",
+  "name": "joker-phone-pos-system",
+  "version": "2.0.0",
+  "description": "الجوكر فون - JOKER PHONE — نظام إدارة محلات التليفونات والاكسسوارات والصيانة",
   "main": "dist-electron/main/index.js",
-  "author": "Cosmetics POS Team",
+  "author": "Joker Phone Team",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
@@ -40,8 +40,8 @@
     "vitest": "^5.0.3"
   },
   "build": {
-    "appId": "com.cosmetics.pos",
-    "productName": "Boutique Gouri - نظام بيع وجرد مستحضرات التجميل",
+    "appId": "com.jokerphone.pos",
+    "productName": "الجوكر فون - JOKER PHONE",
     "directories": {
       "output": "release"
     },
@@ -67,7 +67,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Boutique Gouri - بوتيك جوري",
+      "shortcutName": "الجوكر فون - JOKER PHONE",
       "installerIcon": "build/installerIcon.ico",
       "uninstallerIcon": "build/uninstallerIcon.ico",
       "installerHeaderIcon": "build/installerIcon.ico"

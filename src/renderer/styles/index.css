@@ -1,75 +1,74 @@
 @import './fonts.css';
 
 /* ==========================================================================
-   Design System — نظام بيع وجرد مستحضرات التجميل (UX/UI RTL)
-   مستوحى من هوية Sage Green & Warm Cream المعتمدة بالوثيقة رقم 10
-   ومعزز بنظام الخطوط الأنيق (Alexandria & Material Symbols) المطابق لواجهة CCMS
+   Design System — نظام الجوكر فون | JOKER PHONE (UX/UI RTL)
+   نظام إدارة محلات التليفونات والاكسسوارات والصيانة
    ========================================================================== */
 
 :root {
   /* ==========================================================================
-     هوية كوزمتكس ستور الفاخرة — مطابقة بالكامل لصفحة تسجيل الدخول
-     الأساس: الأبيض النقي الفاخر (#FFFFFF)
-     اللون الثانوي والمميز: الروز التجميلي الفاخر (#FF95A5) مع تدرج (#FF6584)
-     عناوين فائقة الوضوح: الفحم الداكن الفاخر (#1A1F26)
+     هوية الجوكر فون الفاخرة — JOKER PHONE Dark Cyber & Gold Theme
+     الأساس: الأسود التقني الفاحم (#0B0E14) والأسطح الكربونية (#161B22)
+     اللون الثانوي والمميز: الذهبي الكهربائي الساطع (#FFB800) مع تدرج (#FFA800)
+     عناوين فائقة الوضوح: الأبيض الكريستالي (#FFFFFF) والرمادي التقني (#94A3B8)
      ========================================================================== */
 
-  /* ألوان الهوية الرئيسية (Cosmetics Rose Palette) */
-  --color-primary: #FF95A5;              /* اللون الثانوي المميز المعتمد */
-  --color-primary-rgb: 255, 149, 165;
-  --color-primary-hover: #FF7B92;        /* تفاعل التمرير */
-  --color-primary-active: #F55D79;       /* تفاعل الضغط */
-  --color-primary-light: #FFF0F3;        /* خلفية العناصر المختارة والشارات الوردية */
-  --color-primary-dark: #E04868;         /* للنصوص الوردية عالية التباين والوضوح */
+  /* ألوان الهوية الرئيسية (Joker Phone Cyber Gold Palette) */
+  --color-primary: #FFB800;              /* اللون الذهبي المميز المعتمد */
+  --color-primary-rgb: 255, 184, 0;
+  --color-primary-hover: #FFC72C;        /* تفاعل التمرير */
+  --color-primary-active: #E5A600;       /* تفاعل الضغط */
+  --color-primary-light: rgba(255, 184, 0, 0.14); /* خلفية العناصر المختارة والشارات الذهبية */
+  --color-primary-dark: #FFB800;         /* للنصوص الذهبية عالية التباين والوضوح */
 
-  --color-brand-deep: #1A1F26;           /* العناوين البارزة، نصوص الأسعار، وهوية النظام */
-  --color-brand-deep-rgb: 26, 31, 38;
-  --color-brand-rose: #FF7088;
+  --color-brand-deep: #F8FAFC;           /* العناوين البارزة الكريستالية فائقة التباين والوضوح */
+  --color-brand-deep-rgb: 248, 250, 252;
+  --color-brand-gold: #FFB800;
 
-  /* خلفيات النظام — الأساس الأبيض مع خلفية عامة نقية ومريحة */
-  --bg-app: #FAF9F9;                     /* خلفية التطبيق العامة فائقة النقاء */
-  --bg-surface: #FFFFFF;                 /* البطاقات والقوائم والجداول */
-  --bg-surface-glass: rgba(255, 255, 255, 0.94);
-  --bg-surface-soft: #FFF9FA;            /* خلفيات خفيفة وردية راقية للترويسات */
+  /* خلفيات النظام — الأساس الداكن التقني */
+  --bg-app: #0B0E14;                     /* خلفية التطبيق العامة فائقة النقاء */
+  --bg-surface: #161B22;                 /* البطاقات والقوائم والجداول */
+  --bg-surface-glass: rgba(22, 27, 34, 0.94);
+  --bg-surface-soft: #1C222D;            /* خلفيات خفيفة كربونية راقية للترويسات */
 
   /* الحدود والفواصل */
-  --border-light: #F0E8EA;               /* فواصل وترويسة ناعمة بلمسة وردية خفيفة */
-  --border-input: #E4DCDD;               /* حدود حقول الإدخال */
-  --border-focus: #FF95A5;               /* تركيز الحقول */
-  --border-glass: rgba(255, 255, 255, 0.85);
-  --border-accent: rgba(255, 149, 165, 0.35);
+  --border-light: #262E3D;               /* فواصل وترويسة ناعمة بلمسة تكنولوجية */
+  --border-input: #30394A;               /* حدود حقول الإدخال */
+  --border-focus: #FFB800;               /* تركيز الحقول */
+  --border-glass: rgba(255, 184, 0, 0.18);
+  --border-accent: rgba(255, 184, 0, 0.35);
 
-  /* النصوص عالية التباين والوضوح */
-  --text-main: #1A1F26;                  /* النصوص الأساسية والأسعار بوضوح كريستالي */
-  --text-muted: #6B7280;                 /* النصوص التوضيحية والتواريخ */
-  --text-secondary: #4B5563;             /* النصوص الفرعية في الملخصات */
-  --text-brand: #E04868;                 /* نصوص التأكيد والهوية الوردية */
+  /* النصوص فائقة التباين والسطوع والوضوح الكريستالي */
+  --text-main: #FFFFFF;                  /* نصوص أساسية بيضاء ناصعة وفائقة الوضوح */
+  --text-muted: #CBD5E1;                 /* رمادي فضي ساطع فائق المقروئية على الخلفيات الداكنة */
+  --text-secondary: #E2E8F0;             /* نصوص فرعية مشرقة */
+  --text-brand: #FFB800;                 /* نصوص وهوية ذهبية مشعة */
 
   /* الشارات والتنبيهات */
-  --badge-warn-bg: #FFF8E6;
-  --badge-warn-text: #946800;
+  --badge-warn-bg: rgba(245, 158, 11, 0.15);
+  --badge-warn-text: #FBBF24;
 
-  --color-danger-bg: #FDF2F2;
-  --color-danger-text: #B91C1C;
-  --color-danger: #DC2626;
-  --color-danger-rgb: 220, 38, 38;
+  --color-danger-bg: rgba(220, 38, 38, 0.15);
+  --color-danger-text: #F87171;
+  --color-danger: #EF4444;
+  --color-danger-rgb: 239, 68, 68;
 
-  --color-success-bg: #F0FDF4;
-  --color-success-text: #15803D;
-  --color-success: #16A34A;
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+  --color-success-text: #34D399;
+  --color-success: #10B981;
 
-  --color-gold: #D97706;
-  --color-gold-light: #FFFBEB;
-  --color-rose: #FF95A5;
-  --color-rose-light: #FFF0F3;
+  --color-gold: #FFB800;
+  --color-gold-light: rgba(255, 184, 0, 0.15);
+  --color-rose: #FFB800;
+  --color-rose-light: rgba(255, 184, 0, 0.14);
 
-  /* لوحة مستحضرات التجميل الحديثة */
-  --color-cosmetics-rose: #FF95A5;
-  --color-cosmetics-rose-hover: #FF7B92;
-  --color-cosmetics-cream: #FFFFFF;
-  --color-cosmetics-cream-light: #FFFFFF;
+  /* لوحة الألوان الخاصة */
+  --color-cosmetics-rose: #FFB800;
+  --color-cosmetics-rose-hover: #FFC72C;
+  --color-cosmetics-cream: #161B22;
+  --color-cosmetics-cream-light: #1C222D;
 
-  /* قياسات ومنظومة الخطوط — مطابقة بالكامل لنظام CCMS */
+  /* قياسات ومنظومة الخطوط */
   --font-family: 'Alexandria', 'Cairo', 'Space Grotesk', system-ui, -apple-system, sans-serif;
   --font-display: 'Space Grotesk', 'Alexandria', sans-serif;
   --font-mono: 'JetBrains Mono', 'Space Grotesk', monospace;
@@ -82,7 +81,7 @@
   --font-caption: 12.5px;
   --font-badge: 11.5px;
 
-  /* الظلال والانحناءات الفاخرة المعتمدة في صفحة تسجيل الدخول */
+  /* الظلال والانحناءات الفاخرة */
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 9px;
@@ -90,11 +89,11 @@
   --radius-xl: 18px;
   --radius-2xl: 24px;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 14px -1px rgba(255, 149, 165, 0.12), 0 2px 5px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 12px 32px -4px rgba(255, 149, 165, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --shadow-glass: 0 10px 32px 0 rgba(255, 149, 165, 0.1);
-  --shadow-glow: 0 0 18px rgba(255, 149, 165, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px -1px rgba(0, 0, 0, 0.5), 0 2px 5px rgba(255, 184, 0, 0.05);
+  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(255, 184, 0, 0.1);
+  --shadow-glass: 0 10px 32px 0 rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(255, 184, 0, 0.35);
 }
 
 /* إعادة الضبط الأساسية */
@@ -163,55 +162,55 @@ html[dir="rtl"] label {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 149, 165, 0.35);
+  background: rgba(255, 184, 0, 0.35);
   border-radius: 4px;
   transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 149, 165, 0.65);
+  background: rgba(255, 184, 0, 0.65);
 }
 
 /* فئات النمط الزجاجي (Glassmorphism Utilities) */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(22, 27, 34, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 149, 165, 0.25);
+  border: 1px solid rgba(255, 184, 0, 0.2);
   box-shadow: var(--shadow-glass);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(22, 27, 34, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  box-shadow: 0 4px 20px -2px rgba(255, 149, 165, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-card:hover {
-  box-shadow: 0 8px 26px -2px rgba(255, 149, 165, 0.16);
-  border-color: rgba(255, 149, 165, 0.35);
+  box-shadow: 0 8px 26px -2px rgba(255, 184, 0, 0.16);
+  border-color: rgba(255, 184, 0, 0.35);
 }
 
 .glass-header {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(11, 14, 20, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-light);
 }
 
 .glass-sidebar {
-  background: #FFFFFF;
+  background: #12161F;
   border-left: 1px solid var(--border-light);
-  box-shadow: 2px 0 18px rgba(255, 149, 165, 0.05);
+  box-shadow: 2px 0 18px rgba(0, 0, 0, 0.4);
 }
 
 /* بطاقة المحتوى العادية */
@@ -233,7 +232,7 @@ html[dir="rtl"] label {
   border-radius: var(--radius-md);
   font-family: inherit;
   font-size: var(--font-body);
-  background: var(--bg-surface);
+  background: #12161F;
   color: var(--text-main);
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   outline: none;
@@ -241,12 +240,72 @@ html[dir="rtl"] label {
 
 .in:focus {
   border-color: var(--border-focus);
-  background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(255, 149, 165, 0.22);
+  background: #161B22;
+  box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.22);
 }
 
 .in::placeholder {
-  color: #A0A6A2;
+  color: #64748B;
+}
+
+/* القوائم المنسدلة الافتراضية (Default Select & Options) */
+select {
+  font-family: inherit;
+  color: var(--text-main);
+  background-color: #12161F;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.22);
+}
+
+select option {
+  background-color: #161B22;
+  color: #F8FAFC;
+  padding: 8px 12px;
+}
+
+/* سمات المحتوى داخل النوافذ المنبثقة المتطابقة مع هوية الجوكر فون */
+.modal-beige-content {
+  color: #F8FAFC !important;
+}
+
+.modal-beige-content label {
+  color: #CBD5E1 !important;
+  font-weight: 700 !important;
+}
+
+.modal-beige-content .in,
+.modal-beige-content input:not([type="checkbox"]):not([type="radio"]),
+.modal-beige-content select,
+.modal-beige-content textarea {
+  background-color: #0B0E14 !important;
+  color: #F8FAFC !important;
+  border: 1.5px solid #262E3D !important;
+}
+
+.modal-beige-content .in:focus,
+.modal-beige-content input:not([type="checkbox"]):not([type="radio"]):focus,
+.modal-beige-content select:focus,
+.modal-beige-content textarea:focus {
+  border-color: #FFB800 !important;
+  box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.25) !important;
+}
+
+.modal-beige-content select option {
+  background-color: #0B0E14 !important;
+  color: #F8FAFC !important;
+}
+
+.modal-beige-content .in::placeholder,
+.modal-beige-content input::placeholder,
+.modal-beige-content textarea::placeholder {
+  color: #64748B !important;
 }
 
 /* الأزرار */
@@ -280,28 +339,30 @@ html[dir="rtl"] label {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FF95A5 0%, #FF6584 100%);
-  color: #FFFFFF;
-  box-shadow: 0 3px 12px rgba(255, 149, 165, 0.35);
+  background: linear-gradient(135deg, #FFB800 0%, #FFA800 100%);
+  color: #000000;
+  font-weight: 700;
+  box-shadow: 0 3px 12px rgba(255, 184, 0, 0.35);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FF8296 0%, #F55577 100%);
-  box-shadow: 0 6px 20px rgba(255, 149, 165, 0.45);
+  background: linear-gradient(135deg, #FFC72C 0%, #FFB800 100%);
+  box-shadow: 0 6px 20px rgba(255, 184, 0, 0.45);
+  color: #000000;
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background-color: var(--bg-surface);
+  background-color: #1C222D;
   border: 1px solid var(--border-input);
   color: var(--text-main);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #FFF9FA;
-  border-color: rgba(255, 149, 165, 0.5);
-  color: #D63B5E;
+  background-color: #262E3D;
+  border-color: rgba(255, 184, 0, 0.5);
+  color: #FFB800;
   transform: translateY(-1px);
 }
 
@@ -383,12 +444,12 @@ html[dir="rtl"] label {
 
 .badge-primary {
   background-color: var(--color-primary-light);
-  color: #D63B5E;
-  border: 1px solid rgba(255, 149, 165, 0.35);
+  color: #FFB800;
+  border: 1px solid rgba(255, 184, 0, 0.35);
 }
 
 .badge-neutral {
-  background-color: #F5F5F5;
+  background-color: #1E2430;
   color: var(--text-muted);
   border: 1px solid var(--border-light);
 }
@@ -410,24 +471,26 @@ table {
 }
 
 th {
-  background-color: #FFFDFE;
-  color: var(--text-muted);
-  font-weight: 600;
+  background-color: #161B22;
+  color: #CBD5E1;
+  font-weight: 700;
   font-size: var(--font-sub);
   padding: 13px 16px;
   border-bottom: 1.5px solid var(--border-light);
   white-space: nowrap;
+  letter-spacing: 0.2px;
 }
 
 td {
   padding: 13px 16px;
   border-bottom: 1px solid var(--border-light);
   font-size: var(--font-body);
+  color: #F8FAFC;
   transition: background 0.15s ease;
 }
 
 tr:hover td {
-  background-color: rgba(255, 149, 165, 0.05);
+  background-color: rgba(255, 184, 0, 0.06);
 }
 
 tr:last-child td {
@@ -554,14 +617,15 @@ tr:last-child td {
   max-width: 440px;
   padding: 12px 16px;
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(22, 27, 34, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid #30394A;
+  color: #FFFFFF;
   animation: slideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

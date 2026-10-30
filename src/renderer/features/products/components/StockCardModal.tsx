@@ -88,39 +88,39 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: 10,
             padding: '12px 16px',
-            backgroundColor: '#F8FAF8',
+            backgroundColor: '#1C222D',
             borderRadius: 10,
-            border: '1px solid #E2E8E2',
+            border: '1px solid #262E3D',
           }}
         >
           <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>القسم والماركة</div>
-            <div style={{ fontWeight: 700, fontSize: 13, marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: '#94A3B8' }}>القسم والماركة</div>
+            <div style={{ fontWeight: 700, fontSize: 13, marginTop: 2, color: '#F8FAFC' }}>
               {product.category} - {product.brand}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>الباركود الأساسي</div>
-            <div style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 13, marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: '#94A3B8' }}>الباركود الأساسي</div>
+            <div style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 13, marginTop: 2, color: '#F8FAFC' }}>
               {product.primaryBarcode || '---'}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>سعر البيع الحالي</div>
-            <div style={{ fontWeight: 800, fontSize: 14, color: 'var(--color-brand-deep)', marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: '#94A3B8' }}>سعر البيع الحالي</div>
+            <div style={{ fontWeight: 800, fontSize: 14, color: '#FFB800', marginTop: 2 }}>
               {formatMoney(product.price || 0)}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>الرصيد المتبقي</div>
-            <div style={{ fontWeight: 800, fontSize: 14, color: product.totalStock > 0 ? '#1B5E20' : '#B71C1C', marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: '#94A3B8' }}>الرصيد المتبقي</div>
+            <div style={{ fontWeight: 800, fontSize: 14, color: product.totalStock > 0 ? '#10B981' : '#EF4444', marginTop: 2 }}>
               {product.totalStock} {product.unit}
             </div>
           </div>
         </div>
 
         {/* أزرار التبويبات */}
-        <div style={{ display: 'flex', gap: 8, borderBottom: '1.5px solid var(--border-light)', paddingBottom: 6 }}>
+        <div style={{ display: 'flex', gap: 8, borderBottom: '1.5px solid #262E3D', paddingBottom: 6 }}>
           <button
             type="button"
             onClick={() => setActiveTab('movements')}
@@ -128,14 +128,16 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              backgroundColor: activeTab === 'movements' ? 'var(--color-primary)' : 'transparent',
-              color: activeTab === 'movements' ? '#FFFFFF' : 'var(--text-secondary)',
-              fontWeight: 700,
+              backgroundColor: activeTab === 'movements' ? '#FFB800' : 'transparent',
+              color: activeTab === 'movements' ? '#0B0E14' : '#94A3B8',
+              fontWeight: 800,
               fontSize: 13,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: 6,
+              boxShadow: activeTab === 'movements' ? '0 2px 8px rgba(255, 184, 0, 0.3)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             <History size={15} />
@@ -149,14 +151,16 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              backgroundColor: activeTab === 'priceHistory' ? 'var(--color-primary)' : 'transparent',
-              color: activeTab === 'priceHistory' ? '#FFFFFF' : 'var(--text-secondary)',
-              fontWeight: 700,
+              backgroundColor: activeTab === 'priceHistory' ? '#FFB800' : 'transparent',
+              color: activeTab === 'priceHistory' ? '#0B0E14' : '#94A3B8',
+              fontWeight: 800,
               fontSize: 13,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: 6,
+              boxShadow: activeTab === 'priceHistory' ? '0 2px 8px rgba(255, 184, 0, 0.3)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             <TrendingUp size={15} />
@@ -178,7 +182,7 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: 12 }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1px solid var(--border-light)' }}>
+                  <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D', color: '#94A3B8' }}>
                     <th style={{ padding: '8px 10px' }}>التاريخ والوقت</th>
                     <th style={{ padding: '8px 10px' }}>نوع الحركة</th>
                     <th style={{ padding: '8px 10px', textAlign: 'center' }}>الكمية</th>
@@ -191,8 +195,8 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
                     const badge = getMovementLabel(m.type);
                     const isPositive = m.qty > 0;
                     return (
-                      <tr key={m.id} style={{ borderBottom: '1px solid #F0F3F0' }}>
-                        <td style={{ padding: '8px 10px', color: 'var(--text-muted)' }}>
+                      <tr key={m.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                        <td style={{ padding: '8px 10px', color: '#94A3B8' }}>
                           {m.created_at?.slice(0, 16).replace('T', ' ')}
                         </td>
                         <td style={{ padding: '8px 10px' }}>
@@ -210,21 +214,21 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
                           </span>
                         </td>
                         <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 800 }}>
-                          <span style={{ color: isPositive ? '#1B5E20' : '#B71C1C' }}>
+                          <span style={{ color: isPositive ? '#10B981' : '#EF4444' }}>
                             {isPositive ? `+${m.qty}` : m.qty}
                           </span>
                         </td>
                         <td style={{ padding: '8px 10px' }}>
-                          <div style={{ fontFamily: 'monospace', fontWeight: 600 }}>{m.batch_no || '---'}</div>
+                          <div style={{ fontFamily: 'monospace', fontWeight: 600, color: '#F8FAFC' }}>{m.batch_no || '---'}</div>
                           {m.expiry_date && (
-                            <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8' }}>
                               صلاحية: {m.expiry_date}
                             </div>
                           )}
                         </td>
-                        <td style={{ padding: '8px 10px', color: 'var(--text-secondary)' }}>
+                        <td style={{ padding: '8px 10px', color: '#F8FAFC' }}>
                           <div>{m.user_name || 'النظام'}</div>
-                          {m.note && <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{m.note}</div>}
+                          {m.note && <div style={{ fontSize: 10, color: '#94A3B8' }}>{m.note}</div>}
                         </td>
                       </tr>
                     );
@@ -239,7 +243,7 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: 12 }}>
               <thead>
-                <tr style={{ background: '#FAFBF9', borderBottom: '1px solid var(--border-light)' }}>
+                <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D', color: '#94A3B8' }}>
                   <th style={{ padding: '8px 10px' }}>التاريخ والوقت</th>
                   <th style={{ padding: '8px 10px' }}>السعر السابق</th>
                   <th style={{ padding: '8px 10px' }}>السعر الجديد</th>
@@ -252,14 +256,14 @@ export function StockCardModal({ isOpen, onClose, product }: StockCardModalProps
                   const diff = ph.new_price - ph.old_price;
                   const isUp = diff > 0;
                   return (
-                    <tr key={ph.id} style={{ borderBottom: '1px solid #F0F3F0' }}>
-                      <td style={{ padding: '8px 10px', color: 'var(--text-muted)' }}>
+                    <tr key={ph.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                      <td style={{ padding: '8px 10px', color: '#94A3B8' }}>
                         {ph.created_at?.slice(0, 16).replace('T', ' ')}
                       </td>
-                      <td style={{ padding: '8px 10px', color: 'var(--text-muted)' }}>
+                      <td style={{ padding: '8px 10px', color: '#94A3B8' }}>
                         {formatMoney(ph.old_price)}
                       </td>
-                      <td style={{ padding: '8px 10px', fontWeight: 700, color: 'var(--color-brand-deep)' }}>
+                      <td style={{ padding: '8px 10px', fontWeight: 700, color: '#FFB800' }}>
                         {formatMoney(ph.new_price)}
                       </td>
                       <td style={{ padding: '8px 10px' }}>

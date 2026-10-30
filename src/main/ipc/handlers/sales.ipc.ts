@@ -76,7 +76,8 @@ export function registerSalesIpcHandlers(): void {
   // تعليق فاتورة
   ipcMain.handle(IPC_CHANNELS.SALES_HOLD, async (_event, cartData, shiftId, userId, customerName) => {
     try {
-      const holdId = await salesService.holdSale(cartData, shiftId, userId, customerName);
+      const effectiveUserId = userId || sessionService.getCurrentUserId() || 1;
+      const holdId = await salesService.holdSale(cartData, shiftId, effectiveUserId, customerName);
       return { success: true, data: { holdId } };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -103,10 +104,21 @@ export function registerSalesIpcHandlers(): void {
     }
   });
 
+  // حذف فاتورة معلقة دون استئنافها
+  ipcMain.handle(IPC_CHANNELS.SALES_DELETE_HELD, async (_event, holdId) => {
+    try {
+      const deleted = await salesService.deleteHeldSale(holdId);
+      return { success: true, data: deleted };
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
+  });
+
   // إلغاء فاتورة مبيعات
   ipcMain.handle(IPC_CHANNELS.SALES_VOID, async (_event, saleId, userId, reason) => {
     try {
-      const voided = await salesService.voidSale(saleId, userId, reason);
+      const effectiveUserId = userId || sessionService.getCurrentUserId() || 1;
+      const voided = await salesService.voidSale(saleId, effectiveUserId, reason);
       return { success: true, data: voided };
     } catch (err: any) {
       return { success: false, error: err.message };

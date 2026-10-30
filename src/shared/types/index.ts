@@ -10,3 +10,5 @@ export * from './settings.types';
 export * from './customers.types';
 export * from './ipc.types';
 export * from './db-inspector.types';
+export * from './repairs.types';
+export * from './serials.types';

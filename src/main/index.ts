@@ -46,7 +46,7 @@ function createWindow(): void {
     height: 800,
     minWidth: 1024,
     minHeight: 700,
-    title: 'Boutique Gouri - نظام بيع وجرد مستحضرات التجميل',
+    title: 'الجوكر فون | JOKER PHONE — نظام إدارة محلات التليفونات والاكسسوارات والصيانة',
     icon: getAppIconPath(),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
@@ -76,6 +76,11 @@ function createWindow(): void {
 }
 
 app.whenReady().then(async () => {
+  // ضبط معرف التطبيق في شريط مهام ويندوز لعرض الأيقونة والشعار الصحيح
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('com.jokerphone.pos');
+  }
+
   // فتح قاعدة البيانات وتطبيق أي ترحيلات جديدة
   try {
     initializeDatabase();

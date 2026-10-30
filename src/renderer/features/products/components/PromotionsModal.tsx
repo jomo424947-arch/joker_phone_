@@ -165,16 +165,16 @@ export function PromotionsModal({ isOpen, onClose }: PromotionsModalProps): Reac
           <form
             onSubmit={handleCreate}
             style={{
-              backgroundColor: '#F8FAF8',
+              backgroundColor: '#1C222D',
               padding: 16,
               borderRadius: 10,
-              border: '1.5px solid #E2E8E2',
+              border: '1px solid #262E3D',
               display: 'flex',
               flexDirection: 'column',
               gap: 12,
             }}
           >
-            <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--color-brand-deep)' }}>
+            <div style={{ fontWeight: 800, fontSize: 14, color: '#FFB800' }}>
               تفاصيل العرض الترويجي الجديد
             </div>
 
@@ -202,10 +202,11 @@ export function PromotionsModal({ isOpen, onClose }: PromotionsModalProps): Reac
                     width: '100%',
                     height: 42,
                     borderRadius: 8,
-                    border: '1.5px solid var(--border-light)',
+                    border: '1.5px solid #262E3D',
                     padding: '0 10px',
                     fontSize: 13,
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: '#0B0E14',
+                    color: '#F8FAFC',
                   }}
                 >
                   <option value="percentage">نسبة مئوية (%)</option>
@@ -294,7 +295,7 @@ export function PromotionsModal({ isOpen, onClose }: PromotionsModalProps): Reac
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
+                  <tr style={{ background: '#1C222D', borderBottom: '1.5px solid #262E3D', color: '#94A3B8' }}>
                     <th style={{ padding: '10px 12px' }}>اسم العرض</th>
                     <th style={{ padding: '10px 12px' }}>نوع الخصم</th>
                     <th style={{ padding: '10px 12px', textAlign: 'center' }}>القيمة</th>
@@ -308,14 +309,15 @@ export function PromotionsModal({ isOpen, onClose }: PromotionsModalProps): Reac
                   {promotions.map((p) => {
                     const isActive = p.is_active === 1;
                     return (
-                      <tr key={p.id} style={{ borderBottom: '1px solid #F0F3F0' }}>
-                        <td style={{ padding: '10px 12px', fontWeight: 700, color: 'var(--color-brand-deep)' }}>
+                      <tr key={p.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                        <td style={{ padding: '10px 12px', fontWeight: 700, color: '#F8FAFC' }}>
                           {p.name}
                         </td>
                         <td style={{ padding: '10px 12px' }}>
                           <span
                             style={{
-                              backgroundColor: '#EAEFEA',
+                              backgroundColor: 'rgba(255, 184, 0, 0.15)',
+                              color: '#FFB800',
                               padding: '2px 8px',
                               borderRadius: 4,
                               fontSize: 11,

@@ -158,4 +158,66 @@ describe('ProductsService', () => {
     expect(variantRow.is_active).toBe(0);
     expect(variantRow.updated_at).toBeDefined();
   });
+
+  test('حذف منتج بدون حركات سابقة يتم حذفه نهائياً بنجاح (Hard Delete)', async () => {
+    const product = await productsService.createProduct({
+      name_ar: 'جراب سليكون آيفون 13',
+      variants: [
+        {
+          variant_name: 'شفاف',
+          selling_price: 5000,
+          barcodes: ['1234567890128'],
+        },
+      ],
+    });
+
+    const res = await productsService.deleteProduct(product.id);
+    expect(res.success).toBe(true);
+    expect(res.action).toBe('deleted');
+
+    const check = db.prepare('SELECT id FROM products WHERE id = ?').get(product.id);
+    expect(check).toBeUndefined();
+  });
+
+  test('حذف منتج مرتبط بقطع غيار صيانة أو سيريالات يتم أرشفته آلياً دون أي خطأ (Soft Delete)', async () => {
+    const product = await productsService.createProduct({
+      name_ar: 'شاشة آيفون 12 برو أصلية',
+      variants: [
+        {
+          variant_name: 'أسود',
+          selling_price: 350000,
+          barcodes: ['1234567890999'],
+        },
+      ],
+    });
+
+    const variantId = product.variants[0].id;
+
+    // إنشاء مستخدم للنظام ومحاكاة استهلاك القطعة في أمر صيانة
+    db.prepare(`
+      INSERT INTO users (id, uuid, username, display_name, role, password_hash, created_at)
+      VALUES (1, 'user-uuid-1', 'admin', 'مدير', 'owner', 'hash123', datetime('now'))
+    `).run();
+
+    db.prepare(`
+      INSERT INTO repair_orders (uuid, seq_no, repair_code, customer_name, customer_phone, user_id, device_brand, device_model, reported_issue)
+      VALUES ('repair-test-uuid', 9999, 'REP-9999', 'عميل تجربة', '01000000000', 1, 'Apple', 'iPhone 12 Pro', 'شاشة مكسورة')
+    `).run();
+
+    const repair = db.prepare("SELECT id FROM repair_orders WHERE repair_code = 'REP-9999'").get() as { id: number };
+
+    db.prepare(`
+      INSERT INTO repair_parts (repair_id, variant_id, item_name, qty, unit_cost, unit_price)
+      VALUES (?, ?, 'شاشة آيفون 12 برو', 1, 200000, 350000)
+    `).run(repair.id, variantId);
+
+    // محاولة حذف المنتج
+    const res = await productsService.deleteProduct(product.id);
+    expect(res.success).toBe(true);
+    expect(res.action).toBe('archived');
+
+    // المنتج أصبح غير نشط
+    const p = db.prepare('SELECT is_active FROM products WHERE id = ?').get(product.id) as { is_active: number };
+    expect(p.is_active).toBe(0);
+  });
 });

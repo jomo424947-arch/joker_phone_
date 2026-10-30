@@ -135,44 +135,43 @@ export function InventoryScreen(): React.ReactElement {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18, height: '100%' }}>
       {/* بطاقات المؤشرات العلوية */}
-      {/* بطاقات المؤشرات العلوية */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي التشغيلات المسجلة</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>إجمالي التشغيلات المسجلة</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {batches.length}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>تشغيلات صالحة وبعيدة</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: '#21633D', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>تشغيلات صالحة وبعيدة</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
             {validCount}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>أوشكت على الانتهاء (&lt;45 يوم)</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: '#A87910', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>أوشكت على الانتهاء (&lt;45 يوم)</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#F59E0B', marginTop: 4 }}>
             {expiringNearCount}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>منتهية الصلاحية (ممنوع البيع)</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: '#962B34', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>منتهية الصلاحية (ممنوع البيع)</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#EF4444', marginTop: 4 }}>
             {expiredCount}
           </div>
         </div>
@@ -186,10 +185,11 @@ export function InventoryScreen(): React.ReactElement {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
-        <div style={{ display: 'flex', gap: 6, backgroundColor: '#F0F3F1', padding: 4, borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 6, backgroundColor: '#0B0E14', padding: 4, borderRadius: 10, border: '1px solid #262E3D' }}>
           <button
             type="button"
             onClick={() => {
@@ -200,12 +200,13 @@ export function InventoryScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: activeSubTab === 'batches' ? '#FFFFFF' : 'transparent',
-              fontWeight: activeSubTab === 'batches' ? 700 : 500,
-              color: activeSubTab === 'batches' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: activeSubTab === 'batches' ? '#FFB800' : 'transparent',
+              fontWeight: activeSubTab === 'batches' ? 700 : 600,
+              color: activeSubTab === 'batches' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
-              boxShadow: activeSubTab === 'batches' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+              boxShadow: activeSubTab === 'batches' ? '0 2px 8px rgba(255, 184, 0, 0.3)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             التشغيلات والصلاحية (FEFO)
@@ -221,12 +222,13 @@ export function InventoryScreen(): React.ReactElement {
               padding: '8px 16px',
               borderRadius: 8,
               border: 'none',
-              background: activeSubTab === 'movements' ? '#FFFFFF' : 'transparent',
-              fontWeight: activeSubTab === 'movements' ? 700 : 500,
-              color: activeSubTab === 'movements' ? 'var(--color-brand-deep)' : 'var(--text-muted)',
+              background: activeSubTab === 'movements' ? '#FFB800' : 'transparent',
+              fontWeight: activeSubTab === 'movements' ? 700 : 600,
+              color: activeSubTab === 'movements' ? '#0B0E14' : '#94A3B8',
               cursor: 'pointer',
               fontSize: 13,
-              boxShadow: activeSubTab === 'movements' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+              boxShadow: activeSubTab === 'movements' ? '0 2px 8px rgba(255, 184, 0, 0.3)' : 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             سجل حركات المخزون
@@ -264,7 +266,8 @@ export function InventoryScreen(): React.ReactElement {
           flex: 1,
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -280,25 +283,25 @@ export function InventoryScreen(): React.ReactElement {
                   justifyContent: 'center',
                   padding: 48,
                   gap: 12,
-                  color: 'var(--text-muted)',
+                  color: '#94A3B8',
                 }}
               >
-                <Package size={42} opacity={0.4} />
-                <div style={{ fontSize: 15, fontWeight: 600 }}>لا توجد دفعات أو تشغيلات مخزون مسجلة بعد</div>
-                <div style={{ fontSize: 12 }}>
+                <Package size={42} style={{ color: '#FFB800', opacity: 0.7 }} />
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#F8FAFC' }}>لا توجد دفعات أو تشغيلات مخزون مسجلة بعد</div>
+                <div style={{ fontSize: 13, color: '#94A3B8' }}>
                   عند إضافة منتجات برصيد مخزون أو توريد فواتير مشتريات، ستظهر تشغيلات FEFO هنا
                 </div>
               </div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '16%', padding: '12px 16px' }}>رقم التشغيلة (Batch)</th>
-                    <th style={{ width: '30%', padding: '12px 16px' }}>اسم المنتج / الصنف</th>
-                    <th style={{ width: '16%', padding: '12px 16px' }}>تاريخ الصلاحية</th>
-                    <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center' }}>الكمية المتبقية</th>
-                    <th style={{ width: '18%', padding: '12px 16px', textAlign: 'center' }}>حالة الصلاحية (FEFO)</th>
+                  <tr style={{ background: '#1C222D', borderBottom: '1.5px solid #262E3D' }}>
+                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>#</th>
+                    <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>رقم التشغيلة (Batch)</th>
+                    <th style={{ width: '30%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>اسم المنتج / الصنف</th>
+                    <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>تاريخ الصلاحية</th>
+                    <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>الكمية المتبقية</th>
+                    <th style={{ width: '18%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>حالة الصلاحية (FEFO)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -310,11 +313,11 @@ export function InventoryScreen(): React.ReactElement {
                       <tr
                         key={b.id}
                         style={{
-                          borderBottom: '1px solid var(--border-light)',
-                          backgroundColor: isExp ? 'rgba(251, 234, 235, 0.4)' : isNear ? 'rgba(246, 235, 211, 0.25)' : '#FFFFFF',
+                          borderBottom: '1px solid #262E3D',
+                          backgroundColor: isExp ? 'rgba(239, 68, 68, 0.12)' : isNear ? 'rgba(245, 158, 11, 0.1)' : 'transparent',
                         }}
                       >
-                        <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>
                           {idx + 1}
                         </td>
 
@@ -322,8 +325,10 @@ export function InventoryScreen(): React.ReactElement {
                           <span
                             style={{
                               fontFamily: 'monospace',
-                              fontWeight: 600,
-                              backgroundColor: '#F0F3F1',
+                              fontWeight: 700,
+                              backgroundColor: '#0B0E14',
+                              color: '#FFB800',
+                              border: '1px solid #262E3D',
                               padding: '3px 8px',
                               borderRadius: 6,
                               fontSize: 12,
@@ -334,17 +339,17 @@ export function InventoryScreen(): React.ReactElement {
                         </td>
 
                         <td style={{ padding: '12px 16px' }}>
-                          <div style={{ fontWeight: 600, color: 'var(--color-brand-deep)', fontSize: 14 }}>
+                          <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: 14 }}>
                             {b.productName}
                           </div>
                           {b.variantName && (
-                            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{b.variantName}</div>
+                            <div style={{ fontSize: 12, color: '#94A3B8' }}>{b.variantName}</div>
                           )}
                         </td>
 
                         <td style={{ padding: '12px 16px', fontSize: 13 }}>
-                          <div style={{ fontWeight: 600 }}>{b.expiryDate}</div>
-                          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                          <div style={{ fontWeight: 600, color: '#F8FAFC' }}>{b.expiryDate}</div>
+                          <div style={{ fontSize: 12, color: '#94A3B8' }}>
                             {b.daysRemaining >= 9000
                               ? 'صلاحية مفتوحة'
                               : isExp
@@ -353,7 +358,7 @@ export function InventoryScreen(): React.ReactElement {
                           </div>
                         </td>
 
-                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, fontSize: 14 }}>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 800, fontSize: 15, color: '#F8FAFC' }}>
                           {b.qty} قطعة
                         </td>
 
@@ -386,37 +391,37 @@ export function InventoryScreen(): React.ReactElement {
                   justifyContent: 'center',
                   padding: 48,
                   gap: 12,
-                  color: 'var(--text-muted)',
+                  color: '#94A3B8',
                 }}
               >
-                <History size={42} opacity={0.4} />
-                <div style={{ fontSize: 15, fontWeight: 600 }}>لا توجد حركات مخزون مسجلة بعد</div>
-                <div style={{ fontSize: 12 }}>
+                <History size={42} style={{ color: '#FFB800', opacity: 0.7 }} />
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#F8FAFC' }}>لا توجد حركات مخزون مسجلة بعد</div>
+                <div style={{ fontSize: 13, color: '#94A3B8' }}>
                   يتم تسجيل كل إضافة، مبيعات، أو تعديل في سجل تتبعي معتمد تلقائياً
                 </div>
               </div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                 <thead>
-                  <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-                    <th style={{ width: '18%', padding: '12px 16px' }}>التاريخ والوقت</th>
-                    <th style={{ width: '28%', padding: '12px 16px' }}>المنتج</th>
-                    <th style={{ width: '16%', padding: '12px 16px' }}>نوع الحركة</th>
-                    <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center' }}>الكمية</th>
-                    <th style={{ width: '18%', padding: '12px 16px' }}>السبب / الملاحظات</th>
+                  <tr style={{ background: '#1C222D', borderBottom: '1.5px solid #262E3D' }}>
+                    <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>#</th>
+                    <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>التاريخ والوقت</th>
+                    <th style={{ width: '28%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>المنتج</th>
+                    <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>نوع الحركة</th>
+                    <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>الكمية</th>
+                    <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>السبب / الملاحظات</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredMovements.map((m, idx) => (
-                    <tr key={m.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                      <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+                    <tr key={m.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                      <td style={{ padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>
                         {idx + 1}
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 12, color: 'var(--text-muted)' }}>
+                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#94A3B8' }}>
                         {m.date}
                       </td>
-                      <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--color-brand-deep)' }}>
+                      <td style={{ padding: '12px 16px', fontWeight: 700, color: '#F8FAFC' }}>
                         {m.productName}
                       </td>
                       <td style={{ padding: '12px 16px' }}>
@@ -432,14 +437,14 @@ export function InventoryScreen(): React.ReactElement {
                         style={{
                           padding: '12px 16px',
                           textAlign: 'center',
-                          fontWeight: 700,
-                          fontSize: 14,
-                          color: m.qtyChange > 0 ? 'var(--color-success)' : 'var(--color-danger)',
+                          fontWeight: 800,
+                          fontSize: 15,
+                          color: m.qtyChange > 0 ? '#10B981' : '#EF4444',
                         }}
                       >
                         {m.qtyChange > 0 ? `+${m.qtyChange}` : m.qtyChange}
                       </td>
-                      <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#CBD5E1' }}>
                         {m.reason}
                       </td>
                     </tr>

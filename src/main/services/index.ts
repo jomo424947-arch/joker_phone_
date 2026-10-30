@@ -16,3 +16,5 @@ export * from './rbac.service';
 export * from './settings.service';
 export * from './import.service';
 export * from './promotions.service';
+export * from './repairs.service';
+export * from './serials.service';

@@ -12,6 +12,8 @@ import { ReportsScreen } from './features/reports';
 import { SettingsScreen } from './features/settings';
 import { InvoicesScreen } from './features/invoices';
 import { DatabaseInspectorScreen } from './features/db-inspector';
+import { RepairsScreen } from './features/repairs';
+import { CustomersScreen } from './features/customers';
 import { LoginPage, LockScreen, InitialSetupWizard } from './features/auth';
 import { SafeUser } from '../shared/types/users.types';
 import { Loader2 } from 'lucide-react';
@@ -21,6 +23,8 @@ import { api } from './lib/api';
 export type NavTab =
   | 'pos'
   | 'invoices'
+  | 'repairs'
+  | 'customers'
   | 'products'
   | 'inventory'
   | 'purchases'
@@ -38,6 +42,13 @@ export function AppContent(): React.ReactElement {
   const [isSetupCompleted, setIsSetupCompleted] = useState(true);
 
   const lastActivityReport = useRef(0);
+
+  // إعادة التوجيه لشاشة البيع في حال كان التبويب المحدد هو المحافظ أو فاحص الداتا بيز
+  useEffect(() => {
+    if ((activeTab as string) === 'db-inspector' || (activeTab as string) === 'wallets') {
+      setActiveTab('pos');
+    }
+  }, [activeTab]);
 
   // فحص الجلسة الحالية وحالة تهيئة النظام عند الإقلاع
   useEffect(() => {
@@ -101,10 +112,10 @@ export function AppContent(): React.ReactElement {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 14,
+          gap: 16,
           height: '100vh',
-          backgroundColor: '#FFFFFF',
-          color: '#1A1F26',
+          backgroundColor: '#0B0E14',
+          color: '#FFFFFF',
           fontSize: 16,
           fontWeight: 600,
           fontFamily: 'inherit',
@@ -113,32 +124,34 @@ export function AppContent(): React.ReactElement {
       >
         <div
           style={{
-            width: 82,
-            height: 82,
-            borderRadius: '50%',
-            padding: 2.5,
-            background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-            boxShadow: '0 12px 28px -4px rgba(255, 112, 136, 0.4)',
+            width: 90,
+            height: 90,
+            borderRadius: '20px',
+            padding: 3,
+            background: 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)',
+            boxShadow: '0 12px 32px -4px rgba(255, 184, 0, 0.45)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: 4,
+            marginBottom: 6,
           }}
         >
           <img
             src={logoImg}
-            alt="Boutique Gouri Logo"
+            alt="شعار الجوكر فون"
             style={{
               width: '100%',
               height: '100%',
-              borderRadius: '50%',
+              borderRadius: '18px',
               objectFit: 'cover',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#0B0E14',
             }}
           />
         </div>
-        <Loader2 size={30} color="#FF7088" style={{ animation: 'spin 1s linear infinite' }} />
-        <span style={{ fontWeight: 700, color: '#111827' }}>جاري تهيئة وتشغيل نظام Boutique Gouri...</span>
+        <Loader2 size={32} color="#FFB800" style={{ animation: 'spin 1s linear infinite' }} />
+        <span style={{ fontWeight: 700, color: '#F8FAFC', letterSpacing: '0.3px' }}>
+          جاري تهيئة وتشغيل نظام الجوكر فون (JOKER PHONE)...
+        </span>
       </div>
     );
   }
@@ -202,6 +215,8 @@ export function AppContent(): React.ReactElement {
         >
           {activeTab === 'pos' && <PosScreen />}
           {activeTab === 'invoices' && <InvoicesScreen />}
+          {activeTab === 'repairs' && <RepairsScreen />}
+          {activeTab === 'customers' && <CustomersScreen />}
           {activeTab === 'products' && <ProductsScreen />}
           {activeTab === 'inventory' && <InventoryScreen />}
           {activeTab === 'purchases' && <PurchasesScreen />}

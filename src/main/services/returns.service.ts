@@ -112,9 +112,13 @@ export class ReturnsService {
           );
         }
 
-        // سعر الوحدة الفعلي بعد الخصومات المسجلة على السطر
-        const unitRefund = Math.floor(saleItem.line_total / saleItem.qty);
-        totalRefund += unitRefund * item.qty;
+        // سعر الوحدة الفعلي بعد الخصومات المسجلة على السطر بدقة دون فقد كسور القروش
+        const lineRefund =
+          item.qty === saleItem.qty
+            ? saleItem.line_total
+            : Math.round((saleItem.line_total * item.qty) / saleItem.qty);
+        totalRefund += lineRefund;
+        const unitRefund = Math.round(lineRefund / item.qty);
 
         validatedItems.push({
           saleItemId: saleItem.id,
@@ -178,24 +182,33 @@ export class ReturnsService {
 
       // 6. تنفيذ طريقة الرد المالي
       if (input.refund_method === 'cash') {
-        let targetShiftId = input.shift_id ?? sale.shift_id;
-        const openShift = db
-          .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
-          .get() as { id: number } | undefined;
-        if (openShift) targetShiftId = openShift.id;
-
-        if (targetShiftId) {
-          db.prepare(`
-            INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
-            VALUES (?, ?, 'refund', ?, 'return', ?, ?, datetime('now'))
-          `).run(
-            targetShiftId,
-            input.user_id,
-            -Math.abs(totalRefund),
-            returnId,
-            `استرداد نقدي لمرتجع مبيعات #${returnId} لفاتورة #${sale.invoice_no}`
-          );
+        let targetShiftId = input.shift_id;
+        if (!targetShiftId) {
+          const openShift = db
+            .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
+            .get() as { id: number } | undefined;
+          targetShiftId = openShift?.id;
         }
+
+        if (!targetShiftId) {
+          // فتح وردية تلقائية للمستخدم لضمان عدم تعطل صرف المرتجع النقدي
+          const shiftUuid = crypto.randomUUID();
+          const shiftRes = db
+            .prepare("INSERT INTO shifts (uuid, user_id, opening_balance, status, opened_at, notes) VALUES (?, ?, 0, 'open', datetime('now'), 'وردية تلقائية')")
+            .run(shiftUuid, input.user_id);
+          targetShiftId = Number(shiftRes.lastInsertRowid);
+        }
+
+        db.prepare(`
+          INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
+          VALUES (?, ?, 'refund', ?, 'return', ?, ?, datetime('now'))
+        `).run(
+          targetShiftId,
+          input.user_id,
+          -Math.abs(totalRefund),
+          returnId,
+          `استرداد نقدي لمرتجع مبيعات #${returnId} لفاتورة #${sale.invoice_no}`
+        );
       } else if (input.refund_method === 'credit') {
         if (!sale.customer_id) {
           throw new Error('لا يمكن رد المبلغ كرصيد حساب لعميل نقدي بدون تسجيل عميل');
@@ -299,28 +312,6 @@ export class ReturnsService {
         method: 'cash',
         amount: newSaleSubtotal,
       });
-
-      const excessRefund = Math.abs(priceDifference);
-      let targetShiftId = input.shift_id;
-      if (!targetShiftId) {
-        const openShift = db
-          .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
-          .get() as { id: number } | undefined;
-        targetShiftId = openShift?.id;
-      }
-
-      if (targetShiftId) {
-        db.prepare(`
-          INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
-          VALUES (?, ?, 'refund', ?, 'exchange_diff', ?, ?, datetime('now'))
-        `).run(
-          targetShiftId,
-          input.user_id,
-          -excessRefund,
-          returnInvoice.id,
-          `رد فرق استبدال بضاعة لمرتجع #${returnInvoice.id}`
-        );
-      }
     } else {
       // تعادل متساوي
       actionTaken = 'even_exchange';
@@ -331,15 +322,27 @@ export class ReturnsService {
     }
 
     // 4. إنشاء فاتورة المبيعات الجديدة إذا وُجدت أصناف
-    if (saleCartItems.length > 0) {
-      let shiftId = input.shift_id;
-      if (!shiftId) {
-        const openShift = db
-          .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
-          .get() as { id: number } | undefined;
-        shiftId = openShift ? openShift.id : 1;
+    let shiftId = input.shift_id;
+    if (shiftId) {
+      const shiftExists = db.prepare('SELECT id FROM shifts WHERE id = ?').get(shiftId);
+      if (!shiftExists) shiftId = undefined;
+    }
+    if (!shiftId) {
+      const openShift = db
+        .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
+        .get() as { id: number } | undefined;
+      if (openShift) {
+        shiftId = openShift.id;
+      } else {
+        const shiftUuid = crypto.randomUUID();
+        const shiftRes = db
+          .prepare("INSERT INTO shifts (uuid, user_id, opening_balance, status, opened_at, notes) VALUES (?, ?, 0, 'open', datetime('now'), 'وردية تلقائية')")
+          .run(shiftUuid, input.user_id);
+        shiftId = Number(shiftRes.lastInsertRowid);
       }
+    }
 
+    if (saleCartItems.length > 0) {
       const newSale = await salesService.createSale(
         {
           items: saleCartItems,
@@ -351,6 +354,20 @@ export class ReturnsService {
         shiftId
       );
       newSaleId = newSale.id;
+    }
+
+    // إذا كان هناك فارق نقدي مسترد للعميل، تسجيل حركة الخزنة
+    if (priceDifference < 0 && shiftId) {
+      db.prepare(`
+        INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
+        VALUES (?, ?, 'refund', ?, 'exchange_diff', ?, ?, datetime('now'))
+      `).run(
+        shiftId,
+        input.user_id,
+        -Math.abs(priceDifference),
+        returnInvoice.id,
+        `صرف فارق استبدال نقدي لصالح العميل لمرتجع #${returnInvoice.id}`
+      );
     }
 
     return {
@@ -384,8 +401,12 @@ export class ReturnsService {
         throw new Error(`الكمية المرتجعة تتجاوز المتاح (${availableQty})`);
       }
 
-      const unitRefund = Math.floor(saleItem.line_total / saleItem.qty);
-      totalRefund += unitRefund * item.qty;
+      const lineRefund =
+        item.qty === saleItem.qty
+          ? saleItem.line_total
+          : Math.round((saleItem.line_total * item.qty) / saleItem.qty);
+      totalRefund += lineRefund;
+      const unitRefund = Math.round(lineRefund / item.qty);
 
       validatedItems.push({
         saleItemId: saleItem.id,
@@ -425,6 +446,30 @@ export class ReturnsService {
           returnId,
           input.user_id,
           `مرتجع استبدال #${returnId}`
+        );
+      }
+    }
+
+    // تسجيل حركة الخزنة لمرتجع الاستبدال لمعادلة الفاتورة الجديدة
+    if (input.refund_method === 'exchange') {
+      let targetShiftId = input.shift_id;
+      if (!targetShiftId) {
+        const openShift = db
+          .prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1")
+          .get() as { id: number } | undefined;
+        targetShiftId = openShift?.id;
+      }
+
+      if (targetShiftId) {
+        db.prepare(`
+          INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
+          VALUES (?, ?, 'refund', ?, 'exchange_return', ?, ?, datetime('now'))
+        `).run(
+          targetShiftId,
+          input.user_id,
+          -Math.abs(totalRefund),
+          returnId,
+          `استرداد مقابل استبدال بضاعة لمرتجع #${returnId}`
         );
       }
     }

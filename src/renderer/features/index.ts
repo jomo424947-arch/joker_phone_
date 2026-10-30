@@ -10,3 +10,5 @@ export * from './auth';
 export * from './users';
 export * from './audit';
 export * from './backup';
+export * from './repairs';
+export * from './customers';

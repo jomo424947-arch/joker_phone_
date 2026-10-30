@@ -5,6 +5,7 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from '../../../shared/constants/ipc-channels';
 import { inventoryService } from '../../services/inventory.service';
+import { sessionService } from '../../services/session.service';
 import { StockCountScopeType, StockMovementType } from '../../../shared/types/inventory.types';
 
 export function registerInventoryIpcHandlers(): void {
@@ -61,12 +62,16 @@ export function registerInventoryIpcHandlers(): void {
         qty: number;
         refType?: string | null;
         refId?: number | null;
-        userId: number;
+        userId?: number;
         note?: string | null;
       }
     ) => {
       try {
-        const movementId = await inventoryService.recordMovement(params);
+        const effectiveUserId = params.userId || sessionService.getCurrentUserId() || 1;
+        const movementId = await inventoryService.recordMovement({
+          ...params,
+          userId: effectiveUserId,
+        });
         return { success: true, data: { movementId } };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -79,10 +84,11 @@ export function registerInventoryIpcHandlers(): void {
     IPC_CHANNELS.INVENTORY_MARK_EXPIRED,
     async (
       _event,
-      params: { batchId: number; qty: number; userId: number; note?: string }
+      params: { batchId: number; qty: number; userId?: number; note?: string }
     ) => {
       try {
-        await inventoryService.markExpired(params.batchId, params.qty, params.userId, params.note);
+        const effectiveUserId = params.userId || sessionService.getCurrentUserId() || 1;
+        await inventoryService.markExpired(params.batchId, params.qty, effectiveUserId, params.note);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -95,10 +101,11 @@ export function registerInventoryIpcHandlers(): void {
     IPC_CHANNELS.INVENTORY_MARK_TESTER,
     async (
       _event,
-      params: { batchId: number; qty: number; userId: number; note?: string }
+      params: { batchId: number; qty: number; userId?: number; note?: string }
     ) => {
       try {
-        await inventoryService.markTester(params.batchId, params.qty, params.userId, params.note);
+        const effectiveUserId = params.userId || sessionService.getCurrentUserId() || 1;
+        await inventoryService.markTester(params.batchId, params.qty, effectiveUserId, params.note);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -114,12 +121,16 @@ export function registerInventoryIpcHandlers(): void {
       params: {
         scope: StockCountScopeType;
         scopeId?: number | null;
-        userId: number;
+        userId?: number;
         variantIds?: number[];
       }
     ) => {
       try {
-        const data = await inventoryService.createStockCount(params);
+        const effectiveUserId = params.userId || sessionService.getCurrentUserId() || 1;
+        const data = await inventoryService.createStockCount({
+          ...params,
+          userId: effectiveUserId,
+        });
         return { success: true, data };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -158,11 +169,12 @@ export function registerInventoryIpcHandlers(): void {
       params: {
         countId: number;
         items: Array<{ variantId: number; countedQty: number; note?: string }>;
-        userId: number;
+        userId?: number;
       }
     ) => {
       try {
-        await inventoryService.submitCount(params.countId, params.items, params.userId);
+        const effectiveUserId = params.userId || sessionService.getCurrentUserId() || 1;
+        await inventoryService.submitCount(params.countId, params.items, effectiveUserId);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -173,9 +185,10 @@ export function registerInventoryIpcHandlers(): void {
   // اعتماد الجرد
   ipcMain.handle(
     IPC_CHANNELS.INVENTORY_APPROVE_COUNT,
-    async (_event, params: { countId: number; approverId: number }) => {
+    async (_event, params: { countId: number; approverId?: number }) => {
       try {
-        await inventoryService.approveCount(params.countId, params.approverId);
+        const effectiveApproverId = params.approverId || sessionService.getCurrentUserId() || 1;
+        await inventoryService.approveCount(params.countId, effectiveApproverId);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -186,9 +199,10 @@ export function registerInventoryIpcHandlers(): void {
   // إلغاء الجرد
   ipcMain.handle(
     IPC_CHANNELS.INVENTORY_CANCEL_COUNT,
-    async (_event, params: { countId: number; userId: number }) => {
+    async (_event, params: { countId: number; userId?: number }) => {
       try {
-        await inventoryService.cancelCount(params.countId, params.userId);
+        const effectiveUserId = params.userId || sessionService.getCurrentUserId() || 1;
+        await inventoryService.cancelCount(params.countId, effectiveUserId);
         return { success: true };
       } catch (err: unknown) {
         return { success: false, error: err instanceof Error ? err.message : String(err) };

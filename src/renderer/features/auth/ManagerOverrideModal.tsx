@@ -185,9 +185,9 @@ export function ManagerOverrideModal({
             alignItems: 'center',
             gap: 12,
             height: 50,
-            backgroundColor: '#F4F5F2',
+            backgroundColor: '#0B0E14',
             borderRadius: 12,
-            border: '1px solid #D5DAD6',
+            border: '1px solid #262E3D',
           }}
         >
           {[0, 1, 2, 3].map((idx) => (
@@ -197,7 +197,7 @@ export function ManagerOverrideModal({
                 width: 14,
                 height: 14,
                 borderRadius: '50%',
-                backgroundColor: idx < pin.length ? 'var(--color-brand-deep)' : '#CCD3CE',
+                backgroundColor: idx < pin.length ? '#FFB800' : '#262E3D',
                 transform: idx < pin.length ? 'scale(1.25)' : 'scale(1)',
                 transition: 'all 0.15s ease',
               }}
@@ -221,16 +221,16 @@ export function ManagerOverrideModal({
               style={{
                 height: 48,
                 fontSize: 20,
-                fontWeight: 600,
+                fontWeight: 700,
                 borderRadius: 10,
-                border: '1px solid var(--border-light)',
-                backgroundColor: '#FFFFFF',
-                color: 'var(--text-main)',
+                border: '1px solid #262E3D',
+                backgroundColor: '#0B0E14',
+                color: '#F8FAFC',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F0F3F1')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1C222D')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0B0E14')}
             >
               {d}
             </button>
@@ -241,11 +241,11 @@ export function ManagerOverrideModal({
             style={{
               height: 48,
               fontSize: 13,
-              fontWeight: 600,
+              fontWeight: 700,
               borderRadius: 10,
-              border: '1px solid #F5C6CB',
-              backgroundColor: '#FBEAEB',
-              color: 'var(--color-danger)',
+              border: '1px solid #EF4444',
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              color: '#EF4444',
               cursor: 'pointer',
             }}
           >
@@ -257,15 +257,15 @@ export function ManagerOverrideModal({
             style={{
               height: 48,
               fontSize: 20,
-              fontWeight: 600,
+              fontWeight: 700,
               borderRadius: 10,
-              border: '1px solid var(--border-light)',
-              backgroundColor: '#FFFFFF',
-              color: 'var(--text-main)',
+              border: '1px solid #262E3D',
+              backgroundColor: '#0B0E14',
+              color: '#F8FAFC',
               cursor: 'pointer',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F0F3F1')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1C222D')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0B0E14')}
           >
             0
           </button>
@@ -275,18 +275,17 @@ export function ManagerOverrideModal({
             style={{
               height: 48,
               fontSize: 18,
-              fontWeight: 600,
+              fontWeight: 700,
               borderRadius: 10,
-              border: '1px solid var(--border-light)',
-              backgroundColor: '#FAFBF9',
-              color: 'var(--text-secondary)',
+              border: '1px solid #262E3D',
+              backgroundColor: '#0B0E14',
+              color: '#CBD5E1',
               cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1C222D')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0B0E14')}
           >
-            <Delete size={18} />
+            <Delete size={20} />
           </button>
         </div>
 

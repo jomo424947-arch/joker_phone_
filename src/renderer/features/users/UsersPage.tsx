@@ -178,24 +178,26 @@ export function UsersPage(): React.ReactElement {
         style={{
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
+          borderRadius: 14,
         }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
           <thead>
-            <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-              <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-              <th style={{ width: '28%', padding: '12px 16px' }}>الاسم الظاهر والبيانات</th>
-              <th style={{ width: '20%', padding: '12px 16px' }}>اسم المستخدم (Login)</th>
-              <th style={{ width: '18%', padding: '12px 16px' }}>الدور والصلاحيات</th>
-              <th style={{ width: '12%', padding: '12px 16px', textAlign: 'center' }}>الحالة</th>
-              <th style={{ width: '16%', padding: '12px 16px', textAlign: 'center' }}>الإجراءات</th>
+            <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D' }}>
+              <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>#</th>
+              <th style={{ width: '28%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الاسم الظاهر والبيانات</th>
+              <th style={{ width: '20%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>اسم المستخدم (Login)</th>
+              <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الدور والصلاحيات</th>
+              <th style={{ width: '12%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الحالة</th>
+              <th style={{ width: '16%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الإجراءات</th>
             </tr>
           </thead>
           <tbody>
             {users.map((u, idx) => (
-              <tr key={u.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+              <tr key={u.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#64748B', fontSize: 13 }}>
                   {idx + 1}
                 </td>
 
@@ -203,17 +205,17 @@ export function UsersPage(): React.ReactElement {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     {getRoleIcon(u.role)}
                     <div>
-                      <div style={{ fontWeight: 600, color: 'var(--color-brand-deep)', fontSize: 14 }}>
+                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: 14 }}>
                         {u.display_name}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 11.5, color: '#64748B' }}>
                         تاريخ الإنشاء: {u.created_at?.split('T')[0] || '2026-01-01'}
                       </div>
                     </div>
                   </div>
                 </td>
 
-                <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 600 }}>
+                <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 600, color: '#FFB800' }}>
                   {u.username}
                 </td>
 

@@ -5,13 +5,15 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from '../../../shared/constants/ipc-channels';
 import { returnsService } from '../../services/returns.service';
+import { sessionService } from '../../services/session.service';
 import { CreateReturnInput, ExchangeInput } from '../../../shared/types/returns.types';
 
 export function registerReturnsIpcHandlers(): void {
   // إنشاء مرتجع
   ipcMain.handle(IPC_CHANNELS.RETURNS_CREATE, async (_event, input: CreateReturnInput) => {
     try {
-      const data = await returnsService.createReturn(input);
+      const effectiveUserId = input.user_id || sessionService.getCurrentUserId() || 1;
+      const data = await returnsService.createReturn({ ...input, user_id: effectiveUserId });
       return { success: true, data };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -21,7 +23,8 @@ export function registerReturnsIpcHandlers(): void {
   // معالجة مرتجع (متوافق مع الاسم القديم)
   ipcMain.handle(IPC_CHANNELS.RETURNS_PROCESS, async (_event, input: CreateReturnInput) => {
     try {
-      const data = await returnsService.createReturn(input);
+      const effectiveUserId = input.user_id || sessionService.getCurrentUserId() || 1;
+      const data = await returnsService.createReturn({ ...input, user_id: effectiveUserId });
       return { success: true, data };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -31,7 +34,8 @@ export function registerReturnsIpcHandlers(): void {
   // عملية استبدال بضاعة
   ipcMain.handle(IPC_CHANNELS.RETURNS_EXCHANGE, async (_event, input: ExchangeInput) => {
     try {
-      const data = await returnsService.createExchange(input);
+      const effectiveUserId = input.user_id || sessionService.getCurrentUserId() || 1;
+      const data = await returnsService.createExchange({ ...input, user_id: effectiveUserId });
       return { success: true, data };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : String(err) };

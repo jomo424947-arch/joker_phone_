@@ -183,7 +183,8 @@ export function AuditLogPage(): React.ReactElement {
         className="glass-card"
         style={{
           padding: 16,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
         <form
@@ -196,14 +197,14 @@ export function AuditLogPage(): React.ReactElement {
           }}
         >
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: '#94A3B8' }}>
               المستخدم:
             </label>
             <select
               value={selectedUserId}
               onChange={(e) => setSelectedUserId(e.target.value)}
               className="in"
-              style={{ height: 40, fontSize: 13 }}
+              style={{ height: 40, fontSize: 13, backgroundColor: '#0B0E14', color: '#F8FAFC', border: '1px solid #262E3D' }}
             >
               <option value="">جميع المستخدمين</option>
               {users.map((u) => (
@@ -215,7 +216,7 @@ export function AuditLogPage(): React.ReactElement {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: '#94A3B8' }}>
               نوع الحركة / الإجراء:
             </label>
             <Input
@@ -227,7 +228,7 @@ export function AuditLogPage(): React.ReactElement {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: '#94A3B8' }}>
               من تاريخ:
             </label>
             <Input
@@ -239,7 +240,7 @@ export function AuditLogPage(): React.ReactElement {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: '#94A3B8' }}>
               إلى تاريخ:
             </label>
             <Input
@@ -268,30 +269,31 @@ export function AuditLogPage(): React.ReactElement {
         style={{
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
           <thead>
-            <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-              <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-              <th style={{ width: '18%', padding: '12px 16px' }}>التاريخ والوقت</th>
-              <th style={{ width: '18%', padding: '12px 16px' }}>المستخدم المنفذ</th>
-              <th style={{ width: '22%', padding: '12px 16px' }}>نوع الإجراء</th>
-              <th style={{ width: '26%', padding: '12px 16px' }}>ملخص العملية</th>
-              <th style={{ width: '10%', padding: '12px 16px', textAlign: 'center' }}>التفاصيل</th>
+            <tr style={{ background: '#1C222D', borderBottom: '1.5px solid #262E3D' }}>
+              <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>#</th>
+              <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>التاريخ والوقت</th>
+              <th style={{ width: '18%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>المستخدم المنفذ</th>
+              <th style={{ width: '22%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>نوع الإجراء</th>
+              <th style={{ width: '26%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>ملخص العملية</th>
+              <th style={{ width: '10%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>التفاصيل</th>
             </tr>
           </thead>
           <tbody>
             {logs.map((log, idx) => (
-              <tr key={log.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+              <tr key={log.id} style={{ borderBottom: '1px solid #262E3D' }}>
+                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>
                   {idx + 1}
                 </td>
-                <td style={{ padding: '12px 16px', fontSize: 12, color: 'var(--text-muted)' }}>
+                <td style={{ padding: '12px 16px', fontSize: 12, color: '#94A3B8' }}>
                   {log.createdAt}
                 </td>
-                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--color-brand-deep)' }}>
+                <td style={{ padding: '12px 16px', fontWeight: 700, color: '#F8FAFC' }}>
                   {log.displayName || log.username || `مستخدم #${log.userId}`}
                 </td>
                 <td style={{ padding: '12px 16px' }}>
@@ -302,7 +304,7 @@ export function AuditLogPage(): React.ReactElement {
                     padding: '12px 16px',
                     fontSize: 12,
                     fontFamily: 'monospace',
-                    color: 'var(--text-secondary)',
+                    color: '#CBD5E1',
                     maxWidth: 260,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',

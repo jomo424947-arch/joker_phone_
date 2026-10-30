@@ -75,6 +75,7 @@ export interface ProfitLossReport {
   cogs: number;
   gross_profit: number;
   gross_profit_margin_percent: number;
+  wallet_commissions_revenue?: number;
   operating_expenses_total: number;
   expenses_breakdown: { category: string; amount_piasters: number }[];
   net_profit: number;
@@ -113,12 +114,15 @@ export interface CashFlowSummary {
     cash_sales: number;
     customer_debt_collections: number;
     cash_deposits: number;
+    wallet_cash_in?: number;
     total_inflow: number;
   };
   outflows: {
     cash_refunds: number;
     operating_expenses: number;
     supplier_debt_payments: number;
+    cash_purchases?: number;
+    wallet_cash_out?: number;
     cash_withdrawals: number;
     total_outflow: number;
   };

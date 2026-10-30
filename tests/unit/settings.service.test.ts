@@ -101,6 +101,6 @@ describe('SettingsService (خدمة الإعدادات العامة)', () => {
     // إعادة الضبط للافتراضي
     settingsService.set('store_name', 'اسم تجريبي مؤقت');
     settingsService.resetDefaults();
-    expect(settingsService.get('store_name')).toBe('محل مستحضرات التجميل');
+    expect(settingsService.get('store_name')).toBe('الجوكر فون - JOKER PHONE');
   });
 });

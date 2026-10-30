@@ -54,34 +54,50 @@ export class AuditService {
   log(entry: AuditLogEntry, txDb?: Database.Database): void {
     const db = txDb ?? this.getDb();
 
-    let targetUserId = entry.userId;
-    if (!targetUserId || targetUserId <= 0) {
-      try {
+    try {
+      let targetUserId: number | undefined = entry.userId;
+      if (targetUserId && targetUserId > 0) {
+        const exists = db.prepare('SELECT id FROM users WHERE id = ?').get(targetUserId);
+        if (!exists) {
+          targetUserId = undefined;
+        }
+      }
+
+      if (!targetUserId || targetUserId <= 0) {
         const u = db.prepare('SELECT id FROM users ORDER BY id ASC LIMIT 1').get() as
           | { id: number }
           | undefined;
-        if (!u) {
-          // إذا لم يكن هناك مستخدم مسجل في قاعدة البيانات بعد، نتجاوز السجل لتفادي فشل الـ Foreign Key
-          return;
+        if (u) {
+          targetUserId = u.id;
+        } else {
+          try {
+            db.prepare(`
+              INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
+              VALUES (1, 'system', 'system', 'النظام', 'admin', 1, datetime('now'))
+            `).run();
+            targetUserId = 1;
+          } catch {
+            return;
+          }
         }
-        targetUserId = u.id;
-      } catch {
-        return;
       }
+
+      const stmt = db.prepare(`
+        INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, created_at)
+        VALUES (?, ?, ?, ?, ?, datetime('now'))
+      `);
+
+      stmt.run(
+        targetUserId,
+        entry.action,
+        entry.entityType,
+        entry.entityId ?? null,
+        entry.details ? JSON.stringify(entry.details) : null
+      );
+    } catch {
+      // سجل التدقيق الرقابي لا يجب أن يوقف المعاملة في حال حدوث أي خطأ غير متوقع
+      return;
     }
-
-    const stmt = db.prepare(`
-      INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, created_at)
-      VALUES (?, ?, ?, ?, ?, datetime('now'))
-    `);
-
-    stmt.run(
-      targetUserId,
-      entry.action,
-      entry.entityType,
-      entry.entityId ?? null,
-      entry.details ? JSON.stringify(entry.details) : null
-    );
   }
 
   /**

@@ -3,7 +3,8 @@ import { Loader2 } from 'lucide-react';
 import { sounds } from '../../lib/sounds';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'danger-outline' | 'success' | 'gold';
+  variant?: 'primary' | 'secondary' | 'danger' | 'danger-outline' | 'success' | 'gold' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
   kbdShortcut?: string;
   isLoading?: boolean;
   noSound?: boolean;
@@ -13,6 +14,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export function Button({
   children,
   variant = 'primary',
+  size = 'md',
   kbdShortcut,
   isLoading = false,
   noSound = false,
@@ -20,6 +22,7 @@ export function Button({
   className = '',
   onClick,
   disabled,
+  style,
   ...props
 }: ButtonProps): React.ReactElement {
   const lastClickRef = useRef(0);
@@ -43,13 +46,21 @@ export function Button({
     onClick?.(e);
   };
 
-  const variantClass = `btn-${variant}`;
+  const actualVariant = variant === 'outline' ? 'secondary' : variant;
+  const variantClass = `btn-${actualVariant}`;
+  const sizeStyle: React.CSSProperties =
+    size === 'sm'
+      ? { padding: '5px 10px', fontSize: 12, minHeight: 30 }
+      : size === 'lg'
+      ? { padding: '12px 20px', fontSize: 15, minHeight: 46 }
+      : {};
 
   return (
     <button
       className={`btn ${variantClass} ${className}`}
       onClick={handleClick}
       disabled={disabled || isLoading}
+      style={{ ...sizeStyle, ...style }}
       {...props}
     >
       {isLoading ? (

@@ -12,6 +12,19 @@ import { StockCountScopeType, StockMovementType } from '../shared/types/inventor
 import { CreateSupplierInput, UpdateSupplierInput, CreatePurchaseInput } from '../shared/types/purchases.types';
 import { CreateCustomerInput, UpdateCustomerInput } from '../shared/types/customers.types';
 import { CreateReturnInput, ExchangeInput } from '../shared/types/returns.types';
+import {
+  CreateRepairOrderInput,
+  DeliverRepairInput,
+  UpdateRepairOrderInput,
+  AddRepairPartInput,
+  RepairFilterOptions,
+  RepairStatus,
+} from '../shared/types/repairs.types';
+import {
+  CreateDeviceSerialInput,
+  DeviceSerialFilters,
+  DeviceSerialStatus,
+} from '../shared/types/serials.types';
 
 // قائمة القنوات المسموح بها في المعالج المساعد invoke/send
 const ALLOWED_IPC_CHANNELS = new Set<string>(Object.values(IPC_CHANNELS));
@@ -41,6 +54,7 @@ const electronAPI = {
     displayName: string;
     password: string;
     pin: string;
+    activationCode: string;
   }) => ipcRenderer.invoke(IPC_CHANNELS.AUTH_COMPLETE_INITIAL_SETUP, data),
   requestOverride: (permission: Permission, pin: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.SYSTEM_OVERRIDE_PIN, { permission, pin }),
@@ -131,8 +145,10 @@ const electronAPI = {
     ipcRenderer.invoke(IPC_CHANNELS.SALES_HOLD, cartData, shiftId, userId, customerName),
   getHeldSales: () =>
     ipcRenderer.invoke(IPC_CHANNELS.SALES_GET_HELD),
-  resumeHeldSale: (holdId: number) =>
+  resumeHeldSale: (holdId: string | number) =>
     ipcRenderer.invoke(IPC_CHANNELS.SALES_RESUME_HELD, holdId),
+  deleteHeldSale: (holdId: string | number) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SALES_DELETE_HELD, holdId),
   voidSale: (saleId: number, userId: number, reason: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.SALES_VOID, saleId, userId, reason),
   printReceipt: (saleOrId: any) =>
@@ -385,6 +401,38 @@ const electronAPI = {
       ipcRenderer.removeListener('system:lock-state-changed', handler);
     };
   },
+
+  // ==========================================
+  // Repairs & Maintenance Workshop
+  // ==========================================
+  listRepairs: (filters?: RepairFilterOptions) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_LIST, filters),
+  getRepair: (id: number) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_GET, id),
+  createRepair: (params: { input: CreateRepairOrderInput; userId: number; shiftId?: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_CREATE, params),
+  updateRepair: (params: { id: number; input: UpdateRepairOrderInput; userId: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_UPDATE, params),
+  updateRepairStatus: (params: { id: number; status: RepairStatus; userId: number; note?: string }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_UPDATE_STATUS, params),
+  deliverRepair: (params: DeliverRepairInput) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_DELIVER, params),
+  addRepairPart: (params: { input: AddRepairPartInput; userId: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_ADD_PART, params),
+  removeRepairPart: (params: { partId: number; userId: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.REPAIRS_REMOVE_PART, params),
+
+  // ==========================================
+  // Device Serials & IMEI Tracking
+  // ==========================================
+  listSerials: (filters?: DeviceSerialFilters) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SERIALS_LIST, filters),
+  searchSerials: (query: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SERIALS_SEARCH, query),
+  createSerial: (params: { input: CreateDeviceSerialInput; userId: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SERIALS_CREATE, params),
+  updateSerialStatus: (params: { id: number; status: DeviceSerialStatus; saleItemId?: number }) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SERIALS_UPDATE_STATUS, params),
 
   // ==========================================
   // Generic Whitelisted IPC Bridge

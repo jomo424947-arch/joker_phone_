@@ -62,6 +62,7 @@ export const IPC_CHANNELS = {
   SALES_HOLD: 'sales:hold',
   SALES_GET_HELD: 'sales:get-held',
   SALES_RESUME_HELD: 'sales:resume-held',
+  SALES_DELETE_HELD: 'sales:delete-held',
   SALES_PRINT_RECEIPT: 'sales:print-receipt',
 
   // Inventory & Batches
@@ -163,6 +164,23 @@ export const IPC_CHANNELS = {
   DB_INSPECTOR_INSPECT: 'db-inspector:inspect',
   DB_INSPECTOR_GET_DEFAULT_PATH: 'db-inspector:get-default-path',
   DB_INSPECTOR_LIST_BACKUPS: 'db-inspector:list-backups',
+
+  // Phone Extensions: Repairs & Maintenance Workshop
+  REPAIRS_LIST: 'repairs:list',
+  REPAIRS_GET: 'repairs:get',
+  REPAIRS_CREATE: 'repairs:create',
+  REPAIRS_UPDATE: 'repairs:update',
+  REPAIRS_UPDATE_STATUS: 'repairs:update-status',
+  REPAIRS_DELIVER: 'repairs:deliver',
+  REPAIRS_ADD_PART: 'repairs:add-part',
+  REPAIRS_REMOVE_PART: 'repairs:remove-part',
+  REPAIRS_PRINT_RECEIPT: 'repairs:print-receipt',
+
+  // Phone Extensions: Device Serials & IMEI
+  SERIALS_LIST: 'serials:list',
+  SERIALS_SEARCH: 'serials:search',
+  SERIALS_CREATE: 'serials:create',
+  SERIALS_UPDATE_STATUS: 'serials:update-status',
 } as const;
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

@@ -192,19 +192,26 @@ export class PurchasesService {
           targetShiftId = openShift?.id;
         }
 
-        if (targetShiftId) {
-          db.prepare(`
-            INSERT INTO cash_movements (
-              shift_id, user_id, type, amount, ref_type, ref_id, note, created_at
-            ) VALUES (?, ?, 'withdrawal', ?, 'purchase', ?, ?, datetime('now'))
-          `).run(
-            targetShiftId,
-            input.user_id,
-            paid,
-            purchaseId,
-            `سداد فاتورة مشتريات #${invoiceNo} (${supplier.name})`
-          );
+        if (!targetShiftId) {
+          // فتح وردية تلقائية للمستخدم لضمان عدم تعطل حفظ فاتورة الشراء النقدية
+          const shiftUuid = crypto.randomUUID();
+          const shiftRes = db
+            .prepare("INSERT INTO shifts (uuid, user_id, opening_balance, status, opened_at, notes) VALUES (?, ?, 0, 'open', datetime('now'), 'وردية تلقائية')")
+            .run(shiftUuid, input.user_id);
+          targetShiftId = Number(shiftRes.lastInsertRowid);
         }
+
+        db.prepare(`
+          INSERT INTO cash_movements (
+            shift_id, user_id, type, amount, ref_type, ref_id, note, created_at
+          ) VALUES (?, ?, 'withdrawal', ?, 'purchase', ?, ?, datetime('now'))
+        `).run(
+          targetShiftId,
+          input.user_id,
+          -Math.abs(paid),
+          purchaseId,
+          `سداد فاتورة مشتريات #${invoiceNo} (${supplier.name})`
+        );
       }
 
       // 7. تسجيل التدقيق

@@ -123,7 +123,7 @@ export class ReceiptPrinter {
     }
 
     return {
-      storeName: map.get('store_name') || 'بوتيك جوري (Boutique Gouri)',
+      storeName: map.get('store_name') || 'الجوكر فون (JOKER PHONE)',
       storePhone: map.get('store_phone') || map.get('store_whatsapp') || '',
       storeAddress: map.get('store_address') || '',
       taxNumber: map.get('tax_registration_no') || map.get('tax_number') || '',
@@ -599,7 +599,7 @@ export class ReceiptPrinter {
             <strong>سياسة الاستبدال والاسترجاع:</strong><br>
             البضاعة المباعة تستبدل أو تسترجع خلال 14 يوماً مع إحضار الفاتورة بحالتها الأصلية.
           </div>
-          <div class="system-brand">نظام بيع وجرد مستحضرات التجميل | Boutique Gouri POS</div>
+          <div class="system-brand">نظام إدارة محلات التليفونات والاكسسوارات والصيانة | الجوكر فون - JOKER PHONE</div>
         </div>
       </body>
       </html>

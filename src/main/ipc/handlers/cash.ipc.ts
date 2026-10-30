@@ -5,6 +5,7 @@
 import { ipcMain } from 'electron';
 import { IPC_CHANNELS } from '../../../shared/constants/ipc-channels';
 import { cashService } from '../../services/cash.service';
+import { sessionService } from '../../services/session.service';
 import { receiptPrinter } from '../../printing/receipt-printer';
 
 export function registerCashIpcHandlers(): void {
@@ -21,7 +22,8 @@ export function registerCashIpcHandlers(): void {
   // فتح وردية جديدة
   ipcMain.handle(IPC_CHANNELS.CASH_OPEN_SHIFT, async (_event, userId: number, openingCash: number, notes?: string) => {
     try {
-      const shift = await cashService.openShift(userId, openingCash, notes);
+      const effectiveUserId = userId || sessionService.getCurrentUserId() || 1;
+      const shift = await cashService.openShift(effectiveUserId, openingCash, notes);
       return { success: true, data: shift };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -31,7 +33,8 @@ export function registerCashIpcHandlers(): void {
   // إغلاق وردية بالعد الأعمى
   ipcMain.handle(IPC_CHANNELS.CASH_CLOSE_SHIFT, async (_event, shiftId: number, actualCash: number, notes?: string, actorUserId?: number) => {
     try {
-      const summary = await cashService.closeShift(shiftId, actualCash, notes, actorUserId);
+      const effectiveActorId = actorUserId || sessionService.getCurrentUserId() || 1;
+      const summary = await cashService.closeShift(shiftId, actualCash, notes, effectiveActorId);
       return { success: true, data: summary };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -41,7 +44,11 @@ export function registerCashIpcHandlers(): void {
   // تسجيل مصروف
   ipcMain.handle(IPC_CHANNELS.CASH_RECORD_EXPENSE, async (_event, input) => {
     try {
-      const expense = await cashService.recordExpense(input);
+      const effectiveUserId = input?.user_id || sessionService.getCurrentUserId() || 1;
+      const expense = await cashService.recordExpense({
+        ...input,
+        user_id: effectiveUserId,
+      });
       return { success: true, data: expense };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -52,8 +59,9 @@ export function registerCashIpcHandlers(): void {
   ipcMain.handle(IPC_CHANNELS.CASH_DRAWER_OPEN, async (_event, shiftId?: number, userId?: number, reason?: string) => {
     try {
       const opened = await receiptPrinter.openCashDrawer();
-      if (shiftId && userId) {
-        await cashService.logDrawerOpen(shiftId, userId, reason);
+      const effectiveUserId = userId || sessionService.getCurrentUserId() || 1;
+      if (shiftId) {
+        await cashService.logDrawerOpen(shiftId, effectiveUserId, reason);
       }
       return { success: true, data: { opened } };
     } catch (err: any) {
@@ -64,7 +72,8 @@ export function registerCashIpcHandlers(): void {
   // تسجيل إيداع نقدي
   ipcMain.handle(IPC_CHANNELS.CASH_DEPOSIT, async (_event, shiftId: number, userId: number, amount: number, note?: string) => {
     try {
-      const movement = await cashService.recordDeposit(shiftId, userId, amount, note);
+      const effectiveUserId = userId || sessionService.getCurrentUserId() || 1;
+      const movement = await cashService.recordDeposit(shiftId, effectiveUserId, amount, note);
       return { success: true, data: movement };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -74,7 +83,8 @@ export function registerCashIpcHandlers(): void {
   // تسجيل سحب نقدي (Cash Drop)
   ipcMain.handle(IPC_CHANNELS.CASH_WITHDRAWAL, async (_event, shiftId: number, userId: number, amount: number, note?: string) => {
     try {
-      const movement = await cashService.recordWithdrawal(shiftId, userId, amount, note);
+      const effectiveUserId = userId || sessionService.getCurrentUserId() || 1;
+      const movement = await cashService.recordWithdrawal(shiftId, effectiveUserId, amount, note);
       return { success: true, data: movement };
     } catch (err: any) {
       return { success: false, error: err.message };

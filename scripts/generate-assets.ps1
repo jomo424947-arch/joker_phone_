@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Drawing
 
-$srcPath = "C:\Users\jomo4\.gemini\antigravity-ide\brain\48e39f95-0d15-4df4-a7b4-92bc18aa751f\.user_uploaded\media_1791984480951.jpg"
-$baseDir = "c:\Users\jomo4\OneDrive\Desktop\Cosmetics Store"
+$baseDir = Split-Path -Parent $PSScriptRoot
+$srcPath = "$baseDir\src\renderer\assets\joker-logo.jpg"
 
 # Ensure directories exist
 $dirs = @(

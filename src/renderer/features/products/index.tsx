@@ -86,27 +86,27 @@ export function ProductsScreen(): React.ReactElement {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
       {/* بطاقات الإحصائيات العلوية */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
-        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#FFFFFF' }}>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي المنتجات</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>إجمالي المنتجات</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {products.length}
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#FFFFFF' }}>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي المخزون بالقطع</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>إجمالي المخزون بالقطع</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#F8FAFC', marginTop: 4 }}>
             {totalStockCount}
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#FFFFFF' }}>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>أصناف منخفضة الرصيد</div>
+        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>أصناف منخفضة الرصيد</div>
           <div
             style={{
               fontSize: 22,
               fontWeight: 800,
-              color: lowStockCount > 0 ? '#962B34' : 'var(--color-brand-deep)',
+              color: lowStockCount > 0 ? '#EF4444' : '#10B981',
               marginTop: 4,
             }}
           >
@@ -114,9 +114,9 @@ export function ProductsScreen(): React.ReactElement {
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#FFFFFF' }}>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>الأقسام والتصنيفات</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+        <div className="glass-card" style={{ padding: '14px 16px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>الأقسام والتصنيفات</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {categoriesList.length}
           </div>
         </div>
@@ -130,7 +130,8 @@ export function ProductsScreen(): React.ReactElement {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
           gap: 12,
         }}
       >
@@ -153,13 +154,18 @@ export function ProductsScreen(): React.ReactElement {
               border: '1.5px solid var(--border-light)',
               padding: '0 12px',
               fontSize: 13,
-              backgroundColor: '#FAFCFA',
+              fontWeight: 600,
+              backgroundColor: '#161B22',
+              color: '#F8FAFC',
               cursor: 'pointer',
+              outline: 'none',
             }}
           >
-            <option value="all">جميع الأقسام</option>
+            <option value="all" style={{ backgroundColor: '#161B22', color: '#F8FAFC' }}>
+              جميع الأقسام
+            </option>
             {categoriesList.map((c) => (
-              <option key={c} value={c}>
+              <option key={c} value={c} style={{ backgroundColor: '#161B22', color: '#F8FAFC' }}>
                 {c}
               </option>
             ))}
@@ -178,12 +184,13 @@ export function ProductsScreen(): React.ReactElement {
               height: 42,
               padding: '0 16px',
               fontSize: 13,
-              borderColor: '#E8D5C4',
-              color: '#8D4004',
-              backgroundColor: '#FFF9F5',
+              fontWeight: 700,
+              borderColor: 'rgba(255, 184, 0, 0.35)',
+              color: '#FFB800',
+              backgroundColor: 'rgba(255, 184, 0, 0.12)',
             }}
           >
-            <Sparkles size={16} color="#E65100" />
+            <Sparkles size={16} color="#FFB800" />
             <span>العروض والخصومات</span>
           </Button>
 
@@ -203,13 +210,16 @@ export function ProductsScreen(): React.ReactElement {
       </div>
 
       {/* جدول المنتجات */}
+      {/* جدول المنتجات */}
       <div
         className="glass-card"
         style={{
           flex: 1,
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
+          borderRadius: 14,
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -227,15 +237,15 @@ export function ProductsScreen(): React.ReactElement {
           <div style={{ overflowY: 'auto', flex: 1 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
               <thead>
-                <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                  <th style={{ width: '4%', padding: '12px 10px', textAlign: 'center' }}>#</th>
-                  <th style={{ width: '25%', padding: '12px 14px' }}>اسم المنتج / الصنف</th>
-                  <th style={{ width: '12%', padding: '12px 12px' }}>القسم</th>
-                  <th style={{ width: '12%', padding: '12px 12px' }}>الماركة</th>
-                  <th style={{ width: '13%', padding: '12px 12px', textAlign: 'center' }}>سعر البيع</th>
-                  <th style={{ width: '12%', padding: '12px 12px', textAlign: 'center' }}>الباركود</th>
-                  <th style={{ width: '10%', padding: '12px 12px', textAlign: 'center' }}>المخزون</th>
-                  <th style={{ width: '12%', padding: '12px 14px', textAlign: 'center' }}>إجراءات</th>
+                <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D' }}>
+                  <th style={{ width: '4%', padding: '12px 10px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>#</th>
+                  <th style={{ width: '25%', padding: '12px 14px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>اسم المنتج / الصنف</th>
+                  <th style={{ width: '13%', padding: '12px 12px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>القسم</th>
+                  <th style={{ width: '12%', padding: '12px 12px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الماركة</th>
+                  <th style={{ width: '13%', padding: '12px 12px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>سعر البيع</th>
+                  <th style={{ width: '12%', padding: '12px 12px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الباركود</th>
+                  <th style={{ width: '10%', padding: '12px 12px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>المخزون</th>
+                  <th style={{ width: '11%', padding: '12px 14px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>إجراءات</th>
                 </tr>
               </thead>
               <tbody>
@@ -247,7 +257,7 @@ export function ProductsScreen(): React.ReactElement {
                     <tr
                       key={p.id}
                       style={{
-                        borderBottom: '1px solid var(--border-light)',
+                        borderBottom: '1px solid #262E3D',
                         transition: 'background 0.15s ease',
                       }}
                     >
@@ -255,7 +265,7 @@ export function ProductsScreen(): React.ReactElement {
                         style={{
                           padding: '12px 10px',
                           textAlign: 'center',
-                          color: 'var(--text-muted)',
+                          color: '#64748B',
                           fontSize: 13,
                         }}
                       >
@@ -263,26 +273,29 @@ export function ProductsScreen(): React.ReactElement {
                       </td>
 
                       <td style={{ padding: '12px 14px' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--color-brand-deep)', fontSize: 14 }}>
+                        <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: 14 }}>
                           {p.name}
                         </div>
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>الوحدة: {p.unit}</div>
+                        <div style={{ fontSize: 11.5, color: '#64748B' }}>الوحدة: {p.unit}</div>
                       </td>
 
-                      <td style={{ padding: '12px 12px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                      <td style={{ padding: '12px 12px', fontSize: 13 }}>
                         <span
                           style={{
-                            backgroundColor: '#EAEFEA',
+                            backgroundColor: 'rgba(255, 184, 0, 0.12)',
+                            color: '#FFB800',
+                            border: '1px solid rgba(255, 184, 0, 0.25)',
                             padding: '3px 8px',
                             borderRadius: 6,
                             fontSize: 12,
+                            fontWeight: 600,
                           }}
                         >
                           {p.category}
                         </span>
                       </td>
 
-                      <td style={{ padding: '12px 12px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                      <td style={{ padding: '12px 12px', fontSize: 13, color: '#CBD5E1', fontWeight: 600 }}>
                         {p.brand}
                       </td>
 
@@ -291,10 +304,11 @@ export function ProductsScreen(): React.ReactElement {
                         <span
                           style={{
                             fontWeight: 800,
-                            color: 'var(--color-brand-deep)',
+                            color: '#FFB800',
                             fontSize: 14,
-                            backgroundColor: '#F3F7F3',
-                            padding: '3px 8px',
+                            backgroundColor: 'rgba(255, 184, 0, 0.08)',
+                            border: '1px solid rgba(255, 184, 0, 0.22)',
+                            padding: '4px 10px',
                             borderRadius: 6,
                           }}
                         >
@@ -309,7 +323,9 @@ export function ProductsScreen(): React.ReactElement {
                             fontFamily: 'monospace',
                             fontSize: 12,
                             fontWeight: 600,
-                            backgroundColor: '#F0F3F1',
+                            backgroundColor: '#0B0E14',
+                            color: '#94A3B8',
+                            border: '1px solid #262E3D',
                             padding: '3px 7px',
                             borderRadius: 4,
                           }}
@@ -344,12 +360,13 @@ export function ProductsScreen(): React.ReactElement {
                               setStockCardProduct(p);
                             }}
                             style={{
-                              background: '#F0F4F8',
-                              border: '1px solid #D9E2EC',
+                              background: '#1C222D',
+                              border: '1px solid #262E3D',
                               borderRadius: 6,
                               padding: '5px 8px',
                               cursor: 'pointer',
-                              color: '#102A43',
+                              color: '#94A3B8',
+                              transition: 'all 0.15s ease',
                             }}
                             title="عرض كارت حركة الصنف وتاريخ الأسعار"
                           >
@@ -364,12 +381,13 @@ export function ProductsScreen(): React.ReactElement {
                               setEditingProduct(p);
                             }}
                             style={{
-                              background: '#E8F5E9',
-                              border: '1px solid #C8E6C9',
+                              background: 'rgba(255, 184, 0, 0.12)',
+                              border: '1px solid rgba(255, 184, 0, 0.3)',
                               borderRadius: 6,
                               padding: '5px 8px',
                               cursor: 'pointer',
-                              color: '#1B5E20',
+                              color: '#FFB800',
+                              transition: 'all 0.15s ease',
                             }}
                             title="تعديل بيانات المنتج وسعر البيع"
                           >
@@ -389,12 +407,13 @@ export function ProductsScreen(): React.ReactElement {
                                 });
                               }}
                               style={{
-                                background: '#FFF8E1',
-                                border: '1px solid #FFE082',
+                                background: 'rgba(59, 130, 246, 0.12)',
+                                border: '1px solid rgba(59, 130, 246, 0.3)',
                                 borderRadius: 6,
                                 padding: '5px 8px',
                                 cursor: 'pointer',
-                                color: '#F57F17',
+                                color: '#60A5FA',
+                                transition: 'all 0.15s ease',
                               }}
                               title="طباعة ملصق باركود حراري"
                             >
@@ -407,12 +426,13 @@ export function ProductsScreen(): React.ReactElement {
                             type="button"
                             onClick={() => handleDeleteProduct(p)}
                             style={{
-                              background: '#FFEBEE',
-                              border: '1px solid #FFCDD2',
+                              background: 'rgba(239, 68, 68, 0.12)',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
                               borderRadius: 6,
                               padding: '5px 8px',
                               cursor: 'pointer',
-                              color: '#C62828',
+                              color: '#F87171',
+                              transition: 'all 0.15s ease',
                             }}
                             title="حذف / أرشفة المنتج بأمان"
                           >

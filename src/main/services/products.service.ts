@@ -88,6 +88,28 @@ export class ProductsService {
   }
 
   /**
+   * التحقق من معرف المستخدم وضمان وجوده في قاعدة البيانات لتفادي أخطاء الـ Foreign Key
+   */
+  private resolveUserId(db: Database.Database, userId?: number): number {
+    if (userId && userId > 0) {
+      const u = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
+      if (u) return userId;
+    }
+    const anyUser = db.prepare('SELECT id FROM users ORDER BY id ASC LIMIT 1').get() as { id: number } | undefined;
+    if (anyUser) return anyUser.id;
+
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
+        VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+      `).run();
+      return 1;
+    } catch {
+      return 1;
+    }
+  }
+
+  /**
    * إنشاء تصنيف إن لم يكن موجوداً
    */
   getOrCreateCategory(name: string): number {
@@ -249,6 +271,7 @@ export class ProductsService {
         // إنشاء الدفعة الافتتاحية للمخزون إذا تم إدخال رصيد أولي أكبر من الصفر
         const initialStock = Number((vInput as any).initial_stock) || 0;
         if (initialStock > 0) {
+          const effectiveUserId = this.resolveUserId(db, actorUserId);
           const batchNo = `INIT-${Date.now().toString().slice(-6)}`;
           const batchRes = db.prepare(`
             INSERT INTO batches (variant_id, batch_no, expiry_date, unit_cost, qty_remaining, received_at)
@@ -260,19 +283,18 @@ export class ProductsService {
           db.prepare(`
             INSERT INTO stock_movements (batch_id, type, qty, ref_type, ref_id, user_id, note, created_at)
             VALUES (?, 'adjust_in', ?, 'initial_stock', ?, ?, 'رصيد مخزون افتتاحي عند إضافة المنتج', datetime('now'))
-          `).run(batchId, initialStock, productId, actorUserId ?? 1);
+          `).run(batchId, initialStock, productId, effectiveUserId);
         }
       }
 
-      if (actorUserId) {
-        this.auditService.log({
-          userId: actorUserId,
-          action: 'CREATE_PRODUCT',
-          entityType: 'products',
-          entityId: productId,
-          details: { name_ar: input.name_ar, variants_count: input.variants.length },
-        });
-      }
+      const effectiveAuditUserId = this.resolveUserId(db, actorUserId);
+      this.auditService.log({
+        userId: effectiveAuditUserId,
+        action: 'CREATE_PRODUCT',
+        entityType: 'products',
+        entityId: productId,
+        details: { name_ar: input.name_ar, variants_count: input.variants.length },
+      });
     });
 
     createTx();
@@ -449,6 +471,7 @@ export class ProductsService {
         if ((input as any).stock !== undefined && (input as any).stock !== null) {
           const newStock = Number((input as any).stock);
           if (!isNaN(newStock) && newStock >= 0) {
+            const effectiveUserId = this.resolveUserId(db, actorUserId);
             const batch = db
               .prepare('SELECT id, qty_remaining FROM batches WHERE variant_id = ? ORDER BY id ASC LIMIT 1')
               .get(targetVariantId) as { id: number; qty_remaining: number } | undefined;
@@ -457,51 +480,51 @@ export class ProductsService {
               const diff = newStock - batch.qty_remaining;
               if (diff !== 0) {
                 const moveType = diff > 0 ? 'adjust_in' : 'adjust_out';
-                db.prepare('UPDATE batches SET qty_remaining = ? WHERE id = ?').run(newStock, batch.id);
+                // مشغل trg_movement_apply يقوم تلقائياً بزيادة NEW.qty إلى batches.qty_remaining
+                // لذلك يجب إدراج diff بإشارته (+ للزيادة، - للنقصان) بدون تعديل يدوي مباشر للدفعة
                 db.prepare(`
                   INSERT INTO stock_movements (batch_id, type, qty, ref_type, ref_id, user_id, note, created_at)
                   VALUES (?, ?, ?, 'manual_adjustment', ?, ?, 'تسوية يدوية للرصيد من تعديل الصنف', datetime('now'))
-                `).run(batch.id, moveType, Math.abs(diff), id, actorUserId ?? null);
+                `).run(batch.id, moveType, diff, id, effectiveUserId);
               }
-            } else {
+            } else if (newStock > 0) {
               const batchRes = db.prepare(`
                 INSERT INTO batches (variant_id, batch_no, expiry_date, unit_cost, qty_remaining, received_at)
-                VALUES (?, ?, NULL, 0, ?, datetime('now'))
-              `).run(targetVariantId, `B-INIT-${id}`, newStock);
+                VALUES (?, ?, NULL, 0, 0, datetime('now'))
+              `).run(targetVariantId, `B-INIT-${id}`);
               const newBatchId = Number(batchRes.lastInsertRowid);
               db.prepare(`
                 INSERT INTO stock_movements (batch_id, type, qty, ref_type, ref_id, user_id, note, created_at)
                 VALUES (?, 'adjust_in', ?, 'initial_stock', ?, ?, 'رصيد مخزون من تعديل الصنف', datetime('now'))
-              `).run(newBatchId, newStock, id, actorUserId ?? null);
+              `).run(newBatchId, newStock, id, effectiveUserId);
             }
           }
         }
       }
 
-      // 4. توثيق التحديث العام في سجل الرقابة
-      if (actorUserId) {
-        const changes: Record<string, { old: any; new: any }> = {};
-        if (input.name_ar !== undefined && input.name_ar !== oldProduct.name_ar) {
-          changes.name_ar = { old: oldProduct.name_ar, new: input.name_ar };
-        }
-        if (targetSalePrice !== undefined && targetSalePrice !== primaryVariant?.sale_price) {
-          changes.sale_price = { old: primaryVariant?.sale_price, new: targetSalePrice };
-        }
-        if (input.unit !== undefined && input.unit !== oldProduct.unit) {
-          changes.unit = { old: oldProduct.unit, new: input.unit };
-        }
-
-        this.auditService.log({
-          userId: actorUserId,
-          action: 'UPDATE_PRODUCT',
-          entityType: 'products',
-          entityId: id,
-          details: {
-            changes,
-            input_summary: input,
-          },
-        });
+      // 5. توثيق التحديث العام في سجل الرقابة
+      const effectiveAuditUserId = this.resolveUserId(db, actorUserId);
+      const changes: Record<string, { old: any; new: any }> = {};
+      if (input.name_ar !== undefined && input.name_ar !== oldProduct.name_ar) {
+        changes.name_ar = { old: oldProduct.name_ar, new: input.name_ar };
       }
+      if (targetSalePrice !== undefined && targetSalePrice !== primaryVariant?.sale_price) {
+        changes.sale_price = { old: primaryVariant?.sale_price, new: targetSalePrice };
+      }
+      if (input.unit !== undefined && input.unit !== oldProduct.unit) {
+        changes.unit = { old: oldProduct.unit, new: input.unit };
+      }
+
+      this.auditService.log({
+        userId: effectiveAuditUserId,
+        action: 'UPDATE_PRODUCT',
+        entityType: 'products',
+        entityId: id,
+        details: {
+          changes,
+          input_summary: input,
+        },
+      });
     });
 
     updateTx();
@@ -526,6 +549,10 @@ export class ProductsService {
     let hasSales = false;
     let hasMovements = false;
     let hasPurchases = false;
+    let hasRepairs = false;
+    let hasReturns = false;
+    let hasSoldSerials = false;
+    let hasStockCounts = false;
 
     if (variantIds.length > 0) {
       const placeholders = variantIds.map(() => '?').join(',');
@@ -542,7 +569,45 @@ export class ProductsService {
         .get(...variantIds) as { count: number };
       if (purchaseCount.count > 0) hasPurchases = true;
 
-      // 3. فحص الدفعات ذات الرصيد أو الحركات
+      // 3. فحص قطع الغيار في الصيانة
+      try {
+        const repairCount = db
+          .prepare(`SELECT COUNT(*) as count FROM repair_parts WHERE variant_id IN (${placeholders})`)
+          .get(...variantIds) as { count: number };
+        if (repairCount.count > 0) hasRepairs = true;
+      } catch {}
+
+      // 4. فحص المرتجعات
+      try {
+        const returnCount = db
+          .prepare(`SELECT COUNT(*) as count FROM return_items WHERE variant_id IN (${placeholders})`)
+          .get(...variantIds) as { count: number };
+        const purchaseRetCount = db
+          .prepare(`SELECT COUNT(*) as count FROM purchase_return_items WHERE variant_id IN (${placeholders})`)
+          .get(...variantIds) as { count: number };
+        if (returnCount.count > 0 || purchaseRetCount.count > 0) hasReturns = true;
+      } catch {}
+
+      // 5. فحص أجهزة الهواتف والسيريالات المباعة
+      try {
+        const soldSerialCount = db
+          .prepare(`
+            SELECT COUNT(*) as count FROM device_serials 
+            WHERE variant_id IN (${placeholders}) AND (status = 'sold' OR sale_item_id IS NOT NULL)
+          `)
+          .get(...variantIds) as { count: number };
+        if (soldSerialCount.count > 0) hasSoldSerials = true;
+      } catch {}
+
+      // 6. فحص عمليات الجرد
+      try {
+        const countCount = db
+          .prepare(`SELECT COUNT(*) as count FROM stock_count_items WHERE variant_id IN (${placeholders})`)
+          .get(...variantIds) as { count: number };
+        if (countCount.count > 0) hasStockCounts = true;
+      } catch {}
+
+      // 7. فحص الدفعات ذات الرصيد أو الحركات
       const batches = db
         .prepare(`SELECT id, qty_remaining FROM batches WHERE variant_id IN (${placeholders})`)
         .all(...variantIds) as { id: number; qty_remaining: number }[];
@@ -550,7 +615,6 @@ export class ProductsService {
       if (batches.length > 0) {
         const batchIds = batches.map((b) => b.id);
         const bPlaceholders = batchIds.map(() => '?').join(',');
-        // الحركات التي تدل على نشاط تجاري حقيقي وليست مجرد رصيد افتتاحي
         const moveCount = db
           .prepare(
             `SELECT COUNT(*) as count FROM stock_movements WHERE batch_id IN (${bPlaceholders}) AND type NOT IN ('adjust_in')`
@@ -560,17 +624,19 @@ export class ProductsService {
       }
     }
 
-    const hasHistory = hasSales || hasMovements || hasPurchases;
+    const hasHistory =
+      hasSales || hasMovements || hasPurchases || hasRepairs || hasReturns || hasSoldSerials || hasStockCounts;
 
-    if (hasHistory) {
-      // أرشفة آمنة (Soft Delete)
+    const performSoftDelete = () => {
       db.transaction(() => {
         db.prepare("UPDATE products SET is_active = 0, updated_at = datetime('now') WHERE id = ?").run(id);
         if (variantIds.length > 0) {
           const placeholders = variantIds.map(() => '?').join(',');
           db.prepare(`UPDATE product_variants SET is_active = 0 WHERE id IN (${placeholders})`).run(...variantIds);
           // تحرير الباركودات المرتبطة لكي يتمكن المتجر من إعادة استخدامها إن رغب
-          db.prepare(`DELETE FROM product_barcodes WHERE variant_id IN (${placeholders})`).run(...variantIds);
+          try {
+            db.prepare(`DELETE FROM product_barcodes WHERE variant_id IN (${placeholders})`).run(...variantIds);
+          } catch {}
         }
 
         if (actorUserId) {
@@ -581,72 +647,98 @@ export class ProductsService {
             entityId: id,
             details: {
               product_name: product.name_ar,
-              reason: 'أرشفة المنتج لوجود حركات مبيعات أو مشتريات سابقة',
+              reason: 'أرشفة المنتج لوجود حركات مبيعات أو مشتريات أو صيانة سابقة',
               has_sales: hasSales,
               has_movements: hasMovements,
+              has_repairs: hasRepairs,
             },
           });
         }
       })();
+    };
+
+    if (hasHistory) {
+      // أرشفة آمنة (Soft Delete)
+      performSoftDelete();
 
       return {
         success: true,
         action: 'archived',
-        message: `تم أرشفة المنتج "${product.name_ar}" وإخفاؤه بنجاح نظراً لوجود مبيعات أو مشتريات سابقة مرتبطة به.`,
+        message: `تم أرشفة المنتج "${product.name_ar}" وإخفاؤه بنجاح نظراً لوجود مبيعات أو مشتريات أو عمليات صيانة سابقة مرتبطة به.`,
       };
     } else {
-      // حذف نهائي كامل (Hard Delete)
-      db.transaction(() => {
-        if (variantIds.length > 0) {
-          const placeholders = variantIds.map(() => '?').join(',');
+      // محاولة حذف نهائي كامل (Hard Delete) مع حماية أمان تلقائية
+      try {
+        db.transaction(() => {
+          if (variantIds.length > 0) {
+            const placeholders = variantIds.map(() => '?').join(',');
 
-          // 1. حذف حركات المخزون التابعة للـ batches أولاً لتفادي تعارض الـ Foreign Key
-          const batchRows = db
-            .prepare(`SELECT id FROM batches WHERE variant_id IN (${placeholders})`)
-            .all(...variantIds) as { id: number }[];
+            // 1. حذف أجهزة وسيريالات الهواتف غير المباعة (in_stock) المرتبطة بالصنف
+            try {
+              db.prepare(`DELETE FROM device_serials WHERE variant_id IN (${placeholders})`).run(...variantIds);
+            } catch {}
 
-          if (batchRows.length > 0) {
-            const bPlaceholders = batchRows.map(() => '?').join(',');
-            db.prepare(`DELETE FROM stock_movements WHERE batch_id IN (${bPlaceholders})`).run(
-              ...batchRows.map((b) => b.id)
-            );
+            // 2. حذف بنود الجرد المعلقة إن وجدت
+            try {
+              db.prepare(`DELETE FROM stock_count_items WHERE variant_id IN (${placeholders})`).run(...variantIds);
+            } catch {}
+
+            // 3. حذف حركات المخزون التابعة للـ batches أولاً لتفادي تعارض الـ Foreign Key
+            const batchRows = db
+              .prepare(`SELECT id FROM batches WHERE variant_id IN (${placeholders})`)
+              .all(...variantIds) as { id: number }[];
+
+            if (batchRows.length > 0) {
+              const bPlaceholders = batchRows.map(() => '?').join(',');
+              db.prepare(`DELETE FROM stock_movements WHERE batch_id IN (${bPlaceholders})`).run(
+                ...batchRows.map((b) => b.id)
+              );
+            }
+
+            db.prepare(`DELETE FROM product_barcodes WHERE variant_id IN (${placeholders})`).run(...variantIds);
+            db.prepare(`DELETE FROM batches WHERE variant_id IN (${placeholders})`).run(...variantIds);
+
+            try {
+              db.prepare(`DELETE FROM product_price_history WHERE variant_id IN (${placeholders})`).run(...variantIds);
+            } catch {}
+
+            try {
+              db.prepare(`DELETE FROM promotion_items WHERE variant_id IN (${placeholders}) OR product_id = ?`).run(...variantIds, id);
+            } catch {}
+
+            db.prepare(`DELETE FROM product_variants WHERE product_id = ?`).run(id);
           }
 
-          db.prepare(`DELETE FROM product_barcodes WHERE variant_id IN (${placeholders})`).run(...variantIds);
-          db.prepare(`DELETE FROM batches WHERE variant_id IN (${placeholders})`).run(...variantIds);
+          db.prepare('DELETE FROM products WHERE id = ?').run(id);
 
-          try {
-            db.prepare(`DELETE FROM product_price_history WHERE variant_id IN (${placeholders})`).run(...variantIds);
-          } catch {}
+          if (actorUserId) {
+            this.auditService.log({
+              userId: actorUserId,
+              action: 'DELETE_PRODUCT',
+              entityType: 'products',
+              entityId: id,
+              details: {
+                product_name: product.name_ar,
+                note: 'حذف نهائي لعدم وجود أي مبيعات أو حركات مخزون سابقة',
+              },
+            });
+          }
+        })();
 
-          try {
-            db.prepare(`DELETE FROM promotion_items WHERE variant_id IN (${placeholders}) OR product_id = ?`).run(...variantIds, id);
-          } catch {}
-
-          db.prepare(`DELETE FROM product_variants WHERE product_id = ?`).run(id);
-        }
-
-        db.prepare('DELETE FROM products WHERE id = ?').run(id);
-
-        if (actorUserId) {
-          this.auditService.log({
-            userId: actorUserId,
-            action: 'DELETE_PRODUCT',
-            entityType: 'products',
-            entityId: id,
-            details: {
-              product_name: product.name_ar,
-              note: 'حذف نهائي لعدم وجود أي مبيعات أو حركات مخزون سابقة',
-            },
-          });
-        }
-      })();
-
-      return {
-        success: true,
-        action: 'deleted',
-        message: `تم حذف المنتج "${product.name_ar}" نهائياً من قاعدة البيانات بنجاح.`,
-      };
+        return {
+          success: true,
+          action: 'deleted',
+          message: `تم حذف المنتج "${product.name_ar}" نهائياً من قاعدة البيانات بنجاح.`,
+        };
+      } catch (hardDeleteErr) {
+        // في حال وجود أي قيد خارجي لم نتوقعه، نتحول تلقائياً للأرشفة الآمنة لمنع إحباط المستخدم
+        performSoftDelete();
+        return {
+          success: true,
+          action: 'archived',
+          message: `تم أرشفة المنتج "${product.name_ar}" وإخفاؤه بنجاح لوجود ارتباطات سابقة به في النظام.`,
+        };
+      }
     }
   }
 

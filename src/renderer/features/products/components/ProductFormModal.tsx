@@ -24,7 +24,7 @@ export function ProductFormModal({
 }: ProductFormModalProps): React.ReactElement | null {
   const { success: toastSuccess, error: toastError } = useToast();
   const [nameAr, setNameAr] = useState('');
-  const [categoryName, setCategoryName] = useState('مكياج');
+  const [categoryName, setCategoryName] = useState('هواتف ذكية (Smartphones)');
   const [brandName, setBrandName] = useState('');
   const [priceStr, setPriceStr] = useState('');
   const [barcode, setBarcode] = useState('');
@@ -37,7 +37,7 @@ export function ProductFormModal({
   useEffect(() => {
     if (productToEdit) {
       setNameAr(productToEdit.name || '');
-      setCategoryName(productToEdit.category || 'مكياج');
+      setCategoryName(productToEdit.category || 'هواتف ذكية (Smartphones)');
       setBrandName(productToEdit.brand === 'بدون علامة' ? '' : productToEdit.brand || '');
       setPriceStr(productToEdit.price ? (productToEdit.price / 100).toString() : '0');
       setBarcode(productToEdit.primaryBarcode === '---' ? '' : productToEdit.primaryBarcode || '');
@@ -45,7 +45,7 @@ export function ProductFormModal({
       setPriceReason('');
     } else {
       setNameAr('');
-      setCategoryName('مكياج');
+      setCategoryName('هواتف ذكية (Smartphones)');
       setBrandName('');
       setPriceStr('');
       setBarcode('');
@@ -164,17 +164,18 @@ export function ProductFormModal({
       onClose={onClose}
       title={isEditing ? `تعديل بيانات وسعر: ${productToEdit?.name}` : 'إضافة منتج وصنف جديد'}
       icon={<GlassIcon icon={isEditing ? Edit3 : Tag} size="sm" variant="primary" />}
-      width={540}
+      width={560}
     >
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14, direction: 'rtl' }}>
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 5 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
             اسم المنتج (بالعربية) *
           </label>
           <Input
             value={nameAr}
             onChange={(e) => setNameAr(e.target.value)}
-            placeholder="مثال: سيروم فيتامين سي لوريال"
+            placeholder="مثال: iPhone 14 Pro Max 256GB أو شاحن أنكر 20W"
+            style={{ backgroundColor: '#0B0E14', color: '#F8FAFC', border: '1.5px solid #262E3D', fontWeight: 600 }}
             autoFocus
             required
           />
@@ -182,48 +183,55 @@ export function ProductFormModal({
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 5 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
               القسم / التصنيف
             </label>
             <select
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
-              className="in"
               style={{
                 width: '100%',
                 height: 42,
                 borderRadius: 8,
-                border: '1.5px solid var(--border-light)',
+                border: '1.5px solid #262E3D',
                 padding: '0 10px',
-                fontSize: 14,
-                backgroundColor: '#FAFCFA',
+                fontSize: 13,
+                fontWeight: 600,
+                backgroundColor: '#0B0E14',
+                color: '#F8FAFC',
+                outline: 'none',
               }}
             >
-              <option value="مكياج">مكياج</option>
-              <option value="عناية بالبشرة">عناية بالبشرة</option>
-              <option value="عناية بالشعر">عناية بالشعر</option>
-              <option value="عطور">عطور</option>
-              <option value="أظافر">أظافر</option>
-              <option value="إكسسوارات">إكسسوارات</option>
-              <option value="عام">عام</option>
+              <option value="هواتف ذكية (Smartphones)">هواتف ذكية (Smartphones)</option>
+              <option value="هواتف مستعملة ومجددة (Used Phones)">هواتف مستعملة ومجددة (Used Phones)</option>
+              <option value="شواحن وكابلات (Chargers & Cables)">شواحن وكابلات (Chargers & Cables)</option>
+              <option value="سماعات وايرلس وصوتيات (Headphones & Audio)">سماعات وايرلس وصوتيات (Headphones & Audio)</option>
+              <option value="جرابات واسكرينات حماية (Cases & Screen Protectors)">جرابات واسكرينات حماية (Cases & Screen Protectors)</option>
+              <option value="باور بانك وبطاريات (Power Banks & Batteries)">باور بانك وبطاريات (Power Banks & Batteries)</option>
+              <option value="قطع غيار وشاشات (Spare Parts & Screens)">قطع غيار وشاشات (Spare Parts & Screens)</option>
+              <option value="ساعات وسوارات ذكية (Smart Watches)">ساعات وسوارات ذكية (Smart Watches)</option>
+              <option value="صيانة وخدمات (Repairs & Services)">صيانة وخدمات (Repairs & Services)</option>
+              <option value="كروت شحن وبطاقات (Cards & Recharge)">كروت شحن وبطاقات (Cards & Recharge)</option>
+              <option value="إكسسوارات عامة (Accessories)">إكسسوارات عامة (Accessories)</option>
             </select>
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 5 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
               الماركة / البراند
             </label>
             <Input
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
-              placeholder="مثال: لوريال، ميبيلين..."
+              placeholder="مثال: Apple, Samsung, Anker..."
+              style={{ backgroundColor: '#0B0E14', color: '#F8FAFC', border: '1.5px solid #262E3D', fontWeight: 600 }}
             />
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 5 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
               سعر البيع (ج.م) *
             </label>
             <Input
@@ -231,13 +239,14 @@ export function ProductFormModal({
               step="any"
               value={priceStr}
               onChange={(e) => setPriceStr(e.target.value)}
-              placeholder="مثال: 180.00"
+              placeholder="مثال: 450.00"
+              style={{ backgroundColor: '#0B0E14', color: '#FFB800', border: '1.5px solid #262E3D', fontWeight: 700 }}
               required
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 5 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
               {isEditing ? 'رصيد المخزون (قطعة)' : 'رصيد المخزون الافتتاحي'}
             </label>
             <Input
@@ -246,37 +255,39 @@ export function ProductFormModal({
               onChange={(e) => setInitialStockStr(e.target.value)}
               placeholder="10"
               min={0}
+              style={{ backgroundColor: '#0B0E14', color: '#F8FAFC', border: '1.5px solid #262E3D', fontWeight: 700 }}
             />
           </div>
         </div>
 
         {isEditing && (
-          <div style={{ backgroundColor: '#F8FAF8', padding: '10px 12px', borderRadius: 8, border: '1px solid #E2E8E2' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-muted)', marginBottom: 5 }}>
-              <ShieldAlert size={14} color="var(--color-brand-deep)" />
+          <div style={{ backgroundColor: '#0B0E14', padding: '10px 12px', borderRadius: 8, border: '1px solid #262E3D' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#FFB800', marginBottom: 5, fontWeight: 600 }}>
+              <ShieldAlert size={14} color="#FFB800" />
               <span>سبب تعديل السعر (اختياري - يوثق تلقائياً في سجل الرقابة والتاريخ):</span>
             </div>
             <Input
               value={priceReason}
               onChange={(e) => setPriceReason(e.target.value)}
               placeholder="مثال: زيادة تسعيرة المورد، خصم خاص، تعديل دوري..."
+              style={{ backgroundColor: '#161B22', color: '#F8FAFC', border: '1.5px solid #262E3D' }}
             />
           </div>
         )}
 
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
-            <label style={{ fontSize: 13, fontWeight: 600 }}>الباركود الدولي أو الداخلي</label>
+            <label style={{ fontSize: 13, fontWeight: 700, color: '#F8FAFC' }}>الباركود الدولي أو الداخلي</label>
             <button
               type="button"
               onClick={handleGenerateBarcode}
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'var(--color-primary)',
+                color: '#FFB800',
                 fontSize: 12,
                 cursor: 'pointer',
-                fontWeight: 600,
+                fontWeight: 700,
                 textDecoration: 'underline',
               }}
             >
@@ -287,7 +298,8 @@ export function ProductFormModal({
             value={barcode}
             onChange={(e) => setBarcode(e.target.value)}
             placeholder="امسح بالباركود أو اتركه للتوليد التلقائي"
-            icon={<Barcode size={18} />}
+            icon={<Barcode size={18} color="#94A3B8" />}
+            style={{ backgroundColor: '#0B0E14', color: '#F8FAFC', border: '1.5px solid #262E3D', fontWeight: 600 }}
           />
         </div>
 

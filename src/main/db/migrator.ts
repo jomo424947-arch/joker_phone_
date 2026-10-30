@@ -32,11 +32,34 @@ function resolveMigrationsDir(customDir?: string): string {
   }
 
   const candidatePaths = [
+    // المسار الأقرب: بجانب ملف index.js المبني
     path.join(__dirname, 'migrations'),
     path.join(__dirname, 'db', 'migrations'),
+    // مسارات التطوير
     path.resolve(process.cwd(), 'src', 'main', 'db', 'migrations'),
+    // مسار الـ dist-electron
     path.resolve(process.cwd(), 'dist-electron', 'main', 'migrations'),
   ];
+
+  // إضافة مسارات Electron في بيئة الإنتاج
+  try {
+    const { app } = require('electron');
+    if (app) {
+      const appPath = app.getAppPath();
+      candidatePaths.push(
+        path.join(appPath, 'dist-electron', 'main', 'migrations'),
+        path.join(appPath, 'main', 'migrations'),
+      );
+      if (process.resourcesPath) {
+        candidatePaths.push(
+          path.join(process.resourcesPath, 'app', 'dist-electron', 'main', 'migrations'),
+          path.join(process.resourcesPath, 'dist-electron', 'main', 'migrations'),
+        );
+      }
+    }
+  } catch {
+    // بيئة الاختبارات أو بيئة Node العادية - يتم تجاهل الخطأ
+  }
 
   for (const candidate of candidatePaths) {
     if (fs.existsSync(candidate)) {
@@ -44,6 +67,10 @@ function resolveMigrationsDir(customDir?: string): string {
     }
   }
 
+  console.error(
+    `[Migrator] تعذر العثور على مجلد الترحيلات. المسارات المفحوصة:`,
+    candidatePaths
+  );
   throw new Error(
     `تعذر العثور على مجلد الترحيلات (migrations). المسارات المفحوصة: ${candidatePaths.join(', ')}`
   );

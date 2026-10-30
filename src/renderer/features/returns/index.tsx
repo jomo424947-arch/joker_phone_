@@ -181,33 +181,34 @@ export function ReturnsScreen(): React.ReactElement {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18, height: '100%' }}>
       {/* بطاقات الإحصائيات العلوية */}
+      {/* بطاقات الإحصائيات العلوية */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>إجمالي المبالغ المستردة</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: '#962B34', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>إجمالي المبالغ المستردة</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: '#EF4444', marginTop: 4 }}>
             {formatMoney(totalRefunded)}
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>عدد عمليات الإرجاع</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>عدد عمليات الإرجاع</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {returns.length} عملية
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '16px 18px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '16px 18px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>سياسة الإرجاع والاستبدال</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#21633D', marginTop: 4 }}>
+          <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>سياسة الإرجاع والاستبدال</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#10B981', marginTop: 4 }}>
             14 يوماً مع إرجاع فوري للمخزون
           </div>
         </div>
@@ -221,7 +222,8 @@ export function ReturnsScreen(): React.ReactElement {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
         <div style={{ width: 320 }}>
@@ -268,7 +270,9 @@ export function ReturnsScreen(): React.ReactElement {
           flex: 1,
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
+          borderRadius: 14,
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -283,10 +287,10 @@ export function ReturnsScreen(): React.ReactElement {
                 justifyContent: 'center',
                 padding: 48,
                 gap: 12,
-                color: 'var(--text-muted)',
+                color: '#94A3B8',
               }}
             >
-              <RotateCcw size={42} opacity={0.4} />
+              <RotateCcw size={42} opacity={0.4} color="#94A3B8" />
               <div style={{ fontSize: 15, fontWeight: 600 }}>لا توجد عمليات مرتجع مسجلة بعد</div>
               <div style={{ fontSize: 12 }}>
                 عند إرجاع أي صنف مرتبط بفاتورة مبيعات، سيتم توثيقه وتعديل المخزون والخزنة آلياً هنا
@@ -295,13 +299,13 @@ export function ReturnsScreen(): React.ReactElement {
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
               <thead>
-                <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-                  <th style={{ width: '8%', padding: '12px 16px', textAlign: 'center' }}>رقم المرتجع</th>
-                  <th style={{ width: '14%', padding: '12px 16px' }}>الفاتورة الأصلية</th>
-                  <th style={{ width: '16%', padding: '12px 16px' }}>تاريخ المرتجع</th>
-                  <th style={{ width: '16%', padding: '12px 16px', textAlign: 'left' }}>المبلغ المسترد</th>
-                  <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center' }}>طريقة الرد</th>
-                  <th style={{ width: '32%', padding: '12px 16px' }}>سبب الإرجاع</th>
+                <tr style={{ background: '#1C222D', borderBottom: '1px solid #262E3D' }}>
+                  <th style={{ width: '10%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>رقم المرتجع</th>
+                  <th style={{ width: '14%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>الفاتورة الأصلية</th>
+                  <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>تاريخ المرتجع</th>
+                  <th style={{ width: '16%', padding: '12px 16px', textAlign: 'left', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>المبلغ المسترد</th>
+                  <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>طريقة الرد</th>
+                  <th style={{ width: '30%', padding: '12px 16px', color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>سبب الإرجاع</th>
                 </tr>
               </thead>
               <tbody>

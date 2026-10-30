@@ -60,7 +60,7 @@ export function BarcodePrintModal({
   const [printers, setPrinters] = useState<SystemPrinter[]>([]);
   const [selectedPrinter, setSelectedPrinter] = useState<string>('');
   const [selectedSizeId, setSelectedSizeId] = useState<string>('38x25');
-  const [storeName, setStoreName] = useState<string>('بوتيك جوري');
+  const [storeName, setStoreName] = useState<string>('الجوكر فون');
 
   const previewSvgRef = useRef<SVGSVGElement | null>(null);
 
@@ -388,11 +388,11 @@ export function BarcodePrintModal({
                 style={{
                   padding: '5px 8px',
                   borderRadius: 6,
-                  border: '1px solid #CCD8D1',
-                  backgroundColor: '#FFFFFF',
-                  color: '#2C4A3E',
+                  border: '1px solid #262E3D',
+                  backgroundColor: '#0B0E14',
+                  color: '#FFB800',
                   fontSize: 11,
-                  fontWeight: 600,
+                  fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -411,11 +411,11 @@ export function BarcodePrintModal({
                 style={{
                   padding: '5px 8px',
                   borderRadius: 6,
-                  border: '1px solid #CCD8D1',
-                  backgroundColor: '#FFFFFF',
-                  color: '#B91C1C',
+                  border: '1px solid #EF4444',
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  color: '#EF4444',
                   fontSize: 11,
-                  fontWeight: 600,
+                  fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -437,10 +437,10 @@ export function BarcodePrintModal({
               padding: '8px 10px',
               borderRadius: 7,
               border: isSelectedOnline ? '1.5px solid #10B981' : '1.5px solid #EF4444',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#0B0E14',
               fontSize: 13,
               fontWeight: 700,
-              color: '#1B2B24',
+              color: '#F8FAFC',
               direction: 'ltr',
               textAlign: 'right',
             }}
@@ -497,7 +497,7 @@ export function BarcodePrintModal({
 
         {/* مقاس ورق الملصق */}
         <div>
-          <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, marginBottom: 6, color: '#1B2B24' }}>
+          <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, marginBottom: 6, color: '#F8FAFC' }}>
             مقاس ورق الملصق (Label Size):
           </label>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -511,14 +511,14 @@ export function BarcodePrintModal({
                   borderRadius: 6,
                   border:
                     selectedSizeId === size.id
-                      ? '1.5px solid var(--color-brand-deep)'
-                      : '1px solid #CCD8D1',
+                      ? '1.5px solid #FFB800'
+                      : '1px solid #262E3D',
                   backgroundColor:
-                    selectedSizeId === size.id ? 'var(--color-primary-light)' : '#FFFFFF',
+                    selectedSizeId === size.id ? '#FFB800' : '#1C222D',
                   color:
-                    selectedSizeId === size.id ? 'var(--color-brand-deep)' : '#444',
+                    selectedSizeId === size.id ? '#0B0E14' : '#CBD5E1',
                   fontSize: 11.5,
-                  fontWeight: selectedSizeId === size.id ? 700 : 500,
+                  fontWeight: selectedSizeId === size.id ? 800 : 500,
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
@@ -678,10 +678,10 @@ export function BarcodePrintModal({
                 style={{
                   padding: '8px 12px',
                   borderRadius: 6,
-                  border: '1px solid #D5DAD6',
-                  backgroundColor: copies === preset ? 'var(--color-primary-light)' : '#FFFFFF',
-                  color: copies === preset ? 'var(--color-brand-deep)' : '#555',
-                  fontWeight: 700,
+                  border: copies === preset ? '1.5px solid #FFB800' : '1px solid #262E3D',
+                  backgroundColor: copies === preset ? '#FFB800' : '#1C222D',
+                  color: copies === preset ? '#0B0E14' : '#CBD5E1',
+                  fontWeight: copies === preset ? 800 : 600,
                   fontSize: 12,
                   cursor: 'pointer',
                 }}

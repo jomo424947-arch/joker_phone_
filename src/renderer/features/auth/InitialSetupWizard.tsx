@@ -9,6 +9,9 @@ import {
   Sparkles,
   AlertCircle,
   CheckCircle2,
+  ShieldCheck,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { SafeUser } from '../../../shared/types/users.types';
 import { sounds } from '../../lib/sounds';
@@ -30,6 +33,10 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pin, setPin] = useState('');
+
+  // كود تفعيل النسخة والترخيص (خاص بالمطور)
+  const [activationCode, setActivationCode] = useState('');
+  const [showActivationCode, setShowActivationCode] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -90,6 +97,10 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
       triggerError('رمز PIN يجب أن يتكون من 4 أرقام بالضبط');
       return;
     }
+    if (!activationCode.trim()) {
+      triggerError('يرجى إدخال كود تفعيل وترخيص النسخة المعتمد لتنشيط النظام');
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -119,6 +130,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
         username: username.trim(),
         password,
         pin: pin.trim(),
+        activationCode: activationCode.trim().toUpperCase(),
       });
 
       if (res?.success && res.user) {
@@ -143,7 +155,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
         height: '100vh',
         width: '100vw',
         padding: '20px 16px 30px 16px',
-        background: 'radial-gradient(circle at 50% 10%, #FFF5F7 0%, #FFFFFF 65%, #FFF0F3 100%)',
+        background: 'radial-gradient(circle at 50% 10%, #161B22 0%, #0B0E14 70%)',
         userSelect: 'none',
         fontFamily: 'var(--font-family, "Alexandria", sans-serif)',
         direction: 'rtl',
@@ -157,73 +169,75 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
           width: '100%',
           maxWidth: 680,
           margin: 'auto',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
           borderRadius: 20,
-          padding: '22px 28px',
-          boxShadow: '0 20px 48px -12px rgba(255, 149, 165, 0.22), 0 4px 16px rgba(0, 0, 0, 0.04)',
-          border: '1px solid rgba(255, 149, 165, 0.3)',
+          padding: '24px 28px',
+          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 184, 0, 0.25)',
+          border: '1px solid #262E3D',
           display: 'flex',
           flexDirection: 'column',
           gap: 14,
           position: 'relative',
+          color: '#F8FAFC',
         }}
       >
-        {/* الترويسة الرئيسية وشعار Boutique Gouri */}
+        {/* الترويسة الرئيسية وشعار الجوكر فون */}
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div
             style={{
-              width: 58,
-              height: 58,
-              borderRadius: '50%',
-              padding: 2,
-              background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
+              width: 62,
+              height: 62,
+              borderRadius: '16px',
+              padding: 3,
+              background: 'linear-gradient(135deg, #FFB800 0%, #D97706 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 6px 16px rgba(255, 112, 136, 0.35)',
-              marginBottom: 8,
+              boxShadow: '0 6px 20px rgba(255, 184, 0, 0.35)',
+              marginBottom: 10,
             }}
           >
             <img
               src={logoImg}
-              alt="Boutique Gouri Logo"
+              alt="الجوكر فون - JOKER PHONE"
               style={{
                 width: '100%',
                 height: '100%',
-                borderRadius: '50%',
+                borderRadius: '13px',
                 objectFit: 'cover',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#0B0E14',
               }}
             />
           </div>
 
           <h1
             style={{
-              fontSize: 19,
+              fontSize: 20,
               fontWeight: 800,
-              color: '#111827',
+              color: '#F8FAFC',
               margin: '0 0 4px 0',
               lineHeight: 1.25,
             }}
           >
-            مرحباً بك في Boutique Gouri • تهيئة النظام
+            مرحباً بك في نظام الجوكر فون (JOKER PHONE) • تهيئة النظام لأول مرة
           </h1>
           <p
             style={{
               fontSize: 12.5,
-              color: '#6B7280',
+              color: '#CBD5E1',
               margin: 0,
-              maxWidth: 500,
-              lineHeight: 1.4,
+              maxWidth: 520,
+              lineHeight: 1.5,
+              fontWeight: 500,
             }}
           >
-            يرجى إدخال بيانات متجرك وحساب المسؤول الرئيسي لبدء استخدام نظام المبيعات ونقاط البيع بأمان تام.
+            يرجى إدخال بيانات متجرك وحساب المسؤول الرئيسي لبدء استخدام نظام إدارة محلات الهواتف والاكسسوارات والصيانة بأمان تام.
           </p>
           <button
             type="button"
             onClick={() => {
               sounds.playClick();
-              setStoreName('بوتيك جوري - كوزمتكس');
+              setStoreName('الجوكر فون - لإدارة محلات التليفونات والاكسسوارات');
               setStorePhone('01000000000');
               setStoreAddress('الفرع الرئيسي');
               setDisplayName('محمد الجوكر');
@@ -234,19 +248,19 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
               setError(null);
             }}
             style={{
-              marginTop: 8,
-              background: 'rgba(255, 112, 136, 0.08)',
-              border: '1px dashed #FF7088',
+              marginTop: 10,
+              background: 'rgba(255, 184, 0, 0.12)',
+              border: '1.5px dashed #FFB800',
               borderRadius: 8,
-              color: 'var(--color-primary)',
-              fontSize: 11.5,
-              fontWeight: 600,
-              padding: '4px 12px',
+              color: '#FFB800',
+              fontSize: 12,
+              fontWeight: 700,
+              padding: '6px 14px',
               cursor: 'pointer',
               transition: 'background 0.15s ease',
             }}
           >
-            ⚡ تعبئة سريعة لبيانات متجر بوتيك جوري (محمد الجوكر)
+            ⚡ تعبئة سريعة لبيانات متجر الجوكر فون (محمد الجوكر)
           </button>
         </div>
 
@@ -272,55 +286,57 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
           {/* القسم 1: بيانات المتجر */}
           <div
             style={{
-              backgroundColor: '#FAFAF9',
+              backgroundColor: '#1C222D',
               borderRadius: 14,
-              padding: '12px 16px',
-              border: '1px solid #F0EAEB',
+              padding: '14px 18px',
+              border: '1px solid #262E3D',
               display: 'flex',
               flexDirection: 'column',
-              gap: 10,
+              gap: 11,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#D63B5E', fontWeight: 700, fontSize: 13.5 }}>
-              <Store size={16} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#FFB800', fontWeight: 800, fontSize: 14 }}>
+              <Store size={18} color="#FFB800" />
               <span>1. بيانات المتجر والنشاط</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  اسم المتجر / المحل <span style={{ color: '#E11D48' }}>*</span>
+                <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                  اسم المتجر / المحل <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
                     type="text"
                     value={storeName}
                     onChange={(e) => setStoreName(e.target.value)}
-                    placeholder="مثال: بوتيك جوري - Boutique Gouri"
+                    placeholder="مثال: الجوكر فون - JOKER PHONE"
                     autoFocus
                     style={{
                       width: '100%',
-                      height: 38,
-                      padding: '0 34px 0 10px',
-                      borderRadius: 8,
-                      border: '1.5px solid #E5E7EB',
-                      fontSize: 13,
+                      height: 40,
+                      padding: '0 36px 0 12px',
+                      borderRadius: 9,
+                      border: '1.5px solid #262E3D',
+                      backgroundColor: '#0B0E14',
+                      color: '#F8FAFC',
+                      fontSize: 13.5,
                       fontWeight: 600,
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
                   />
-                  <Store size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                  <Store size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  رقم الهاتف للتواصل <span style={{ color: '#E11D48' }}>*</span>
+                <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                  رقم الهاتف للتواصل <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -330,23 +346,25 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                     placeholder="مثال: 01012345678"
                     style={{
                       width: '100%',
-                      height: 38,
-                      padding: '0 34px 0 10px',
-                      borderRadius: 8,
-                      border: '1.5px solid #E5E7EB',
-                      fontSize: 13,
+                      height: 40,
+                      padding: '0 36px 0 12px',
+                      borderRadius: 9,
+                      border: '1.5px solid #262E3D',
+                      backgroundColor: '#0B0E14',
+                      color: '#F8FAFC',
+                      fontSize: 13.5,
                       fontWeight: 600,
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
                   />
-                  <Phone size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                  <Phone size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
                 </div>
               </div>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
+              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
                 عنوان المتجر أو الفرع (اختياري)
               </label>
               <div style={{ position: 'relative' }}>
@@ -357,17 +375,19 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                   placeholder="مثال: شارع الجمهورية - الفرع الرئيسي"
                   style={{
                     width: '100%',
-                    height: 38,
-                    padding: '0 34px 0 10px',
-                    borderRadius: 8,
-                    border: '1.5px solid #E5E7EB',
-                    fontSize: 13,
+                    height: 40,
+                    padding: '0 36px 0 12px',
+                    borderRadius: 9,
+                    border: '1.5px solid #262E3D',
+                    backgroundColor: '#0B0E14',
+                    color: '#F8FAFC',
+                    fontSize: 13.5,
                     fontWeight: 600,
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
                 />
-                <MapPin size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                <MapPin size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
               </div>
             </div>
           </div>
@@ -375,24 +395,24 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
           {/* القسم 2: حساب المالك الرئيسي */}
           <div
             style={{
-              backgroundColor: '#FAFAF9',
+              backgroundColor: '#1C222D',
               borderRadius: 14,
-              padding: '12px 16px',
-              border: '1px solid #F0EAEB',
+              padding: '14px 18px',
+              border: '1px solid #262E3D',
               display: 'flex',
               flexDirection: 'column',
-              gap: 10,
+              gap: 11,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#D63B5E', fontWeight: 700, fontSize: 13.5 }}>
-              <User size={16} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#FFB800', fontWeight: 800, fontSize: 14 }}>
+              <User size={18} color="#FFB800" />
               <span>2. بيانات حساب المالك والمدير الرئيسي</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  اسم المالك الشخصي <span style={{ color: '#E11D48' }}>*</span>
+                <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                  اسم المالك الشخصي <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -402,23 +422,25 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                     placeholder="مثال: محمد أحمد"
                     style={{
                       width: '100%',
-                      height: 38,
-                      padding: '0 34px 0 10px',
-                      borderRadius: 8,
-                      border: '1.5px solid #E5E7EB',
-                      fontSize: 13,
+                      height: 40,
+                      padding: '0 36px 0 12px',
+                      borderRadius: 9,
+                      border: '1.5px solid #262E3D',
+                      backgroundColor: '#0B0E14',
+                      color: '#F8FAFC',
+                      fontSize: 13.5,
                       fontWeight: 600,
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
                   />
-                  <User size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                  <User size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  اسم المستخدم لتسجيل الدخول <span style={{ color: '#E11D48' }}>*</span>
+                <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                  اسم المستخدم لتسجيل الدخول <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -428,11 +450,13 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                     placeholder="مثال: admin"
                     style={{
                       width: '100%',
-                      height: 38,
-                      padding: '0 34px 0 10px',
-                      borderRadius: 8,
-                      border: '1.5px solid #E5E7EB',
-                      fontSize: 13,
+                      height: 40,
+                      padding: '0 36px 0 12px',
+                      borderRadius: 9,
+                      border: '1.5px solid #262E3D',
+                      backgroundColor: '#0B0E14',
+                      color: '#F8FAFC',
+                      fontSize: 13.5,
                       fontWeight: 600,
                       outline: 'none',
                       boxSizing: 'border-box',
@@ -440,15 +464,15 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                       textAlign: 'right',
                     }}
                   />
-                  <User size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                  <User size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  كلمة المرور الإدارية (6 خانات فأكثر) <span style={{ color: '#E11D48' }}>*</span>
+                <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                  كلمة المرور الإدارية (6 خانات فأكثر) <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -458,22 +482,24 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                     placeholder="••••••••"
                     style={{
                       width: '100%',
-                      height: 38,
-                      padding: '0 34px 0 10px',
-                      borderRadius: 8,
-                      border: '1.5px solid #E5E7EB',
+                      height: 40,
+                      padding: '0 36px 0 12px',
+                      borderRadius: 9,
+                      border: '1.5px solid #262E3D',
+                      backgroundColor: '#0B0E14',
+                      color: '#F8FAFC',
                       fontSize: 14,
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
                   />
-                  <Lock size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                  <Lock size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  تأكيد كلمة المرور <span style={{ color: '#E11D48' }}>*</span>
+                <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                  تأكيد كلمة المرور <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -483,23 +509,25 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                     placeholder="••••••••"
                     style={{
                       width: '100%',
-                      height: 38,
-                      padding: '0 34px 0 10px',
-                      borderRadius: 8,
-                      border: '1.5px solid #E5E7EB',
+                      height: 40,
+                      padding: '0 36px 0 12px',
+                      borderRadius: 9,
+                      border: '1.5px solid #262E3D',
+                      backgroundColor: '#0B0E14',
+                      color: '#F8FAFC',
                       fontSize: 14,
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
                   />
-                  <Lock size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                  <Lock size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
                 </div>
               </div>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                رمز PIN السريع (4 أرقام للدخول السريع في الكاشير) <span style={{ color: '#E11D48' }}>*</span>
+              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                رمز PIN السريع (4 أرقام للدخول السريع في الكاشير) <span style={{ color: '#EF4444' }}>*</span>
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -510,22 +538,114 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                   placeholder="مثال: 1234"
                   style={{
                     width: '100%',
-                    height: 38,
-                    padding: '0 34px 0 10px',
-                    borderRadius: 8,
-                    border: '1.5px solid #E5E7EB',
-                    fontSize: 14,
-                    fontWeight: 700,
-                    letterSpacing: '2px',
+                    height: 40,
+                    padding: '0 36px 0 12px',
+                    borderRadius: 9,
+                    border: '1.5px solid #262E3D',
+                    backgroundColor: '#0B0E14',
+                    color: '#FFB800',
+                    fontSize: 16,
+                    fontWeight: 800,
+                    letterSpacing: '4px',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
                 />
-                <KeyRound size={15} color="#9CA3AF" style={{ position: 'absolute', right: 10, top: 11 }} />
+                <KeyRound size={16} color="#FFB800" style={{ position: 'absolute', right: 11, top: 12 }} />
               </div>
-              <span style={{ fontSize: 11, color: '#6B7280', marginTop: 3, display: 'block' }}>
+              <span style={{ fontSize: 11.5, color: '#CBD5E1', marginTop: 4, display: 'block', fontWeight: 500 }}>
                 يُستخدم رمز الـ PIN هذا لتسجيل الدخول السريع في نقاط البيع وتفويض الخصومات والعمليات الحساسة.
               </span>
+            </div>
+          </div>
+
+          {/* القسم 3: كود تفعيل وترخيص النسخة (خاص بالمطور) */}
+          <div
+            style={{
+              backgroundColor: '#1C222D',
+              borderRadius: 14,
+              padding: '14px 18px',
+              border: '1.5px solid #FFB800',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              background: 'linear-gradient(180deg, rgba(255, 184, 0, 0.08) 0%, rgba(28, 34, 45, 0.9) 100%)',
+              boxShadow: '0 4px 20px rgba(255, 184, 0, 0.12)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#FFB800', fontWeight: 800, fontSize: 14 }}>
+                <ShieldCheck size={19} color="#FFB800" />
+                <span>3. تفعيل وترخيص النسخة (خاص بالمطور / الدعم الفني)</span>
+              </div>
+              <span
+                style={{
+                  fontSize: 11,
+                  backgroundColor: '#FFB800',
+                  color: '#000000',
+                  fontWeight: 800,
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                }}
+              >
+                مطلوب للتنشيط
+              </span>
+            </div>
+
+            <p style={{ fontSize: 12, color: '#CBD5E1', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
+              هذا الحقل مخصص للمطور/المالك لوضع كود الترخيص المعتمد لتنشيط هذه النسخة على هذا الجهاز قبل الاستخدام.
+            </p>
+
+            <div>
+              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
+                كود تفعيل النسخة (Activation Key) <span style={{ color: '#EF4444' }}>*</span>
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showActivationCode ? 'text' : 'password'}
+                  value={activationCode}
+                  onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
+                  placeholder="مثال: JKR-XXXX-XXXX-XXXX"
+                  style={{
+                    width: '100%',
+                    height: 42,
+                    padding: '0 40px 0 40px',
+                    borderRadius: 9,
+                    border: '1.5px solid #FFB800',
+                    backgroundColor: '#0B0E14',
+                    color: '#FFB800',
+                    fontSize: 14.5,
+                    fontWeight: 800,
+                    fontFamily: 'monospace',
+                    letterSpacing: '2px',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    direction: 'ltr',
+                    textAlign: 'center',
+                  }}
+                />
+                <ShieldCheck size={18} color="#FFB800" style={{ position: 'absolute', right: 12, top: 12 }} />
+                <button
+                  type="button"
+                  onClick={() => setShowActivationCode(!showActivationCode)}
+                  title={showActivationCode ? 'إخفاء كود التفعيل' : 'إظهار كود التفعيل'}
+                  style={{
+                    position: 'absolute',
+                    left: 10,
+                    top: 10,
+                    background: 'none',
+                    border: 'none',
+                    color: '#94A3B8',
+                    cursor: 'pointer',
+                    padding: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {showActivationCode ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -534,28 +654,28 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
             type="submit"
             disabled={isLoading}
             style={{
-              height: 44,
+              height: 46,
               borderRadius: 12,
               border: 'none',
-              background: 'linear-gradient(135deg, #FF95A5 0%, #FF6584 100%)',
-              color: '#FFFFFF',
-              fontSize: 15,
+              background: 'linear-gradient(135deg, #FFB800 0%, #FFA800 100%)',
+              color: '#000000',
+              fontSize: 15.5,
               fontWeight: 800,
               cursor: isLoading ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: 8,
-              boxShadow: '0 6px 20px rgba(255, 112, 136, 0.35)',
+              boxShadow: '0 6px 20px rgba(255, 184, 0, 0.45)',
               transition: 'all 0.18s ease',
-              marginTop: 4,
+              marginTop: 6,
             }}
           >
             {isLoading ? (
               <span>جاري حفظ التهيئة وتجهيز النظام...</span>
             ) : (
               <>
-                <CheckCircle2 size={18} />
+                <CheckCircle2 size={20} color="#000000" />
                 <span>حفظ الإعدادات وبدء استخدام النظام</span>
               </>
             )}

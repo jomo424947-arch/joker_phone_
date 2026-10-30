@@ -24,14 +24,14 @@ export function HotkeysBar(): React.ReactElement {
         alignItems: 'center',
         gap: 12,
         padding: '7px 14px',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#161B22',
         borderRadius: 12,
-        border: '1px solid var(--border-light)',
-        boxShadow: 'var(--shadow-sm)',
+        border: '1px solid #262E3D',
+        boxShadow: 'none',
         overflowX: 'auto',
       }}
     >
-      <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-muted)' }}>
+      <span style={{ fontSize: 12, fontWeight: 700, color: '#FFB800' }}>
         اختصارات سريعة:
       </span>
 
@@ -41,10 +41,10 @@ export function HotkeysBar(): React.ReactElement {
             <span
               className="kbd-badge"
               style={{
-                backgroundColor: '#FFF5F7',
-                color: h.color || 'var(--text-main)',
-                borderColor: '#F5D5DB',
-                padding: '2px 7px',
+                backgroundColor: '#0B0E14',
+                color: h.color || '#FFB800',
+                borderColor: '#262E3D',
+                padding: '2px 8px',
                 fontWeight: 700,
                 fontFamily: 'Space Grotesk, monospace',
                 fontSize: 11,
@@ -52,8 +52,8 @@ export function HotkeysBar(): React.ReactElement {
             >
               {h.key}
             </span>
-            <AppIcon name={h.iconName} size={14} color={h.color || 'var(--text-muted)'} />
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: 12 }}>{h.label}</span>
+            <AppIcon name={h.iconName} size={14} color={h.color || '#94A3B8'} />
+            <span style={{ color: '#CBD5E1', fontWeight: 600, fontSize: 12 }}>{h.label}</span>
           </div>
         ))}
       </div>

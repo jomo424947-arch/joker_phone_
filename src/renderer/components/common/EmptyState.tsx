@@ -31,30 +31,45 @@ export function EmptyState({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '48px 24px',
+        padding: '52px 24px',
         textAlign: 'center',
-        background: 'rgba(255, 255, 255, 0.5)',
+        background: 'rgba(255, 184, 0, 0.03)',
         borderRadius: 16,
-        border: '1.5px dashed #EAE2E4',
-        margin: '16px 0',
+        border: '1.5px dashed rgba(255, 184, 0, 0.25)',
+        margin: '16px',
         ...style,
       }}
     >
       <GlassIcon icon={icon} size="2xl" variant={variant} glow style={{ marginBottom: 16 }} />
-      <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--color-brand-deep)', marginBottom: 6 }}>
+      <h3 style={{ fontSize: 18, fontWeight: 800, color: '#F8FAFC', marginBottom: 8 }}>
         {title}
       </h3>
       {description && (
-        <p style={{ fontSize: 14, color: 'var(--text-muted)', maxWidth: 400, lineHeight: 1.5, marginBottom: actionLabel ? 20 : 0 }}>
+        <p style={{ fontSize: 14.5, color: '#CBD5E1', maxWidth: 480, lineHeight: 1.6, fontWeight: 500, marginBottom: actionLabel ? 22 : 0 }}>
           {description}
         </p>
       )}
       {actionLabel && onAction && (
         <button
           type="button"
-          className="btn btn-primary"
           onClick={onAction}
-          style={{ height: 40, padding: '0 20px', fontSize: 14 }}
+          style={{
+            height: 42,
+            padding: '0 24px',
+            fontSize: 14.5,
+            fontWeight: 800,
+            borderRadius: 10,
+            border: 'none',
+            background: 'linear-gradient(135deg, #FFB800 0%, #FFA800 100%)',
+            color: '#000000',
+            cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(255, 184, 0, 0.35)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            transition: 'all 0.18s ease',
+          }}
         >
           {actionLabel}
         </button>

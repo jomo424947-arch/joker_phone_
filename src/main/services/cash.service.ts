@@ -29,6 +29,42 @@ export interface ShiftSummary {
   expenses_by_category: { category: string; amount: number }[];
 }
 
+function resolveUserId(db: Database.Database, userId?: number | null): number {
+  if (userId && userId > 0) {
+    const exists = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
+    if (exists) return userId;
+  }
+  const firstUser = db.prepare('SELECT id FROM users ORDER BY id ASC LIMIT 1').get() as { id: number } | undefined;
+  if (firstUser) return firstUser.id;
+
+  try {
+    db.prepare(`
+      INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
+      VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+    `).run();
+    return 1;
+  } catch {
+    return 1;
+  }
+}
+
+function resolveShiftId(db: Database.Database, shiftId?: number | null, userId?: number): number {
+  if (shiftId) {
+    const exists = db.prepare("SELECT id FROM shifts WHERE id = ?").get(shiftId);
+    if (exists) return shiftId;
+  }
+  const openShift = db.prepare("SELECT id FROM shifts WHERE status = 'open' ORDER BY id DESC LIMIT 1").get() as { id: number } | undefined;
+  if (openShift) return openShift.id;
+
+  const effectiveUserId = resolveUserId(db, userId);
+  const uuid = crypto.randomUUID();
+  const res = db.prepare(`
+    INSERT INTO shifts (uuid, user_id, opening_balance, status, opened_at, notes)
+    VALUES (?, ?, 0, 'open', datetime('now'), 'وردية تلقائية')
+  `).run(uuid, effectiveUserId);
+  return Number(res.lastInsertRowid);
+}
+
 export class CashService {
   private db?: Database.Database;
   private auditService: AuditService;
@@ -91,10 +127,11 @@ export class CashService {
     let newShiftId = 0;
 
     const openTx = db.transaction(() => {
+      const effectiveUserId = resolveUserId(db, userId);
       // التأكد من عدم وجود وردية مفتوحة بالفعل لنفس المستخدم
       const existing = db
         .prepare("SELECT id FROM shifts WHERE user_id = ? AND status = 'open'")
-        .get(userId);
+        .get(effectiveUserId);
       if (existing) {
         throw new Error('توجد وردية مفتوحة بالفعل لهذا المستخدم، يجب إغلاقها أولاً');
       }
@@ -105,17 +142,17 @@ export class CashService {
         VALUES (?, ?, ?, 'open', datetime('now'), ?)
       `);
 
-      const res = insertShift.run(shiftUuid, userId, openingCash, notes ?? null);
+      const res = insertShift.run(shiftUuid, effectiveUserId, openingCash, notes ?? null);
       newShiftId = Number(res.lastInsertRowid);
 
       // تسجيل الرصيد الافتتاحي كحركة إيداع في الخزنة
       db.prepare(`
         INSERT INTO cash_movements (shift_id, user_id, type, amount, note, created_at)
         VALUES (?, ?, 'deposit', ?, 'رصيد افتتاحي للوردية', datetime('now'))
-      `).run(newShiftId, userId, openingCash);
+      `).run(newShiftId, effectiveUserId, openingCash);
 
       this.auditService.log({
-        userId,
+        userId: effectiveUserId,
         action: 'OPEN_SHIFT',
         entityType: 'shifts',
         entityId: newShiftId,
@@ -144,6 +181,8 @@ export class CashService {
     txDb?: Database.Database
   ): Promise<CashMovement> {
     const db = txDb ?? this.getDb();
+    const effectiveUserId = movement.user_id ? resolveUserId(db, movement.user_id) : null;
+    const effectiveShiftId = resolveShiftId(db, movement.shift_id, effectiveUserId ?? undefined);
 
     const stmt = db.prepare(`
       INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
@@ -151,8 +190,8 @@ export class CashService {
     `);
 
     const result = stmt.run(
-      movement.shift_id,
-      movement.user_id ?? null,
+      effectiveShiftId,
+      effectiveUserId,
       movement.type,
       movement.amount,
       movement.ref_type ?? null,
@@ -191,6 +230,8 @@ export class CashService {
     let expenseId = 0;
 
     const expenseTx = db.transaction(() => {
+      const effectiveUserId = resolveUserId(db, input.user_id);
+      const effectiveShiftId = resolveShiftId(db, input.shift_id, effectiveUserId);
       const expenseUuid = crypto.randomUUID();
       const res = db
         .prepare(`
@@ -199,8 +240,8 @@ export class CashService {
         `)
         .run(
           expenseUuid,
-          input.shift_id,
-          input.user_id,
+          effectiveShiftId,
+          effectiveUserId,
           input.category.trim(),
           input.amount,
           input.note?.trim() ?? null
@@ -213,15 +254,15 @@ export class CashService {
         INSERT INTO cash_movements (shift_id, user_id, type, amount, ref_type, ref_id, note, created_at)
         VALUES (?, ?, 'expense', ?, 'expense', ?, ?, datetime('now'))
       `).run(
-        input.shift_id,
-        input.user_id,
+        effectiveShiftId,
+        effectiveUserId,
         -Math.abs(input.amount),
         expenseId,
         input.note?.trim() ?? `مصروف: ${input.category}`
       );
 
       this.auditService.log({
-        userId: input.user_id,
+        userId: effectiveUserId,
         action: 'RECORD_EXPENSE',
         entityType: 'expenses',
         entityId: expenseId,
@@ -406,9 +447,13 @@ export class CashService {
     if (amount <= 0) {
       throw new Error('مبلغ الإيداع يجب أن يكون أكبر من الصفر');
     }
+    const db = this.getDb();
+    const effectiveUserId = resolveUserId(db, userId);
+    const effectiveShiftId = resolveShiftId(db, shiftId, effectiveUserId);
+
     const movement = await this.recordCashMovement({
-      shift_id: shiftId,
-      user_id: userId,
+      shift_id: effectiveShiftId,
+      user_id: effectiveUserId,
       type: 'deposit',
       amount: Math.abs(amount),
       ref_type: 'deposit',
@@ -416,10 +461,10 @@ export class CashService {
     });
 
     this.auditService.log({
-      userId,
+      userId: effectiveUserId,
       action: 'CASH_DEPOSIT',
       entityType: 'shifts',
-      entityId: shiftId,
+      entityId: effectiveShiftId,
       details: { amount, note },
     });
 
@@ -438,9 +483,13 @@ export class CashService {
     if (amount <= 0) {
       throw new Error('مبلغ السحب يجب أن يكون أكبر من الصفر');
     }
+    const db = this.getDb();
+    const effectiveUserId = resolveUserId(db, userId);
+    const effectiveShiftId = resolveShiftId(db, shiftId, effectiveUserId);
+
     const movement = await this.recordCashMovement({
-      shift_id: shiftId,
-      user_id: userId,
+      shift_id: effectiveShiftId,
+      user_id: effectiveUserId,
       type: 'withdrawal',
       amount: -Math.abs(amount),
       ref_type: 'withdrawal',
@@ -448,10 +497,10 @@ export class CashService {
     });
 
     this.auditService.log({
-      userId,
+      userId: effectiveUserId,
       action: 'CASH_DROP',
       entityType: 'shifts',
-      entityId: shiftId,
+      entityId: effectiveShiftId,
       details: { amount, note },
     });
 
@@ -557,11 +606,14 @@ export class CashService {
    * تسجيل فتح درج النقدية في سجل التدقيق
    */
   async logDrawerOpen(shiftId: number, userId: number, reason?: string): Promise<void> {
+    const db = this.getDb();
+    const effectiveUserId = resolveUserId(db, userId);
+    const effectiveShiftId = resolveShiftId(db, shiftId, effectiveUserId);
     this.auditService.log({
-      userId,
+      userId: effectiveUserId,
       action: 'DRAWER_OPEN',
       entityType: 'shifts',
-      entityId: shiftId,
+      entityId: effectiveShiftId,
       details: { reason: reason ?? 'فتح يدوي لدرج النقدية' },
     });
   }

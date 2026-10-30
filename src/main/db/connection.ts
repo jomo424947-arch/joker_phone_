@@ -58,17 +58,20 @@ export function getDatabase(options?: DatabaseConnectionOptions): Database.Datab
     verbose: options?.verbose ? console.log : undefined,
   });
 
-  // تفعيل إعدادات الأمان والأداء الصارمة
+  // تفعيل إعدادات الأمان والأداء الصارمة ومنع التجمد والقفل التلقائي
   dbInstance.pragma('journal_mode = WAL');
   dbInstance.pragma('foreign_keys = ON');
-  dbInstance.pragma('synchronous = FULL');
-  dbInstance.pragma('busy_timeout = 5000');
+  dbInstance.pragma('synchronous = NORMAL'); // الأداء القياسي الآمن في نمط WAL لتفادي تعليق القرص
+  dbInstance.pragma('busy_timeout = 15000'); // مهلة 15 ثانية لتفادي أخطاء database locked
+  dbInstance.pragma('wal_autocheckpoint = 1000');
+  dbInstance.pragma('cache_size = -64000'); // ذاكرة كاش 64 ميجابايت لتسريع القراءة
+  dbInstance.pragma('temp_store = MEMORY');
 
   return dbInstance;
 }
 
 /**
- * تهيئة قاعدة البيانات بالكامل (فتح الاتصال + تطبيق الترحيلات)
+ * تهيئة قاعدة البيانات بالكامل (فتح الاتصال + تطبيق الترحيلات + زرع الحسابات الافتراضية)
  */
 export function initializeDatabase(options?: DatabaseConnectionOptions): {
   db: Database.Database;
@@ -79,6 +82,17 @@ export function initializeDatabase(options?: DatabaseConnectionOptions): {
   const migrationResult = runMigrations(db, {
     migrationsDir: options?.migrationsDir,
   });
+
+  // التأكد من وجود الحسابات الإدارية المعتمدة وتفعيل النظام تلقائياً
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { authService } = require('../services/auth.service');
+    if (authService && typeof authService.seedDefaultOwnerIfNone === 'function') {
+      authService.seedDefaultOwnerIfNone();
+    }
+  } catch (err) {
+    console.error('تنبيه أثناء التحقق من الحسابات الافتراضية:', err);
+  }
 
   return {
     db,

@@ -30,7 +30,7 @@ export function BackupPage(): React.ReactElement {
 
   // نافذة تصدير USB
   const [isUsbModalOpen, setIsUsbModalOpen] = useState(false);
-  const [usbPath, setUsbPath] = useState('D:\\CosmeticsBackups');
+  const [usbPath, setUsbPath] = useState('D:\\JokerBackups');
 
   // استعادة نسخة احتياطية
   const [restoreTargetFile, setRestoreTargetFile] = useState<string | null>(null);
@@ -55,8 +55,8 @@ export function BackupPage(): React.ReactElement {
       if (backups.length === 0) {
         // بيانات افتراضية توضيحية
         setBackups([
-          { filePath: 'C:\\CosmeticsStore\\backups\\pos_backup_20261012_daily.db', sizeBytes: 2450000, createdAt: new Date().toISOString() },
-          { filePath: 'C:\\CosmeticsStore\\backups\\pos_backup_20261011_daily.db', sizeBytes: 2410000, createdAt: new Date(Date.now() - 86400000).toISOString() },
+          { filePath: 'C:\\JokerStore\\backups\\pos_backup_20261012_daily.db', sizeBytes: 2450000, createdAt: new Date().toISOString() },
+          { filePath: 'C:\\JokerStore\\backups\\pos_backup_20261011_daily.db', sizeBytes: 2410000, createdAt: new Date(Date.now() - 86400000).toISOString() },
         ]);
       }
     } catch (err: any) {
@@ -175,30 +175,30 @@ export function BackupPage(): React.ReactElement {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         <div
           className="glass-card"
-          style={{ padding: '18px 20px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '18px 20px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>النسخ الاحتياطية المتوفرة</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>النسخ الاحتياطية المتوفرة</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#FFB800', marginTop: 4 }}>
             {backups.length} نسخة محلية
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '18px 20px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '18px 20px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>فحص سلامة قاعدة البيانات</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#21633D', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>فحص سلامة قاعدة البيانات</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#10B981', marginTop: 4 }}>
             سليمة وتعمل بـ WAL
           </div>
         </div>
 
         <div
           className="glass-card"
-          style={{ padding: '18px 20px', backgroundColor: '#FFFFFF' }}
+          style={{ padding: '18px 20px', backgroundColor: '#161B22', border: '1px solid #262E3D' }}
         >
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>تصدير خارجي USB</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--color-brand-deep)', marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>تصدير خارجي USB</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#38BDF8', marginTop: 4 }}>
             جاهز للتصدير
           </div>
         </div>
@@ -212,11 +212,12 @@ export function BackupPage(): React.ReactElement {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-brand-deep)' }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#F8FAFC' }}>
             سجل النسخ الاحتياطية الآمنة
           </span>
         </div>
@@ -263,37 +264,38 @@ export function BackupPage(): React.ReactElement {
         style={{
           padding: 0,
           overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
         }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
           <thead>
-            <tr style={{ background: '#FAFBF9', borderBottom: '1.5px solid var(--border-light)' }}>
-              <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center' }}>#</th>
-              <th style={{ width: '48%', padding: '12px 16px' }}>مسار ملف النسخة الاحتياطية</th>
-              <th style={{ width: '16%', padding: '12px 16px' }}>حجم الملف</th>
-              <th style={{ width: '16%', padding: '12px 16px' }}>تاريخ الإنشاء</th>
-              <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center' }}>الاسترجاع</th>
+            <tr style={{ background: '#1C222D', borderBottom: '1.5px solid #262E3D' }}>
+              <th style={{ width: '6%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>#</th>
+              <th style={{ width: '48%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>مسار ملف النسخة الاحتياطية</th>
+              <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>حجم الملف</th>
+              <th style={{ width: '16%', padding: '12px 16px', color: '#94A3B8', fontWeight: 600 }}>تاريخ الإنشاء</th>
+              <th style={{ width: '14%', padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>الاسترجاع</th>
             </tr>
           </thead>
           <tbody>
             {backups.map((b, idx) => (
-              <tr key={idx} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+              <tr key={idx} style={{ borderBottom: '1px solid #262E3D' }}>
+                <td style={{ padding: '12px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>
                   {idx + 1}
                 </td>
                 <td style={{ padding: '12px 16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <FileArchive size={16} color="var(--color-primary)" />
-                    <span style={{ fontFamily: 'monospace', fontSize: 12, direction: 'ltr', textAlign: 'left' }}>
+                    <FileArchive size={16} color="#FFB800" />
+                    <span style={{ fontFamily: 'monospace', fontSize: 12, direction: 'ltr', textAlign: 'left', color: '#F8FAFC' }}>
                       {b.filePath}
                     </span>
                   </div>
                 </td>
-                <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 600 }}>
+                <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 700, color: '#FFB800' }}>
                   {((b.sizeBytes || 0) / (1024 * 1024)).toFixed(2)} ميجابايت
                 </td>
-                <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--text-muted)' }}>
+                <td style={{ padding: '12px 16px', fontSize: 13, color: '#94A3B8' }}>
                   {new Date(b.createdAt).toLocaleString('ar-EG')}
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
@@ -332,7 +334,7 @@ export function BackupPage(): React.ReactElement {
             <Input
               value={usbPath}
               onChange={(e) => setUsbPath(e.target.value)}
-              placeholder="مثال: E:\CosmeticsBackups"
+              placeholder="مثال: E:\JokerBackups"
               required
               autoFocus
             />

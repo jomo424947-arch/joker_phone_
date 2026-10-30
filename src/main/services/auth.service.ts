@@ -692,14 +692,64 @@ export class AuthService {
       }
     }
 
+    try {
+      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('system_initialized', '1', datetime('now'))").run();
+      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('license_activated', '1', datetime('now'))").run();
+      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('license_key', '-', datetime('now'))").run();
+      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('license_activated_at', datetime('now'), datetime('now'))").run();
+    } catch {
+      // ignore
+    }
+
     return seededAny ? primaryOwner : null;
   }
 
   /**
-   * فحص هل تم إعداد وتهيئة النظام مسبقاً (وجود حساب مالك نشط)
+   * قائمة أكواد التفعيل المعتمدة للنظام (Master Activation Codes)
+   * يمكن إدخال الكود مع أو بدون فواصل وبأحرف كبيرة أو صغيرة
+   */
+  private readonly MASTER_ACTIVATION_CODES = [
+    '7392-8410-5628-3714',
+  ];
+
+  /**
+   * تنظيف وتوحيد كود التفعيل لمطابقته بدقة
+   */
+  private normalizeActivationCode(code: string): string {
+    return (code || '').replace(/[\s-]/g, '').toUpperCase();
+  }
+
+  /**
+   * التحقق من صحة كود التفعيل
+   */
+  public verifyActivationCode(code: string): boolean {
+    if (!code || typeof code !== 'string') return false;
+    const normalizedInput = this.normalizeActivationCode(code);
+    return this.MASTER_ACTIVATION_CODES.some(
+      (validCode) => this.normalizeActivationCode(validCode) === normalizedInput
+    );
+  }
+
+  /**
+   * فحص هل تم إعداد وتهيئة النظام مسبقاً وتفعيله (وجود حساب مالك نشط ونسخة مفعلة)
    */
   isSetupCompleted(): boolean {
     const db = this.getDb();
+
+    // 1. التحقق من تفعيل النسخة بكود ترخيص صالح
+    try {
+      const activatedSetting = db
+        .prepare("SELECT value FROM settings WHERE key = 'license_activated'")
+        .get() as { value: string } | undefined;
+
+      if (!activatedSetting || activatedSetting.value !== '1') {
+        return false;
+      }
+    } catch {
+      return false;
+    }
+
+    // 2. التحقق من وجود حساب مالك نشط
     const owner = db
       .prepare(
         "SELECT id FROM users WHERE role = 'owner' AND is_active = 1 LIMIT 1"
@@ -709,7 +759,7 @@ export class AuthService {
   }
 
   /**
-   * إتمام التهيئة الأولية للمتجر وإنشاء حساب المالك الأول
+   * إتمام التهيئة الأولية للمتجر وتفعيل النسخة وإنشاء حساب المالك الأول
    */
   async completeInitialSetup(data: {
     storeName: string;
@@ -719,12 +769,21 @@ export class AuthService {
     displayName: string;
     password: string;
     pin: string;
+    activationCode: string;
   }): Promise<{ success: boolean; user?: SafeUser; error?: string }> {
     const db = this.getDb();
 
-    // منع إعادة التهيئة إذا كان المالك موجوداً بالفعل
+    // 1. التحقق الصارم من كود تفعيل النسخة
+    if (!data.activationCode || !this.verifyActivationCode(data.activationCode)) {
+      return {
+        success: false,
+        error: 'كود تفعيل النسخة غير صحيح! يرجى إدخال كود التفعيل المعتمد لتنشيط هذه النسخة.',
+      };
+    }
+
+    // منع إعادة التهيئة إذا كان المالك موجوداً والنسخة مفعلة بالفعل
     if (this.isSetupCompleted()) {
-      return { success: false, error: 'تم إعداد النظام مسبقاً بالفعل، لا يمكن إعادة التهيئة الأولية.' };
+      return { success: false, error: 'تم إعداد النظام وتفعيله مسبقاً بالفعل.' };
     }
 
     if (!data.username || data.username.trim().length < 3) {
@@ -755,22 +814,35 @@ export class AuthService {
     const pin_hash = hashPin(data.pin.trim());
     const displayName = data.displayName?.trim() || data.username.trim();
 
-    const stmt = db.prepare(`
-      INSERT INTO users (uuid, username, display_name, password_hash, pin_hash, role, is_active, created_at)
-      VALUES (?, ?, ?, ?, ?, 'owner', 1, datetime('now'))
-    `);
+    // التحقق مما إذا كان المستخدم موجوداً مسبقاً بنفس الاسم لتحديثه أو إنشائه
+    const existing = db
+      .prepare('SELECT id FROM users WHERE username = ?')
+      .get(data.username.trim()) as { id: number } | undefined;
 
-    const result = stmt.run(
-      uuid,
-      data.username.trim(),
-      displayName,
-      password_hash,
-      pin_hash
-    );
+    let insertedId: number;
+    if (existing) {
+      db.prepare(`
+        UPDATE users
+        SET display_name = ?, password_hash = ?, pin_hash = ?, role = 'owner', is_active = 1
+        WHERE id = ?
+      `).run(displayName, password_hash, pin_hash, existing.id);
+      insertedId = existing.id;
+    } else {
+      const stmt = db.prepare(`
+        INSERT INTO users (uuid, username, display_name, password_hash, pin_hash, role, is_active, created_at)
+        VALUES (?, ?, ?, ?, ?, 'owner', 1, datetime('now'))
+      `);
+      const result = stmt.run(
+        uuid,
+        data.username.trim(),
+        displayName,
+        password_hash,
+        pin_hash
+      );
+      insertedId = Number(result.lastInsertRowid);
+    }
 
-    const insertedId = Number(result.lastInsertRowid);
-
-    // تحديث إعدادات المتجر
+    // تحديث إعدادات المتجر وحفظ تفعيل الترخيص
     try {
       db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('store_name', ?, datetime('now'))").run(data.storeName.trim());
       if (data.storePhone?.trim()) {
@@ -780,8 +852,11 @@ export class AuthService {
         db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('store_address', ?, datetime('now'))").run(data.storeAddress.trim());
       }
       db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('system_initialized', '1', datetime('now'))").run();
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_activated', '1', datetime('now'))").run();
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_key', ?, datetime('now'))").run(data.activationCode.trim().toUpperCase());
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_activated_at', datetime('now'), datetime('now'))").run();
     } catch (err) {
-      console.error('فشل حفظ إعدادات المتجر أثناء التهيئة:', err);
+      console.error('فشل حفظ إعدادات المتجر والتفعيل أثناء التهيئة:', err);
     }
 
     // تسجيل في سجل التدقيق

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '../../components/common/Button';
 import { GlassIcon } from '../../components/common/GlassIcon';
 import { AppIcon } from '../../components/common/AppIcon';
@@ -8,6 +8,7 @@ import { BarcodeInput } from './components/BarcodeInput';
 import { CartTable } from './components/CartTable';
 import { ProductCatalog } from './components/ProductCatalog';
 import { PaymentModal } from './components/PaymentModal';
+import { CustomerSelectModal } from './components/CustomerSelectModal';
 import { HeldSalesModal } from './components/HeldSalesModal';
 import { InvoiceReceiptModal } from './components/InvoiceReceiptModal';
 import { usePos } from './hooks/usePos';
@@ -28,6 +29,7 @@ export function PosScreen(): React.ReactElement {
     isLoading,
     lastScannedItem,
     setDiscountAmount,
+    setCustomerId,
     setCustomerName,
     addItemByBarcode,
     addProductToCart,
@@ -39,6 +41,7 @@ export function PosScreen(): React.ReactElement {
 
   const { success: toastSuccess, error: toastError, warning: toastWarning } = useToast();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [isHeldModalOpen, setIsHeldModalOpen] = useState(false);
   const [previewSale, setPreviewSale] = useState<Sale | null>(null);
   const [autoPrintAfterSale, setAutoPrintAfterSale] = useState(false);
@@ -47,15 +50,64 @@ export function PosScreen(): React.ReactElement {
   const [customDiscountStr, setCustomDiscountStr] = useState('0');
   const [catalogRefreshTrigger, setCatalogRefreshTrigger] = useState(0);
 
+  // مرجع ثابت للسلة لمنع إعادة تسجيل مستمع لوحة المفاتيح
+  const cartRef = useRef(cart);
+  useEffect(() => {
+    cartRef.current = cart;
+  }, [cart]);
+
+  const handleScan = useCallback(
+    async (barcode: string) => {
+      const res = await addItemByBarcode(barcode);
+      if (!res.success && res.message) {
+        toastError(res.message);
+      }
+    },
+    [addItemByBarcode]
+  );
+
+  const handleSelectCatalogProduct = useCallback(
+    (product: any, variant?: any) => {
+      const res = addProductToCart(product, variant);
+      if (!res.success && res.message) {
+        toastError(res.message);
+      }
+    },
+    [addProductToCart]
+  );
+
+  const handleHoldSale = useCallback(async () => {
+    const currentCart = cartRef.current;
+    if (currentCart.length === 0) {
+      toastWarning(MESSAGES.CART_EMPTY);
+      return;
+    }
+
+    try {
+      const electron = (window as any).electron;
+      if (electron?.holdSale) {
+        await electron.holdSale(currentCart, null, null, customerName || 'عميل نقدي');
+      } else if (electron?.invoke) {
+        await electron.invoke('sales:hold', currentCart, null, null, customerName || 'عميل نقدي');
+      }
+      sounds.playClick();
+      toastSuccess(MESSAGES.SALE_HELD_SUCCESS);
+      clearCart();
+    } catch (err: any) {
+      toastError(err.message || 'تعذر تعليق الفاتورة');
+    }
+  }, [customerName, clearCart]);
+
   // الاستماع لاختصارات لوحة المفاتيح المخصصة لشاشة البيع
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // تجنب تشويش الاختصارات عند فتح المودالات
       if (isPaymentOpen || isHeldModalOpen || showClearConfirm) return;
 
+      const currentCart = cartRef.current;
       if (e.key === 'F4') {
         e.preventDefault();
-        if (cart.length === 0) {
+        if (currentCart.length === 0) {
           toastWarning(MESSAGES.CART_EMPTY);
           return;
         }
@@ -68,7 +120,7 @@ export function PosScreen(): React.ReactElement {
         e.preventDefault();
         sounds.playClick();
         setIsHeldModalOpen(true);
-      } else if (e.key === 'Escape' && cart.length > 0) {
+      } else if (e.key === 'Escape' && currentCart.length > 0) {
         e.preventDefault();
         sounds.playWarning();
         setShowClearConfirm(true);
@@ -77,40 +129,7 @@ export function PosScreen(): React.ReactElement {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [cart, isPaymentOpen, isHeldModalOpen, showClearConfirm]);
-
-  const handleScan = async (barcode: string) => {
-    const res = await addItemByBarcode(barcode);
-    if (!res.success && res.message) {
-      toastError(res.message);
-    }
-  };
-
-  const handleSelectCatalogProduct = (product: any, variant?: any) => {
-    const res = addProductToCart(product, variant);
-    if (!res.success && res.message) {
-      toastError(res.message);
-    }
-  };
-
-  const handleHoldSale = async () => {
-    if (cart.length === 0) {
-      toastWarning(MESSAGES.CART_EMPTY);
-      return;
-    }
-
-    try {
-      const electron = (window as any).electron;
-      if (electron?.invoke) {
-        await electron.invoke('sales:hold', JSON.stringify(cart), null, null, customerName || 'عميل نقدي');
-      }
-      sounds.playClick();
-      toastSuccess(MESSAGES.SALE_HELD_SUCCESS);
-      clearCart();
-    } catch (err: any) {
-      toastError(err.message || 'تعذر تعليق الفاتورة');
-    }
-  };
+  }, [isPaymentOpen, isHeldModalOpen, showClearConfirm, handleHoldSale]);
 
   const handleApplyDiscount = () => {
     const val = parseFloat(customDiscountStr) || 0;
@@ -178,19 +197,104 @@ export function PosScreen(): React.ReactElement {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#161B22',
+            border: '1px solid #262E3D',
             borderRadius: 12,
             flexShrink: 0,
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <GlassIcon icon="person" size="xs" variant="primary" />
+            <GlassIcon icon="person" size="xs" variant="gold" />
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-brand-deep)' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#F8FAFC' }}>
                 {customerName || 'عميل نقدي سريع'}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>نقاط الولاء: 0 نقطة</div>
+              <div style={{ fontSize: 11, color: customerId ? '#10B981' : '#94A3B8' }}>
+                {customerId ? 'عميل مسجل في الحسابات' : 'نقاط الولاء: 0 نقطة'}
+              </div>
             </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {customerId ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    setIsCustomerModalOpen(true);
+                  }}
+                  title="تغيير العميل"
+                  style={{
+                    background: 'rgba(255, 184, 0, 0.15)',
+                    border: '1px solid rgba(255, 184, 0, 0.3)',
+                    color: '#FFB800',
+                    fontSize: 11.5,
+                    fontWeight: 700,
+                    padding: '4px 8px',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <AppIcon name="edit" size={13} />
+                  <span>تغيير</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    setCustomerId(null);
+                    setCustomerName('');
+                    toastSuccess('تمت العودة إلى وضع العميل النقدي');
+                  }}
+                  title="إلغاء التحديد والعودة لعميل نقدي"
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid rgba(239, 68, 68, 0.25)',
+                    color: '#EF4444',
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    padding: '4px 8px',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <AppIcon name="close" size={13} />
+                  <span>إلغاء</span>
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playClick();
+                  setIsCustomerModalOpen(true);
+                }}
+                title="تحديد أو تسجيل عميل"
+                style={{
+                  background: 'rgba(255, 184, 0, 0.12)',
+                  border: '1px solid rgba(255, 184, 0, 0.3)',
+                  color: '#FFB800',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  padding: '5px 10px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
+              >
+                <AppIcon name="person_add" size={14} />
+                <span>تحديد عميل</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -202,10 +306,10 @@ export function PosScreen(): React.ReactElement {
             minHeight: 0,
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#161B22',
             borderRadius: 14,
             overflow: 'hidden',
-            border: '1px solid var(--border-light)',
+            border: '1px solid #262E3D',
             padding: 0,
           }}
         >
@@ -216,26 +320,26 @@ export function PosScreen(): React.ReactElement {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '10px 14px',
-              backgroundColor: '#F8FAF9',
-              borderBottom: '1.5px solid var(--border-light)',
+              backgroundColor: '#1C222D',
+              borderBottom: '1.5px solid #262E3D',
               flexShrink: 0,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <AppIcon name="shopping_cart" size={17} color="var(--color-primary)" />
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-brand-deep)' }}>
+              <AppIcon name="shopping_cart" size={17} color="#FFB800" />
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#F8FAFC' }}>
                 سلة المبيعات الحالية
               </span>
               <span
                 className="kbd-badge"
                 style={{
-                  backgroundColor: '#FFF0F3',
-                  color: '#D63B5E',
-                  padding: '1px 7px',
+                  backgroundColor: '#0B0E14',
+                  color: '#FFB800',
+                  padding: '2px 8px',
                   fontFamily: 'Space Grotesk, sans-serif',
                   fontSize: 11,
-                  fontWeight: 600,
-                  borderColor: 'rgba(255, 149, 165, 0.35)',
+                  fontWeight: 700,
+                  borderColor: '#262E3D',
                 }}
               >
                 {cart.length} صنف
@@ -253,7 +357,7 @@ export function PosScreen(): React.ReactElement {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: 'var(--color-danger)',
+                  color: '#EF4444',
                   fontSize: 11.5,
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -264,7 +368,7 @@ export function PosScreen(): React.ReactElement {
                   borderRadius: 6,
                   transition: 'background 0.15s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-danger-bg)')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 <AppIcon name="delete_sweep" size={14} />
@@ -292,10 +396,10 @@ export function PosScreen(): React.ReactElement {
           className="glass-card"
           style={{
             padding: '14px 16px',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#161B22',
             borderRadius: 14,
-            border: '1.5px solid rgba(255, 149, 165, 0.28)',
-            boxShadow: '0 6px 22px rgba(255, 149, 165, 0.09)',
+            border: '1px solid #262E3D',
+            boxShadow: 'none',
             flexShrink: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -309,11 +413,11 @@ export function PosScreen(): React.ReactElement {
               alignItems: 'center',
               justifyContent: 'space-between',
               paddingBottom: 8,
-              borderBottom: '1px solid var(--border-light)',
+              borderBottom: '1px solid #262E3D',
             }}
           >
             <div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>
+              <div style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>
                 إجمالي الفاتورة النهائي
               </div>
               <div
@@ -322,13 +426,13 @@ export function PosScreen(): React.ReactElement {
                   alignItems: 'center',
                   gap: 8,
                   fontSize: 11.5,
-                  color: 'var(--text-secondary)',
+                  color: '#94A3B8',
                   marginTop: 3,
                 }}
               >
-                <span>عدد الأصناف: <strong>{cart.length}</strong></span>
+                <span>عدد الأصناف: <strong style={{ color: '#F8FAFC' }}>{cart.length}</strong></span>
                 <span>•</span>
-                <span>إجمالي القطع: <strong>{totalItemCount}</strong></span>
+                <span>إجمالي القطع: <strong style={{ color: '#F8FAFC' }}>{totalItemCount}</strong></span>
               </div>
             </div>
 
@@ -338,7 +442,7 @@ export function PosScreen(): React.ReactElement {
                 style={{
                   fontSize: 28,
                   fontWeight: 800,
-                  color: 'var(--color-brand-deep)',
+                  color: '#FFB800',
                   lineHeight: 1.1,
                   letterSpacing: '-0.5px',
                 }}
@@ -350,9 +454,9 @@ export function PosScreen(): React.ReactElement {
                   style={{
                     marginTop: 3,
                     fontSize: 11,
-                    color: 'var(--color-danger)',
+                    color: '#EF4444',
                     fontWeight: 600,
-                    backgroundColor: 'var(--color-danger-bg)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.15)',
                     padding: '2px 6px',
                     borderRadius: 4,
                     display: 'inline-block',
@@ -484,6 +588,16 @@ export function PosScreen(): React.ReactElement {
         discount={discountAmount}
         cart={cart}
         customerId={customerId}
+        customerName={customerName}
+        onSelectCustomer={(cust) => {
+          if (cust) {
+            setCustomerId(cust.id);
+            setCustomerName(cust.name);
+          } else {
+            setCustomerId(null);
+            setCustomerName('');
+          }
+        }}
         onSaleComplete={(createdSale, autoPrint) => {
           clearCart();
           setIsPaymentOpen(false);
@@ -491,6 +605,21 @@ export function PosScreen(): React.ReactElement {
           setPreviewSale(createdSale);
           setCatalogRefreshTrigger((prev) => prev + 1);
         }}
+      />
+
+      {/* نافذة تحديد أو إضافة عميل للشاشة الرئيسية */}
+      <CustomerSelectModal
+        isOpen={isCustomerModalOpen}
+        onClose={() => setIsCustomerModalOpen(false)}
+        onSelectCustomer={(cust) => {
+          sounds.playClick();
+          setCustomerId(cust.id);
+          setCustomerName(cust.name);
+          setIsCustomerModalOpen(false);
+          toastSuccess(`تم تحديد العميل: ${cust.name}`);
+        }}
+        currentCustomerId={customerId}
+        zIndex={1100}
       />
 
       {/* نافذة معاينة الفاتورة قبل الطباعة */}

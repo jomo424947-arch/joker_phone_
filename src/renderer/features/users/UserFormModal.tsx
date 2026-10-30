@@ -122,36 +122,38 @@ export function UserFormModal({
         )}
 
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
             الاسم الظاهر (الاسم بالكامل) *
           </label>
           <input
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            placeholder="مثال: سارة محمد"
+            placeholder="مثال: أحمد محمود (فني صيانة أو كاشير)"
             required
             style={{
               width: '100%',
               height: 40,
               padding: '0 12px',
               borderRadius: 8,
-              border: '1px solid #D1D5DB',
+              border: '1.5px solid #262E3D',
               fontSize: 14,
               boxSizing: 'border-box',
+              backgroundColor: '#0B0E14',
+              color: '#F8FAFC',
             }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
             اسم المستخدم لتسجيل الدخول *
           </label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="مثال: sara_pos"
+            placeholder="مثال: ahmed_pos"
             disabled={isEditing}
             required={!isEditing}
             style={{
@@ -159,16 +161,17 @@ export function UserFormModal({
               height: 40,
               padding: '0 12px',
               borderRadius: 8,
-              border: '1px solid #D1D5DB',
+              border: '1.5px solid #262E3D',
               fontSize: 14,
               boxSizing: 'border-box',
-              backgroundColor: isEditing ? '#F3F4F6' : '#FFFFFF',
+              backgroundColor: isEditing ? '#161B22' : '#0B0E14',
+              color: isEditing ? '#94A3B8' : '#F8FAFC',
             }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
             الدور والصلاحيات *
           </label>
           <select
@@ -179,10 +182,11 @@ export function UserFormModal({
               height: 40,
               padding: '0 12px',
               borderRadius: 8,
-              border: '1px solid #D1D5DB',
+              border: '1.5px solid #262E3D',
               fontSize: 14,
               boxSizing: 'border-box',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#0B0E14',
+              color: '#F8FAFC',
             }}
           >
             <option value={USER_ROLES.CASHIER}>كاشير (واجهة البيع السريع والوردية)</option>
@@ -192,7 +196,7 @@ export function UserFormModal({
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
             {isEditing ? 'كلمة مرور جديدة (اتركها فارغة لعدم التغيير)' : 'كلمة المرور *'}
           </label>
           <input
@@ -206,15 +210,17 @@ export function UserFormModal({
               height: 40,
               padding: '0 12px',
               borderRadius: 8,
-              border: '1px solid #D1D5DB',
+              border: '1.5px solid #262E3D',
               fontSize: 14,
               boxSizing: 'border-box',
+              backgroundColor: '#0B0E14',
+              color: '#F8FAFC',
             }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#F8FAFC', marginBottom: 6 }}>
             رمز الـ PIN للدخول السريع والتفويض (4 أرقام)
           </label>
           <input
@@ -228,9 +234,12 @@ export function UserFormModal({
               height: 40,
               padding: '0 12px',
               borderRadius: 8,
-              border: '1px solid #D1D5DB',
+              border: '1.5px solid #262E3D',
               fontSize: 14,
               boxSizing: 'border-box',
+              backgroundColor: '#0B0E14',
+              color: '#FFB800',
+              fontWeight: 700,
             }}
           />
         </div>

@@ -52,9 +52,9 @@ export function ConfirmDialog({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(20, 30, 25, 0.45)',
-        backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
         padding: 20,
       }}
       onClick={onCancel}
@@ -65,9 +65,10 @@ export function ConfirmDialog({
           width: '100%',
           maxWidth: 440,
           padding: 24,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#161B22',
+          border: '1px solid #262E3D',
           borderRadius: 16,
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.18)',
+          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6)',
           fontFamily: 'var(--font-family)',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -80,7 +81,7 @@ export function ConfirmDialog({
             glow
           />
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--color-brand-deep)' }}>{title}</h3>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: '#F8FAFC' }}>{title}</h3>
           </div>
           <button
             type="button"
@@ -89,7 +90,7 @@ export function ConfirmDialog({
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              color: 'var(--text-muted)',
+              color: '#94A3B8',
               padding: 4,
             }}
           >
@@ -97,7 +98,7 @@ export function ConfirmDialog({
           </button>
         </div>
 
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 24 }}>
+        <p style={{ fontSize: 14, color: '#CBD5E1', lineHeight: 1.6, marginBottom: 24 }}>
           {message}
         </p>
 
