@@ -60,7 +60,7 @@ export function BarcodePrintModal({
   const [printers, setPrinters] = useState<SystemPrinter[]>([]);
   const [selectedPrinter, setSelectedPrinter] = useState<string>('');
   const [selectedSizeId, setSelectedSizeId] = useState<string>('38x25');
-  const [storeName, setStoreName] = useState<string>('الجوكر فون');
+  const [storeName, setStoreName] = useState<string>('موبيكس');
 
   const previewSvgRef = useRef<SVGSVGElement | null>(null);
 
@@ -360,7 +360,7 @@ export function BarcodePrintModal({
       width={520}
     >
       <form onSubmit={handlePrint} style={{ display: 'flex', flexDirection: 'column', gap: 14, direction: 'rtl' }}>
-        
+
         {/* اختيار الطابعة وحالتها المباشرة (ظاهرة دائماً وواضحة) */}
         <div
           style={{

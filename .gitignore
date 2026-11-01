@@ -50,3 +50,8 @@ out/
 *.sw?
 .DS_Store
 Thumbs.db
+
+# Temporary
+.temp/
+supabase/.temp/
+

@@ -469,7 +469,7 @@ export function DatabaseInspectorScreen(): React.ReactElement {
             </div>
             <div style={{ width: 1, height: 24, backgroundColor: '#262E3D' }} />
             <div>
-              المتجر: <strong style={{ color: '#FFB800' }}>{data.meta.storeName || 'الجوكر فون'}</strong>
+              المتجر: <strong style={{ color: '#FFB800' }}>{data.meta.storeName || 'موبيكس'}</strong>
             </div>
             {data.meta.storePhone && (
               <>
@@ -1049,14 +1049,14 @@ export function DatabaseInspectorScreen(): React.ReactElement {
                                   u.role === 'owner'
                                     ? 'rgba(255, 184, 0, 0.15)'
                                     : u.role === 'manager'
-                                    ? 'rgba(56, 189, 248, 0.15)'
-                                    : 'rgba(52, 211, 153, 0.15)',
+                                      ? 'rgba(56, 189, 248, 0.15)'
+                                      : 'rgba(52, 211, 153, 0.15)',
                                 color:
                                   u.role === 'owner'
                                     ? '#FFB800'
                                     : u.role === 'manager'
-                                    ? '#38BDF8'
-                                    : '#34D399',
+                                      ? '#38BDF8'
+                                      : '#34D399',
                                 border: '1px solid #262E3D',
                               }}
                             >
@@ -1319,14 +1319,14 @@ export function DatabaseInspectorScreen(): React.ReactElement {
                                     u.role === 'owner'
                                       ? 'rgba(255, 184, 0, 0.15)'
                                       : u.role === 'manager'
-                                      ? 'rgba(56, 189, 248, 0.15)'
-                                      : 'rgba(52, 211, 153, 0.15)',
+                                        ? 'rgba(56, 189, 248, 0.15)'
+                                        : 'rgba(52, 211, 153, 0.15)',
                                   color:
                                     u.role === 'owner'
                                       ? '#FFB800'
                                       : u.role === 'manager'
-                                      ? '#38BDF8'
-                                      : '#34D399',
+                                        ? '#38BDF8'
+                                        : '#34D399',
                                   border: '1px solid #262E3D',
                                 }}
                               >

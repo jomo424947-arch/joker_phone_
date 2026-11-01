@@ -36,11 +36,11 @@ export function InvoiceReceiptModal({
   const [isPrinting, setIsPrinting] = useState(false);
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
   const [storeSettings, setStoreSettings] = useState({
-    storeName: 'الجوكر فون - JOKER PHONE',
-    storeAddress: 'إدارة محلات التليفونات واكسسواراتها وصيانة',
+    storeName: 'موبيكس - Mobix',
+    storeAddress: 'شريكك الذكي لإدارة محلات الموبايلات',
     storePhone: '01000000000',
     taxNumber: '',
-    receiptFooter: 'شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز',
+    receiptFooter: 'شكراً لتعاملكم مع موبيكس - ضمان وجودة في كل جهاز',
   });
 
   const hasAutoPrintedRef = useRef(false);
@@ -60,11 +60,11 @@ export function InvoiceReceiptModal({
           if (res?.success && res.data) {
             const map = res.data;
             setStoreSettings({
-              storeName: map.store_name || 'الجوكر فون (JOKER PHONE)',
-              storeAddress: map.store_address || 'إدارة محلات التليفونات واكسسواراتها وصيانة',
+              storeName: map.store_name || 'موبيكس (Mobix)',
+              storeAddress: map.store_address || 'شريكك الذكي لإدارة محلات الموبايلات',
               storePhone: map.store_phone || map.store_whatsapp || '01000000000',
               taxNumber: map.tax_registration_no || map.tax_number || '',
-              receiptFooter: map.receipt_footer || 'شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز',
+              receiptFooter: map.receipt_footer || 'شكراً لتعاملكم مع موبيكس - ضمان وجودة في كل جهاز',
             });
           }
         }
@@ -565,7 +565,7 @@ export function InvoiceReceiptModal({
               </div>
 
               <div style={{ fontSize: 9, color: '#9CA3AF', marginTop: 6 }}>
-                نظام إدارة محلات التليفونات والاكسسوارات والصيانة | الجوكر فون - JOKER PHONE
+                نظام إدارة محلات التليفونات والاكسسوارات والصيانة | موبيكس - Mobix
               </div>
             </div>
           </div>

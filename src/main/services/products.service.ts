@@ -101,7 +101,7 @@ export class ProductsService {
     try {
       db.prepare(`
         INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
-        VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+        VALUES (1, 'system', 'system', 'نظام موبيكس', 'admin', 1, datetime('now'))
       `).run();
       return 1;
     } catch {
@@ -575,7 +575,7 @@ export class ProductsService {
           .prepare(`SELECT COUNT(*) as count FROM repair_parts WHERE variant_id IN (${placeholders})`)
           .get(...variantIds) as { count: number };
         if (repairCount.count > 0) hasRepairs = true;
-      } catch {}
+      } catch { }
 
       // 4. فحص المرتجعات
       try {
@@ -586,7 +586,7 @@ export class ProductsService {
           .prepare(`SELECT COUNT(*) as count FROM purchase_return_items WHERE variant_id IN (${placeholders})`)
           .get(...variantIds) as { count: number };
         if (returnCount.count > 0 || purchaseRetCount.count > 0) hasReturns = true;
-      } catch {}
+      } catch { }
 
       // 5. فحص أجهزة الهواتف والسيريالات المباعة
       try {
@@ -597,7 +597,7 @@ export class ProductsService {
           `)
           .get(...variantIds) as { count: number };
         if (soldSerialCount.count > 0) hasSoldSerials = true;
-      } catch {}
+      } catch { }
 
       // 6. فحص عمليات الجرد
       try {
@@ -605,7 +605,7 @@ export class ProductsService {
           .prepare(`SELECT COUNT(*) as count FROM stock_count_items WHERE variant_id IN (${placeholders})`)
           .get(...variantIds) as { count: number };
         if (countCount.count > 0) hasStockCounts = true;
-      } catch {}
+      } catch { }
 
       // 7. فحص الدفعات ذات الرصيد أو الحركات
       const batches = db
@@ -636,7 +636,7 @@ export class ProductsService {
           // تحرير الباركودات المرتبطة لكي يتمكن المتجر من إعادة استخدامها إن رغب
           try {
             db.prepare(`DELETE FROM product_barcodes WHERE variant_id IN (${placeholders})`).run(...variantIds);
-          } catch {}
+          } catch { }
         }
 
         if (actorUserId) {
@@ -676,12 +676,12 @@ export class ProductsService {
             // 1. حذف أجهزة وسيريالات الهواتف غير المباعة (in_stock) المرتبطة بالصنف
             try {
               db.prepare(`DELETE FROM device_serials WHERE variant_id IN (${placeholders})`).run(...variantIds);
-            } catch {}
+            } catch { }
 
             // 2. حذف بنود الجرد المعلقة إن وجدت
             try {
               db.prepare(`DELETE FROM stock_count_items WHERE variant_id IN (${placeholders})`).run(...variantIds);
-            } catch {}
+            } catch { }
 
             // 3. حذف حركات المخزون التابعة للـ batches أولاً لتفادي تعارض الـ Foreign Key
             const batchRows = db
@@ -700,11 +700,11 @@ export class ProductsService {
 
             try {
               db.prepare(`DELETE FROM product_price_history WHERE variant_id IN (${placeholders})`).run(...variantIds);
-            } catch {}
+            } catch { }
 
             try {
               db.prepare(`DELETE FROM promotion_items WHERE variant_id IN (${placeholders}) OR product_id = ?`).run(...variantIds, id);
-            } catch {}
+            } catch { }
 
             db.prepare(`DELETE FROM product_variants WHERE product_id = ?`).run(id);
           }

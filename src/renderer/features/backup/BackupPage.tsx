@@ -30,7 +30,7 @@ export function BackupPage(): React.ReactElement {
 
   // نافذة تصدير USB
   const [isUsbModalOpen, setIsUsbModalOpen] = useState(false);
-  const [usbPath, setUsbPath] = useState('D:\\JokerBackups');
+  const [usbPath, setUsbPath] = useState('D:\\MobixBackups');
 
   // استعادة نسخة احتياطية
   const [restoreTargetFile, setRestoreTargetFile] = useState<string | null>(null);
@@ -55,8 +55,8 @@ export function BackupPage(): React.ReactElement {
       if (backups.length === 0) {
         // بيانات افتراضية توضيحية
         setBackups([
-          { filePath: 'C:\\JokerStore\\backups\\pos_backup_20261012_daily.db', sizeBytes: 2450000, createdAt: new Date().toISOString() },
-          { filePath: 'C:\\JokerStore\\backups\\pos_backup_20261011_daily.db', sizeBytes: 2410000, createdAt: new Date(Date.now() - 86400000).toISOString() },
+          { filePath: 'C:\\MobixStore\\backups\\pos_backup_20261012_daily.db', sizeBytes: 2450000, createdAt: new Date().toISOString() },
+          { filePath: 'C:\\MobixStore\\backups\\pos_backup_20261011_daily.db', sizeBytes: 2410000, createdAt: new Date(Date.now() - 86400000).toISOString() },
         ]);
       }
     } catch (err: any) {
@@ -334,7 +334,7 @@ export function BackupPage(): React.ReactElement {
             <Input
               value={usbPath}
               onChange={(e) => setUsbPath(e.target.value)}
-              placeholder="مثال: E:\JokerBackups"
+              placeholder="مثال: E:\MobixBackups"
               required
               autoFocus
             />

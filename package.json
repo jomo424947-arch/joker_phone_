@@ -1,9 +1,9 @@
 {
-  "name": "joker-phone-pos-system",
+  "name": "mobix-pos-system",
   "version": "2.0.0",
-  "description": "الجوكر فون - JOKER PHONE — نظام إدارة محلات التليفونات والاكسسوارات والصيانة",
+  "description": "موبيكس - Mobix — شريكك الذكي لإدارة محلات الموبايلات والصيانة",
   "main": "dist-electron/main/index.js",
-  "author": "Joker Phone Team",
+  "author": "Mobix Team",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
@@ -11,12 +11,14 @@
     "build": "tsc && vite build",
     "dist": "tsc && vite build && electron-builder",
     "preview": "vite preview",
+    "admin": "node admin-server.js",
     "typecheck": "tsc --noEmit",
     "test": "node run-tests.js",
     "test:unit": "node run-tests.js tests/unit",
     "test:integration": "node run-tests.js tests/integration"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "better-sqlite3": "^11.8.1",
     "jsbarcode": "^3.12.3",
     "lucide-react": "^1.16.0",
@@ -40,8 +42,8 @@
     "vitest": "^5.0.3"
   },
   "build": {
-    "appId": "com.jokerphone.pos",
-    "productName": "الجوكر فون - JOKER PHONE",
+    "appId": "com.mobix.pos",
+    "productName": "موبيكس - Mobix",
     "directories": {
       "output": "release"
     },
@@ -67,7 +69,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "الجوكر فون - JOKER PHONE",
+      "shortcutName": "موبيكس - Mobix",
       "installerIcon": "build/installerIcon.ico",
       "uninstallerIcon": "build/uninstallerIcon.ico",
       "installerHeaderIcon": "build/installerIcon.ico"

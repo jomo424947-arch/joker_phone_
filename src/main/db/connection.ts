@@ -8,6 +8,7 @@ import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
 import { runMigrations, MigrationResult } from './migrator';
+import { authService } from '../services/auth.service';
 
 export interface DatabaseConnectionOptions {
   filename?: string;
@@ -83,15 +84,16 @@ export function initializeDatabase(options?: DatabaseConnectionOptions): {
     migrationsDir: options?.migrationsDir,
   });
 
-  // التأكد من وجود الحسابات الإدارية المعتمدة وتفعيل النظام تلقائياً
+  // التأكد من وجود الحسابات الإدارية المعتمدة فقط إذا تم إتمام التهيئة والتفعيل مسبقاً
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { authService } = require('../services/auth.service');
-    if (authService && typeof authService.seedDefaultOwnerIfNone === 'function') {
-      authService.seedDefaultOwnerIfNone();
+    const isInit = db.prepare("SELECT value FROM settings WHERE key = 'system_initialized'").get() as { value: string } | undefined;
+    if (isInit && isInit.value === '1') {
+      if (authService && typeof authService.seedDefaultOwnerIfNone === 'function') {
+        authService.seedDefaultOwnerIfNone();
+      }
     }
   } catch (err) {
-    console.error('تنبيه أثناء التحقق من الحسابات الافتراضية:', err);
+    console.error('تنبيه أثناء التحقق من الحسابات الإدارية:', err);
   }
 
   return {

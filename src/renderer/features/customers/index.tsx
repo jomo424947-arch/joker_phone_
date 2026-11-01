@@ -196,7 +196,7 @@ export function CustomersScreen(): React.ReactElement {
         fetchCustomers();
       } else {
         sounds.playError();
-        toastError(res?.error?.message || 'فشل في حفظ بيانات العميل');
+        toastError(typeof res?.error === 'string' ? res.error : res?.error?.message || 'فشل في حفظ بيانات العميل');
       }
     } catch (err: any) {
       sounds.playError();
@@ -249,7 +249,7 @@ export function CustomersScreen(): React.ReactElement {
         fetchCustomers();
       } else {
         sounds.playError();
-        toastError(res?.error?.message || 'فشل في تحديث بيانات العميل');
+        toastError(typeof res?.error === 'string' ? res.error : res?.error?.message || 'فشل في تحديث بيانات العميل');
       }
     } catch (err: any) {
       sounds.playError();
@@ -303,7 +303,7 @@ export function CustomersScreen(): React.ReactElement {
         fetchCustomers();
       } else {
         sounds.playError();
-        toastError(res?.error?.message || 'فشل في تسجيل السداد');
+        toastError(typeof res?.error === 'string' ? res.error : res?.error?.message || 'فشل في تسجيل السداد');
       }
     } catch (err: any) {
       sounds.playError();

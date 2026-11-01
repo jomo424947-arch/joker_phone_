@@ -141,7 +141,7 @@ export function Sidebar({
           >
             <img
               src={logoImg}
-              alt="شعار الجوكر فون"
+              alt="شعار موبيكس"
               style={{
                 width: '100%',
                 height: '100%',
@@ -163,7 +163,7 @@ export function Sidebar({
                 letterSpacing: '-0.2px',
               }}
             >
-              الجوكر فون
+              موبيكس • Mobix
             </h2>
             <span
               style={{
@@ -174,7 +174,7 @@ export function Sidebar({
                 marginTop: 2,
               }}
             >
-              JOKER PHONE • هواتف وصيانة
+              شريكك الذكي لإدارة محلات الموبايلات
             </span>
           </div>
         </div>

@@ -1,5 +1,5 @@
 /**
- * خدمة إدارة أوامر الصيانة وورشة الجوكر فون (Repairs & Maintenance Workshop Service)
+ * خدمة إدارة أوامر الصيانة وورشة موبيكس (Repairs & Maintenance Workshop Service)
  * تدير: استلام الأجهزة، مراحل الفحص والإصلاح، استهلاك قطع الغيار من المخزون،
  * وحساب تكاليف الصيانة والضمان، والربط المالي الكامل مع الفواتير وسجل المبيعات وحركات الخزينة
  */
@@ -148,14 +148,14 @@ export class RepairsService {
 
     // فحص هل منتج الخدمة موجود مسبقاً
     let prod = db
-      .prepare("SELECT id FROM products WHERE name_ar = 'خدمات صيانة الجوكر فون' LIMIT 1")
+      .prepare("SELECT id FROM products WHERE name_ar = 'خدمات صيانة موبيكس' LIMIT 1")
       .get() as { id: number } | undefined;
 
     if (!prod) {
       const prodRes = db
         .prepare(`
           INSERT INTO products (uuid, category_id, name_ar, name_en, unit, is_active, created_at, updated_at)
-          VALUES (?, ?, 'خدمات صيانة الجوكر فون', 'Joker Phone Repair Services', 'خدمة', 1, datetime('now'), datetime('now'))
+          VALUES (?, ?, 'خدمات صيانة موبيكس', 'Mobix Repair Services', 'خدمة', 1, datetime('now'), datetime('now'))
         `)
         .run(crypto.randomUUID(), catId);
       prod = { id: Number(prodRes.lastInsertRowid) };

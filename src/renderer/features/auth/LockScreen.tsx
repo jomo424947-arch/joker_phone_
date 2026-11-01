@@ -194,7 +194,7 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
           {currentTime}
         </div>
 
-        {/* Joker Phone Logo Badge with Lock Badge */}
+        {/* Mobix Logo Badge with Lock Badge */}
         <div style={{ position: 'relative', marginTop: 2 }}>
           <div
             style={{
@@ -211,7 +211,7 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
           >
             <img
               src={logoImg}
-              alt="شعار الجوكر فون"
+              alt="شعار موبيكس"
               style={{
                 width: '100%',
                 height: '100%',
@@ -244,7 +244,7 @@ export function LockScreen({ currentUser, onUnlock, onSwitchUser }: LockScreenPr
 
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: '#FFFFFF' }}>
-            الجوكر فون • الشاشة مقفلة
+            موبيكس (Mobix) • الشاشة مقفلة
           </h2>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: '#FFB800', fontWeight: 600 }}>
             أدخل رمز PIN لاستئناف العمل بالوردية

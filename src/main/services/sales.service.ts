@@ -33,7 +33,7 @@ function resolveUserId(db: Database.Database, userId?: number | null): number {
   try {
     db.prepare(`
       INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
-      VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+      VALUES (1, 'system', 'system', 'نظام موبيكس', 'admin', 1, datetime('now'))
     `).run();
     return 1;
   } catch {
@@ -518,7 +518,7 @@ export class SalesService {
       if (typeof parsed === 'string') {
         try {
           parsed = JSON.parse(parsed);
-        } catch {}
+        } catch { }
       }
 
       // الحالة الجديدة: payload يحتوي على { cart, customerName }
@@ -587,7 +587,7 @@ export class SalesService {
     if (typeof cartData === 'string') {
       try {
         finalCart = JSON.parse(cartData);
-      } catch {}
+      } catch { }
     }
 
     // تخزين البيانات بهيكل منظم يتضمن اسم العميل

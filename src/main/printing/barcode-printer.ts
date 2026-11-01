@@ -65,9 +65,9 @@ export class BarcodePrinter {
       const row = db.prepare("SELECT value FROM settings WHERE key = 'store_name'").get() as
         | { value: string }
         | undefined;
-      return row?.value || 'الجوكر فون';
+      return row?.value || 'موبيكس';
     } catch {
-      return 'الجوكر فون';
+      return 'موبيكس';
     }
   }
 
@@ -175,11 +175,10 @@ export class BarcodePrinter {
           <div class="label-card">
             <div class="header-row">
               <span class="store-name">${storeName}</span>
-              ${
-                item.variantName && item.variantName !== 'الافتراضي'
-                  ? `<span class="variant-tag">${item.variantName}</span>`
-                  : ''
-              }
+              ${item.variantName && item.variantName !== 'الافتراضي'
+            ? `<span class="variant-tag">${item.variantName}</span>`
+            : ''
+          }
             </div>
 
             <div class="product-title">${item.productName}</div>

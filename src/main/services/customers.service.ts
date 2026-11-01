@@ -104,6 +104,25 @@ export class CustomersService {
       throw new Error('اسم العميل مطلوب');
     }
 
+    // التحقق من عدم تكرار اسم العميل
+    const duplicateName = db
+      .prepare('SELECT id, name FROM customers WHERE LOWER(name) = LOWER(?) AND is_active = 1')
+      .get(name) as { id: number; name: string } | undefined;
+    if (duplicateName) {
+      throw new Error(`يوجد عميل مسجل بالفعل بنفس الاسم: "${duplicateName.name}" (رقم ${duplicateName.id})`);
+    }
+
+    // التحقق من عدم تكرار رقم الهاتف (إذا تم إدخاله)
+    const phone = data.phone?.trim() ?? null;
+    if (phone) {
+      const duplicatePhone = db
+        .prepare('SELECT id, name FROM customers WHERE phone = ? AND is_active = 1')
+        .get(phone) as { id: number; name: string } | undefined;
+      if (duplicatePhone) {
+        throw new Error(`رقم الهاتف "${phone}" مسجل بالفعل للعميل: "${duplicatePhone.name}"`);
+      }
+    }
+
     const uuid = crypto.randomUUID();
     const initialBalance = data.initial_balance ?? 0;
     const creditLimit = Math.max(0, data.credit_limit ?? 0);
@@ -117,7 +136,7 @@ export class CustomersService {
       const res = stmt.run(
         uuid,
         name,
-        data.phone?.trim() ?? null,
+        phone,
         creditLimit,
         initialBalance,
         data.notes?.trim() ?? null

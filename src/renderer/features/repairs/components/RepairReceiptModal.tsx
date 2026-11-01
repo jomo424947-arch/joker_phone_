@@ -117,11 +117,11 @@ export function RepairReceiptModal({ order, onClose }: RepairReceiptModalProps):
             <div style={{ textAlign: 'center', borderBottom: '1px dashed #666', paddingBottom: 12 }}>
               <img
                 src={logoImg}
-                alt="Joker Phone Logo"
+                alt="Mobix Logo"
                 style={{ width: 64, height: 64, objectFit: 'contain', margin: '0 auto 6px' }}
               />
-              <div style={{ fontSize: 16, fontWeight: 900, letterSpacing: 0.5 }}>الجوكر فون - JOKER PHONE</div>
-              <div style={{ fontSize: 11, color: '#333' }}>للهواتف الذكية والإكسسوارات والصيانة المعتمدة</div>
+              <div style={{ fontSize: 16, fontWeight: 900, letterSpacing: 0.5 }}>موبيكس - Mobix</div>
+              <div style={{ fontSize: 11, color: '#333' }}>شريكك الذكي لإدارة محلات الموبايلات</div>
               <div
                 style={{
                   fontSize: 12,
@@ -164,7 +164,7 @@ export function RepairReceiptModal({ order, onClose }: RepairReceiptModalProps):
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>المستلم / الفني:</span>
-                <span>{order.technicianName || order.userName || 'الجوكر فون'}</span>
+                <span>{order.technicianName || order.userName || 'موبيكس'}</span>
               </div>
             </div>
 
@@ -262,7 +262,7 @@ export function RepairReceiptModal({ order, onClose }: RepairReceiptModalProps):
                 <li>الضمان يسري على القطع المستبدلة فقط ولا يشمل سوء الاستخدام أو الكسر أو التعرض للماء.</li>
               </ol>
               <div style={{ textAlign: 'center', marginTop: 12, fontWeight: 700, fontSize: 11 }}>
-                شكراً لثقتكم في الجوكر فون - خدماتك في أمان تام!
+                شكراً لثقتكم في موبيكس - خدماتك في أمان تام!
               </div>
             </div>
           </div>

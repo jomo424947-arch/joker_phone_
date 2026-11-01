@@ -319,7 +319,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           zIndex: 10,
         }}
       >
-        {/* رأس البطاقة وشعار الجوكر فون */}
+        {/* رأس البطاقة وشعار موبيكس */}
         <div style={{ textAlign: 'center' }}>
           <div
             style={{
@@ -338,7 +338,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
           >
             <img
               src={logoImg}
-              alt="شعار الجوكر فون"
+              alt="شعار موبيكس"
               style={{
                 width: '100%',
                 height: '100%',
@@ -359,7 +359,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
               lineHeight: 1.3,
             }}
           >
-            الجوكر فون • JOKER PHONE
+            موبيكس • Mobix
           </h1>
           <p
             style={{
@@ -369,7 +369,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
               fontWeight: 700,
             }}
           >
-            إدارة محلات التليفونات واكسسواراتها وصيانة
+            شريكك الذكي لإدارة محلات الموبايلات
           </p>
         </div>
 
@@ -571,8 +571,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
                           user.role === 'owner'
                             ? 'linear-gradient(135deg, #FFB800 0%, #FF9500 100%)'
                             : user.role === 'manager'
-                            ? 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)'
-                            : 'linear-gradient(135deg, #FBBF24 0%, #D97706 100%)',
+                              ? 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)'
+                              : 'linear-gradient(135deg, #FBBF24 0%, #D97706 100%)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -947,8 +947,8 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps): React.ReactElemen
               {isLoading
                 ? 'جاري التحقق...'
                 : selectedUser
-                ? `دخول الوردية (${selectedUser.display_name})`
-                : 'دخول الوردية'}
+                  ? `دخول الوردية (${selectedUser.display_name})`
+                  : 'دخول الوردية'}
             </button>
           </div>
         )}

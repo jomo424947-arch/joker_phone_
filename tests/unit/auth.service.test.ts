@@ -90,7 +90,7 @@ describe('AuthService (المصادقة وإدارة المستخدمين وال
   test('تهيئة المالك الافتراضي عند خلو قاعدة البيانات وحماية الصلاحيات', () => {
     const owner = authService.seedDefaultOwnerIfNone();
     expect(owner).not.toBeNull();
-    expect(owner?.username).toBe('mohamed_joker');
+    expect(owner?.username).toBe('mobix_admin');
     expect(owner?.role).toBe(USER_ROLES.OWNER);
 
     // المرة الثانية لا تنشئ مستخدماً مكرراً

@@ -6,7 +6,7 @@ import { SerialsService } from '../../src/main/services/serials.service';
 import { AuthService } from '../../src/main/services/auth.service';
 import { USER_ROLES } from '../../src/shared/constants/roles';
 
-describe('Joker Phone Extensions (Repairs & Serials)', () => {
+describe('Mobix Extensions (Repairs & Serials)', () => {
   let db: Database.Database;
   let repairsService: RepairsService;
   let serialsService: SerialsService;
@@ -22,8 +22,8 @@ describe('Joker Phone Extensions (Repairs & Serials)', () => {
 
     const authService = new AuthService(db);
     const user = authService.createUser({
-      username: 'tech_joker',
-      display_name: 'فني الجوكر فون',
+      username: 'tech_mobix',
+      display_name: 'فني موبيكس',
       password: 'password123',
       pin: '5566',
       role: USER_ROLES.MANAGER,

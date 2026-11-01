@@ -136,8 +136,8 @@ export class SettingsService {
   resetDefaults(): void {
     const db = this.getDb();
     const defaults: Record<string, string> = {
-      store_name: 'الجوكر فون - JOKER PHONE',
-      store_name_en: 'JOKER PHONE',
+      store_name: 'موبيكس - Mobix',
+      store_name_en: 'Mobix',
       store_phone: '',
       store_whatsapp: '',
       store_address: '',

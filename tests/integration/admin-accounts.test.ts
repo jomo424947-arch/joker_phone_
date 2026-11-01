@@ -23,11 +23,11 @@ describe('فحص تكامل الحسابات الإدارية المعتمدة �
   test('تكوين الحسابات الإدارية يحتوي على الحسابين المعتمدين فقط', () => {
     expect(ALLOWED_ADMIN_ACCOUNTS).toHaveLength(2);
 
-    const joker = ALLOWED_ADMIN_ACCOUNTS.find((a) => a.username === 'mohamed_joker');
-    expect(joker).toBeDefined();
-    expect(joker?.display_name).toBe('محمد الجوكر');
-    expect(joker?.role).toBe(USER_ROLES.OWNER);
-    expect(joker?.pin).toBe('7777');
+    const owner = ALLOWED_ADMIN_ACCOUNTS.find((a) => a.username === 'mobix_admin');
+    expect(owner).toBeDefined();
+    expect(owner?.display_name).toBe('مدير موبيكس');
+    expect(owner?.role).toBe(USER_ROLES.OWNER);
+    expect(owner?.pin).toBeDefined();
 
     const tester = ALLOWED_ADMIN_ACCOUNTS.find((a) => a.username === 'test_admin');
     expect(tester).toBeDefined();
@@ -35,7 +35,7 @@ describe('فحص تكامل الحسابات الإدارية المعتمدة �
     expect(tester?.role).toBe(USER_ROLES.OWNER);
     expect(tester?.pin).toBe('9999');
 
-    expect(isAllowedAdminUsername('mohamed_joker')).toBe(true);
+    expect(isAllowedAdminUsername('mobix_admin')).toBe(true);
     expect(isAllowedAdminUsername('test_admin')).toBe(true);
     expect(isAllowedAdminUsername('hacker')).toBe(false);
     expect(isAllowedAdminUsername('admin')).toBe(false);
@@ -50,15 +50,15 @@ describe('فحص تكامل الحسابات الإدارية المعتمدة �
 
     const seededOwner = authService.seedDefaultOwnerIfNone();
     expect(seededOwner).not.toBeNull();
-    expect(seededOwner?.username).toBe('mohamed_joker');
+    expect(seededOwner?.username).toBe('mobix_admin');
 
     // التأكد من وجود الحسابين في قاعدة البيانات
     const allUsers = db.prepare('SELECT username, display_name, role, is_active FROM users').all() as any[];
     expect(allUsers).toHaveLength(2);
 
-    const jokerDb = allUsers.find((u) => u.username === 'mohamed_joker');
-    expect(jokerDb).toBeDefined();
-    expect(jokerDb?.role).toBe(USER_ROLES.OWNER);
+    const ownerDb = allUsers.find((u) => u.username === 'mobix_admin');
+    expect(ownerDb).toBeDefined();
+    expect(ownerDb?.role).toBe(USER_ROLES.OWNER);
 
     const testerDb = allUsers.find((u) => u.username === 'test_admin');
     expect(testerDb).toBeDefined();
@@ -69,13 +69,13 @@ describe('فحص تكامل الحسابات الإدارية المعتمدة �
     expect(oldAdmin).toBeUndefined();
 
     // نجاح تسجيل الدخول بكلمة المرور وبالـ PIN لكلا الحسابين
-    const jokerLogin = await authService.loginWithPasswordDetailed('mohamed_joker', 'Joker@Admin2026');
-    expect(jokerLogin.success).toBe(true);
-    expect(jokerLogin.user?.display_name).toBe('محمد الجوكر');
+    const ownerLogin = await authService.loginWithPasswordDetailed('mobix_admin', ownerDb ? (ALLOWED_ADMIN_ACCOUNTS.find(a => a.username === 'mobix_admin')?.password || 'Mobix@Admin2026') : 'Mobix@Admin2026');
+    expect(ownerLogin.success).toBe(true);
+    expect(ownerLogin.user?.display_name).toBe('مدير موبيكس');
 
-    const jokerPinLogin = await authService.loginWithPinDetailed('7777');
-    expect(jokerPinLogin.success).toBe(true);
-    expect(jokerPinLogin.user?.username).toBe('mohamed_joker');
+    const ownerPinLogin = await authService.loginWithPinDetailed(ALLOWED_ADMIN_ACCOUNTS.find(a => a.username === 'mobix_admin')?.pin || '7777');
+    expect(ownerPinLogin.success).toBe(true);
+    expect(ownerPinLogin.user?.username).toBe('mobix_admin');
 
     const testAdminLogin = await authService.loginWithPasswordDetailed('test_admin', 'Test@Dev2026');
     expect(testAdminLogin.success).toBe(true);

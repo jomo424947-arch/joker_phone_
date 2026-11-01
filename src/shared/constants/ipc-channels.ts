@@ -181,6 +181,14 @@ export const IPC_CHANNELS = {
   SERIALS_SEARCH: 'serials:search',
   SERIALS_CREATE: 'serials:create',
   SERIALS_UPDATE_STATUS: 'serials:update-status',
+
+  // Cloud & Supabase Integration (Optional Features)
+  CLOUD_GET_STATUS: 'cloud:getStatus',
+  CLOUD_BACKUP_NOW: 'cloud:backupNow',
+  CLOUD_LIST_BACKUPS: 'cloud:listBackups',
+  CLOUD_RESTORE: 'cloud:restore',
+  CLOUD_SET_AUTO_BACKUP: 'cloud:setAutoBackup',
+  CLOUD_VERIFY_LICENSE: 'cloud:verifyLicense',
 } as const;
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

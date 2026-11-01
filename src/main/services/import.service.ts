@@ -16,6 +16,7 @@ import {
 } from '../../shared/schemas/import.schema';
 import { ProductsService, productsService as globalProductsService } from './products.service';
 import { auditService as globalAuditService, AuditService } from './audit.service';
+import { generateInternalBarcode } from '../../shared/utils/barcode';
 
 export class ImportService {
   private db?: Database.Database;
@@ -259,9 +260,7 @@ export class ImportService {
             const seqRow = db
               .prepare("SELECT value FROM counters WHERE name = 'internal_barcode_seq'")
               .get() as { value: number };
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { generateInternalBarcode } = require('../../shared/utils/barcode');
-            barcodeToSave = generateInternalBarcode(seqRow.value, '200');
+                        barcodeToSave = generateInternalBarcode(seqRow.value, '200');
             isInternal = 1;
           }
 

@@ -138,7 +138,7 @@ export function AppContent(): React.ReactElement {
         >
           <img
             src={logoImg}
-            alt="شعار الجوكر فون"
+            alt="شعار موبيكس"
             style={{
               width: '100%',
               height: '100%',
@@ -150,7 +150,7 @@ export function AppContent(): React.ReactElement {
         </div>
         <Loader2 size={32} color="#FFB800" style={{ animation: 'spin 1s linear infinite' }} />
         <span style={{ fontWeight: 700, color: '#F8FAFC', letterSpacing: '0.3px' }}>
-          جاري تهيئة وتشغيل نظام الجوكر فون (JOKER PHONE)...
+          جاري تهيئة وتشغيل نظام موبيكس (Mobix)...
         </span>
       </div>
     );

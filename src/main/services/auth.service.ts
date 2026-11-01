@@ -18,6 +18,7 @@ import { USER_ROLES, UserRole } from '../../shared/constants/roles';
 import { ALLOWED_ADMIN_ACCOUNTS, isAllowedAdminUsername } from '../config/admin-accounts.config';
 import { auditService as globalAuditService, AuditService } from './audit.service';
 import { sessionService as globalSessionService, SessionService } from './session.service';
+import { cloudLicenseService, CloudLicenseService } from '../cloud/license.service';
 
 /**
  * تجزئة كلمة المرور باستخدام Scrypt ومفتاح Salt عشوائي
@@ -61,15 +62,18 @@ export class AuthService {
   private db?: Database.Database;
   private auditService: AuditService;
   private sessionService: SessionService;
+  private licenseService?: CloudLicenseService;
 
   constructor(
     db?: Database.Database,
     audit?: AuditService,
-    session?: SessionService
+    session?: SessionService,
+    license?: CloudLicenseService
   ) {
     this.db = db;
     this.auditService = audit ?? (db ? new AuditService(db) : globalAuditService);
     this.sessionService = session ?? globalSessionService;
+    this.licenseService = license ?? (db ? new CloudLicenseService(db) : undefined);
   }
 
   private getDb(): Database.Database {
@@ -649,7 +653,7 @@ export class AuthService {
   }
 
   /**
-   * إنشاء وتأكيد وجود الحسابات الإدارية المعتمدة للمحل (محمد الجوكر وحساب الاختبار)
+   * إنشاء وتأكيد وجود الحسابات الإدارية المعتمدة للمحل (مدير موبيكس وحساب الاختبار)
    */
   seedDefaultOwnerIfNone(): SafeUser | null {
     const db = this.getDb();
@@ -693,12 +697,12 @@ export class AuthService {
     }
 
     try {
-      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('system_initialized', '1', datetime('now'))").run();
-      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('license_activated', '1', datetime('now'))").run();
-      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('license_key', '-', datetime('now'))").run();
-      db.prepare("INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES ('license_activated_at', datetime('now'), datetime('now'))").run();
+      // لا يتم تفعيل النسخة تلقائياً بل عبر معالج التهيئة الأولى والتحقق السحابي
+
+
+
     } catch {
-      // ignore
+      // ignore settings seed
     }
 
     return seededAny ? primaryOwner : null;
@@ -709,7 +713,7 @@ export class AuthService {
    * يمكن إدخال الكود مع أو بدون فواصل وبأحرف كبيرة أو صغيرة
    */
   private readonly MASTER_ACTIVATION_CODES = [
-    '7392-8410-5628-3714',
+    '2784-ACA5-A4E7-B14C',
   ];
 
   /**
@@ -769,21 +773,53 @@ export class AuthService {
     displayName: string;
     password: string;
     pin: string;
-    activationCode: string;
+    activationCode?: string;
+    googleAccount?: string;
   }): Promise<{ success: boolean; user?: SafeUser; error?: string }> {
     const db = this.getDb();
-
-    // 1. التحقق الصارم من كود تفعيل النسخة
-    if (!data.activationCode || !this.verifyActivationCode(data.activationCode)) {
-      return {
-        success: false,
-        error: 'كود تفعيل النسخة غير صحيح! يرجى إدخال كود التفعيل المعتمد لتنشيط هذه النسخة.',
-      };
-    }
 
     // منع إعادة التهيئة إذا كان المالك موجوداً والنسخة مفعلة بالفعل
     if (this.isSetupCompleted()) {
       return { success: false, error: 'تم إعداد النظام وتفعيله مسبقاً بالفعل.' };
+    }
+
+    // 1. التحقق من حساب جوجل المعتمد للترخيص (سحابياً عبر Supabase، أو أوفلاين عبر الأكواد المعتمدة)
+    const rawAccount = (data.googleAccount || data.activationCode || '').trim();
+    if (!rawAccount) {
+      return {
+        success: false,
+        error: 'حساب جوجل المعتمد مطلوب لتنشيط وترخيص النسخة',
+      };
+    }
+    const normalizedCode = rawAccount.toLowerCase();
+    let cloudVerifyError: string | null = null;
+    let isCloudVerified = false;
+
+    try {
+      const licSvc = this.licenseService ?? cloudLicenseService;
+      if (licSvc) {
+        const cloudStatus = await licSvc.verifyLicenseOnline(normalizedCode);
+        if (cloudStatus.isValid) {
+          isCloudVerified = true;
+        } else if (cloudStatus.message) {
+          cloudVerifyError = cloudStatus.message;
+        }
+      }
+    } catch (e: any) {
+      cloudVerifyError = e?.message;
+    }
+
+    const hasValidMasterCode =
+      this.verifyActivationCode(rawAccount) ||
+      (data.activationCode ? this.verifyActivationCode(data.activationCode) : false);
+
+    if (!isCloudVerified && !hasValidMasterCode) {
+      return {
+        success: false,
+        error:
+          cloudVerifyError ||
+          'حساب جوجل هذا غير مسجل لدى الإدارة! يرجى إعطاء حسابك للإدارة لإضافته أولاً في لوحة التحكم والتأكد من الاتصال بالإنترنت للتفعيل لأول مرة.',
+      };
     }
 
     if (!data.username || data.username.trim().length < 3) {
@@ -806,7 +842,7 @@ export class AuthService {
     try {
       db.prepare("DELETE FROM users WHERE username IN ('mohamed_joker', 'test_admin', 'admin')").run();
     } catch {
-      // ignore
+      // ignore settings seed
     }
 
     const uuid = crypto.randomUUID();
@@ -853,7 +889,9 @@ export class AuthService {
       }
       db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('system_initialized', '1', datetime('now'))").run();
       db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_activated', '1', datetime('now'))").run();
-      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_key', ?, datetime('now'))").run(data.activationCode.trim().toUpperCase());
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_key', ?, datetime('now'))").run(normalizedCode);
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('google_account', ?, datetime('now'))").run(normalizedCode);
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('cloud_customer_email', ?, datetime('now'))").run(normalizedCode);
       db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('license_activated_at', datetime('now'), datetime('now'))").run();
     } catch (err) {
       console.error('فشل حفظ إعدادات المتجر والتفعيل أثناء التهيئة:', err);

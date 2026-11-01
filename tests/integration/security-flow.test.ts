@@ -45,7 +45,7 @@ describe('Security & Backup Integration Flow (سيناريو الأمان وال
   test('دورة أمان متكاملة: دخول كاشير -> طلب تفويض مدير -> اعتماد الخصم -> رصد تدقيق -> تجميد اختراق -> نسخ احتياطي', async () => {
     // 1. إنشاء الحسابات الأساسية
     const owner = authService.seedDefaultOwnerIfNone()!;
-    expect(owner.username).toBe('mohamed_joker');
+    expect(owner.username).toBe('mobix_admin');
 
     const manager = authService.createUser({
       username: 'manager_safwat',

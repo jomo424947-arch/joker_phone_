@@ -1,24 +1,24 @@
 -- ============================================================================
--- Migration 010: Joker Phone Store Extensions
--- تمديدات وهيكلة نظام الجوكر فون لإدارة محلات التليفونات والاكسسوارات والصيانة
+-- Migration 010: Mobix Store Extensions
+-- تمديدات وهيكلة نظام موبيكس لإدارة محلات الموبايلات والاكسسوارات والصيانة
 -- ============================================================================
 
--- 1. تحديث الإعدادات الافتراضية إلى هوية الجوكر فون
+-- 1. تحديث الإعدادات الافتراضية إلى هوية موبيكس
 UPDATE settings 
-SET value = 'الجوكر فون - JOKER PHONE', updated_at = datetime('now')
-WHERE key = 'store_name' AND value IN ('محل مستحضرات التجميل', 'بوتيك جوري - Boutique Gouri');
+SET value = 'موبيكس - Mobix', updated_at = datetime('now')
+WHERE key = 'store_name' AND value IN ('محل مستحضرات التجميل', 'بوتيك جوري - Boutique Gouri', 'الجوكر فون - JOKER PHONE');
 
 UPDATE settings 
-SET value = 'الجوكر فون - لإدارة محلات التليفونات واكسسواراتها وصيانة', updated_at = datetime('now')
+SET value = 'موبيكس - شريكك الذكي لإدارة محلات الموبايلات', updated_at = datetime('now')
 WHERE key = 'receipt_header';
 
 UPDATE settings 
-SET value = 'شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز', updated_at = datetime('now')
+SET value = 'شكراً لتعاملكم مع موبيكس - ضمان وجودة في كل جهاز', updated_at = datetime('now')
 WHERE key = 'receipt_footer';
 
 INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES 
     ('warranty_default_days', '30', datetime('now')),
-    ('repair_receipt_header', 'الجوكر فون - إيصال استلام صيانة', datetime('now')),
+    ('repair_receipt_header', 'موبيكس - إيصال استلام صيانة', datetime('now')),
     ('repair_terms', '1. المحل غير مسؤول عن الأجهزة المتروكة أكثر من 30 يوماً بعد إبلاغ العميل بالجاهزية.\n2. الضمان لا يشمل سوء الاستخدام أو الكسر أو التعرض للماء أو محاولة فك الجهاز خارج المحل.', datetime('now'));
 
 -- 2. عداد متسلسل لأوامر الصيانة بدون فجوات

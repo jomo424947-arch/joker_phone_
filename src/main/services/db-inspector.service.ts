@@ -156,7 +156,7 @@ export class DbInspectorService {
         schemaVersion = vRow?.max_v ?? null;
       }
 
-      let storeName = 'الجوكر فون - JOKER PHONE';
+      let storeName = 'موبيكس - Mobix';
       let storePhone = '';
       if (tables.has('settings')) {
         const sRows: any[] = targetDb

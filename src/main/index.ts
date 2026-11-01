@@ -7,6 +7,7 @@
  * - فحص السلامة الدوري التلقائي (Integrity Check)
  * - حماية الخمول بالقفل التلقائي (Auto Lock)
  * - النسخ الاحتياطي التلقائي عند إغلاق التطبيق
+ * - تهيئة الخدمات السحابية الاختيارية (Supabase License & Cloud Backup)
  */
 
 import { app, BrowserWindow } from 'electron';
@@ -14,9 +15,9 @@ import path from 'path';
 import fs from 'fs';
 import { registerAllIpcHandlers } from './ipc';
 import { initializeDatabase, closeDatabase } from './db';
-import { authService } from './services/auth.service';
 import { backupService } from './services/backup.service';
 import { autoLockService } from './services/autolock.service';
+import { initializeCloudFeatures } from './cloud';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -46,7 +47,7 @@ function createWindow(): void {
     height: 800,
     minWidth: 1024,
     minHeight: 700,
-    title: 'الجوكر فون | JOKER PHONE — نظام إدارة محلات التليفونات والاكسسوارات والصيانة',
+    title: 'موبيكس | Mobix — شريكك الذكي لإدارة محلات الموبايلات',
     icon: getAppIconPath(),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
@@ -78,7 +79,7 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   // ضبط معرف التطبيق في شريط مهام ويندوز لعرض الأيقونة والشعار الصحيح
   if (process.platform === 'win32') {
-    app.setAppUserModelId('com.jokerphone.pos');
+    app.setAppUserModelId('com.mobix.pos');
   }
 
   // فتح قاعدة البيانات وتطبيق أي ترحيلات جديدة
@@ -89,6 +90,11 @@ app.whenReady().then(async () => {
   } catch (err) {
     console.error('خطأ في تهيئة قاعدة البيانات:', err);
   }
+
+  // تهيئة الخدمات السحابية الاختيارية (الترخيص والنسخ الاحتياطي)
+  initializeCloudFeatures().catch((err) => {
+    console.warn('[Cloud] خطأ غير حرج في تهيئة الخدمات السحابية:', err);
+  });
 
   createWindow();
 

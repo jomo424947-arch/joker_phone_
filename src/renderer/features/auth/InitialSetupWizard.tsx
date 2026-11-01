@@ -34,9 +34,9 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pin, setPin] = useState('');
 
-  // كود تفعيل النسخة والترخيص (خاص بالمطور)
-  const [activationCode, setActivationCode] = useState('');
-  const [showActivationCode, setShowActivationCode] = useState(false);
+  // حساب جوجل المعتمد لتفعيل وترخيص النسخة
+  const [googleAccount, setGoogleAccount] = useState('');
+
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -97,8 +97,14 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
       triggerError('رمز PIN يجب أن يتكون من 4 أرقام بالضبط');
       return;
     }
-    if (!activationCode.trim()) {
-      triggerError('يرجى إدخال كود تفعيل وترخيص النسخة المعتمد لتنشيط النظام');
+    const cleanGoogleAccount = googleAccount.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!cleanGoogleAccount) {
+      triggerError('يرجى إدخال حساب جوجل المعتمد (Gmail) لتنشيط النظام');
+      return;
+    }
+    if (!emailRegex.test(cleanGoogleAccount)) {
+      triggerError('يرجى إدخال حساب جوجل صحيح بصيغة بريد إلكتروني (مثال: name@gmail.com)');
       return;
     }
 
@@ -130,7 +136,8 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
         username: username.trim(),
         password,
         pin: pin.trim(),
-        activationCode: activationCode.trim().toUpperCase(),
+        activationCode: cleanGoogleAccount,
+        googleAccount: cleanGoogleAccount,
       });
 
       if (res?.success && res.user) {
@@ -181,7 +188,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
           color: '#F8FAFC',
         }}
       >
-        {/* الترويسة الرئيسية وشعار الجوكر فون */}
+        {/* الترويسة الرئيسية وشعار موبيكس */}
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div
             style={{
@@ -199,7 +206,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
           >
             <img
               src={logoImg}
-              alt="الجوكر فون - JOKER PHONE"
+              alt="موبيكس - Mobix"
               style={{
                 width: '100%',
                 height: '100%',
@@ -219,7 +226,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
               lineHeight: 1.25,
             }}
           >
-            مرحباً بك في نظام الجوكر فون (JOKER PHONE) • تهيئة النظام لأول مرة
+            مرحباً بك في نظام موبيكس (Mobix) • تهيئة النظام لأول مرة
           </h1>
           <p
             style={{
@@ -237,14 +244,15 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
             type="button"
             onClick={() => {
               sounds.playClick();
-              setStoreName('الجوكر فون - لإدارة محلات التليفونات والاكسسوارات');
+              setStoreName('موبيكس - شريكك الذكي لإدارة محلات الموبايلات');
               setStorePhone('01000000000');
               setStoreAddress('الفرع الرئيسي');
-              setDisplayName('محمد الجوكر');
-              setUsername('mohamed_joker');
-              setPassword('Joker@Admin2026');
-              setConfirmPassword('Joker@Admin2026');
+              setDisplayName('مدير موبيكس');
+              setUsername('mobix_admin');
+              setPassword('Mobix@Admin2026');
+              setConfirmPassword('Mobix@Admin2026');
               setPin('7777');
+              setGoogleAccount('mobix.store@gmail.com');
               setError(null);
             }}
             style={{
@@ -260,7 +268,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
               transition: 'background 0.15s ease',
             }}
           >
-            ⚡ تعبئة سريعة لبيانات متجر الجوكر فون (محمد الجوكر)
+            ⚡ تعبئة سريعة لبيانات متجر موبيكس (Mobix)
           </button>
         </div>
 
@@ -314,7 +322,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                     type="text"
                     value={storeName}
                     onChange={(e) => setStoreName(e.target.value)}
-                    placeholder="مثال: الجوكر فون - JOKER PHONE"
+                    placeholder="مثال: موبيكس - Mobix"
                     autoFocus
                     style={{
                       width: '100%',
@@ -559,7 +567,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
             </div>
           </div>
 
-          {/* القسم 3: كود تفعيل وترخيص النسخة (خاص بالمطور) */}
+          {/* القسم 3: تفعيل وترخيص النسخة بحساب جوجل المعتمد */}
           <div
             style={{
               backgroundColor: '#1C222D',
@@ -576,7 +584,7 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#FFB800', fontWeight: 800, fontSize: 14 }}>
                 <ShieldCheck size={19} color="#FFB800" />
-                <span>3. تفعيل وترخيص النسخة (خاص بالمطور / الدعم الفني)</span>
+                <span>3. تفعيل وترخيص النسخة بحساب جوجل المعتمد</span>
               </div>
               <span
                 style={{
@@ -588,64 +596,45 @@ export function InitialSetupWizard({ onSetupComplete }: InitialSetupWizardProps)
                   borderRadius: 6,
                 }}
               >
-                مطلوب للتنشيط
+                تفعيل فوري بدون أكواد
               </span>
             </div>
 
             <p style={{ fontSize: 12, color: '#CBD5E1', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
-              هذا الحقل مخصص للمطور/المالك لوضع كود الترخيص المعتمد لتنشيط هذه النسخة على هذا الجهاز قبل الاستخدام.
+              أدخل حساب جوجل (Gmail) الذي قمت بتسليمه لإدارة النظام لإضافته لك. يتطلب التفعيل اتصالاً بالإنترنت لأول مرة فقط للتحقق من الحساب، ثم يعمل البرنامج بعد ذلك 100% بدون إنترنت مدى الحياة.
             </p>
 
             <div>
               <label style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: '#F8FAFC', marginBottom: 5 }}>
-                كود تفعيل النسخة (Activation Key) <span style={{ color: '#EF4444' }}>*</span>
+                حساب جوجل المعتمد للترخيص (Google Account / Email) <span style={{ color: '#EF4444' }}>*</span>
               </label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type={showActivationCode ? 'text' : 'password'}
-                  value={activationCode}
-                  onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
-                  placeholder="مثال: JKR-XXXX-XXXX-XXXX"
+                  type="email"
+                  value={googleAccount}
+                  onChange={(e) => setGoogleAccount(e.target.value.trim().toLowerCase())}
+                  placeholder="مثال: store.owner@gmail.com"
                   style={{
                     width: '100%',
                     height: 42,
-                    padding: '0 40px 0 40px',
+                    padding: '0 40px 0 16px',
                     borderRadius: 9,
                     border: '1.5px solid #FFB800',
                     backgroundColor: '#0B0E14',
                     color: '#FFB800',
                     fontSize: 14.5,
-                    fontWeight: 800,
-                    fontFamily: 'monospace',
-                    letterSpacing: '2px',
+                    fontWeight: 700,
                     outline: 'none',
                     boxSizing: 'border-box',
                     direction: 'ltr',
-                    textAlign: 'center',
+                    textAlign: 'left',
                   }}
                 />
                 <ShieldCheck size={18} color="#FFB800" style={{ position: 'absolute', right: 12, top: 12 }} />
-                <button
-                  type="button"
-                  onClick={() => setShowActivationCode(!showActivationCode)}
-                  title={showActivationCode ? 'إخفاء كود التفعيل' : 'إظهار كود التفعيل'}
-                  style={{
-                    position: 'absolute',
-                    left: 10,
-                    top: 10,
-                    background: 'none',
-                    border: 'none',
-                    color: '#94A3B8',
-                    cursor: 'pointer',
-                    padding: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {showActivationCode ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
               </div>
+              <span style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 4, display: 'block' }}>
+                💡 لا تحتاج لأي كود تفعيل؛ بمجرد أن يضيف المسؤول حسابك في لوحة التحكم، سيعمل برنامجك فوراً.
+              </span>
             </div>
           </div>
 

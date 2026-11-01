@@ -54,7 +54,8 @@ const electronAPI = {
     displayName: string;
     password: string;
     pin: string;
-    activationCode: string;
+    activationCode?: string;
+    googleAccount?: string;
   }) => ipcRenderer.invoke(IPC_CHANNELS.AUTH_COMPLETE_INITIAL_SETUP, data),
   requestOverride: (permission: Permission, pin: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.SYSTEM_OVERRIDE_PIN, { permission, pin }),
@@ -433,6 +434,22 @@ const electronAPI = {
     ipcRenderer.invoke(IPC_CHANNELS.SERIALS_CREATE, params),
   updateSerialStatus: (params: { id: number; status: DeviceSerialStatus; saleItemId?: number }) =>
     ipcRenderer.invoke(IPC_CHANNELS.SERIALS_UPDATE_STATUS, params),
+
+  // ==========================================
+  // Cloud & Supabase Integration (Optional)
+  // ==========================================
+  cloudGetStatus: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.CLOUD_GET_STATUS),
+  cloudVerifyLicense: (licenseKey?: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CLOUD_VERIFY_LICENSE, licenseKey),
+  cloudBackupNow: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.CLOUD_BACKUP_NOW),
+  cloudListBackups: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.CLOUD_LIST_BACKUPS),
+  cloudRestore: (backupId: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CLOUD_RESTORE, backupId),
+  cloudSetAutoBackup: (enabled: boolean, intervalHours?: number) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CLOUD_SET_AUTO_BACKUP, { enabled, intervalHours }),
 
   // ==========================================
   // Generic Whitelisted IPC Bridge

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>موبيكس | لوحة إدارة التراخيص والعملاء — Mobix Admin Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Alexandria', sans-serif;
+      background-color: #0B0E14;
+      color: #FFFFFF;
+    }
+    .font-mono-code {
+      font-family: 'Space Grotesk', monospace;
+    }
+    .glass-card {
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid #262E3D;
+      backdrop-filter: blur(12px);
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 184, 0, 0.35);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #FFB800 0%, #FFA800 100%);
+      color: #000000;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #FFC72C 0%, #FFB800 100%);
+      box-shadow: 0 4px 18px rgba(255, 184, 0, 0.35);
+      transform: translateY(-1px);
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0B0E14; }
+    ::-webkit-scrollbar-thumb { background: #30394A; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #FFB800; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-[#262E3D] mb-6">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#FFB800] to-[#FF9500] p-0.5 flex items-center justify-center shadow-lg shadow-[#FFB800]/20">
+        <div class="w-full h-full bg-[#0B0E14] rounded-[10px] flex items-center justify-center font-black text-[#FFB800] text-xl">
+          📱
+        </div>
+      </div>
+      <div>
+        <h1 class="text-xl md:text-2xl font-black text-[#F8FAFC] tracking-tight">
+          موبيكس <span class="text-[#FFB800]">| Mobix</span>
+        </h1>
+        <p class="text-xs md:text-sm text-[#94A3B8]">
+          لوحة الإدارة المركزية للتراخيص، تفعيل المحلات، وإدارة النسخ السحابية
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <div id="connectionStatus" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#161B22] border border-[#262E3D] text-[#94A3B8]">
+        <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+        <span>جاري الفحص...</span>
+      </div>
+
+      <div id="userBadge" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-300">
+        <span>👤</span>
+        <span id="userEmail">admin</span>
+        <button onclick="handleLogout()" title="تسجيل الخروج" class="mr-2 text-rose-400 hover:text-white font-bold">خروج</button>
+      </div>
+
+      <button onclick="fetchLicenses()" class="px-3 py-2 rounded-lg bg-[#161B22] border border-[#262E3D] hover:border-[#FFB800] text-[#CBD5E1] hover:text-[#FFB800] text-xs font-bold transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        تحديث
+      </button>
+
+      <button onclick="openConfigModal()" class="px-3 py-2 rounded-lg bg-[#161B22] border border-[#262E3D] hover:border-[#FFB800] text-[#CBD5E1] hover:text-[#FFB800] text-xs font-bold transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        الإعدادات
+      </button>
+    </div>
+  </header>
+
+  <!-- Login Card (Displayed only when not authenticated in Browser Mode) -->
+  <div id="loginCard" class="hidden max-w-md mx-auto w-full my-12 glass-card rounded-2xl p-6 border-[#FFB800]/40 shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="text-4xl mb-2">🔐</div>
+      <h2 class="text-xl font-black text-[#F8FAFC]">تسجيل دخول المسؤول</h2>
+      <p class="text-xs text-[#94A3B8] mt-1">سجّل الدخول بحساب الأدمن لإدارة التراخيص والعملاء بأمان</p>
+    </div>
+
+    <form onsubmit="handleLogin(event)" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">البريد الإلكتروني للأدمن:</label>
+        <input type="email" id="loginEmail" required placeholder="أدخل البريد الإلكتروني للأدمن" class="w-full h-11 px-3.5 rounded-xl bg-[#0B0E14] border border-[#262E3D] focus:border-[#FFB800] text-sm text-[#F8FAFC] font-mono-code outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">كلمة المرور:</label>
+        <input type="password" id="loginPassword" required placeholder="أدخل كلمة المرور" class="w-full h-11 px-3.5 rounded-xl bg-[#0B0E14] border border-[#262E3D] focus:border-[#FFB800] text-sm text-[#F8FAFC] font-mono-code outline-none">
+      </div>
+      <div id="loginError" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/30 text-rose-300 text-xs"></div>
+      <button type="submit" id="loginSubmitBtn" class="btn-gold w-full h-11 rounded-xl font-black text-sm flex items-center justify-center gap-2">
+        <span>تسجيل الدخول كمسؤول</span>
+        <span>⚡</span>
+      </button>
+    </form>
+    <div class="mt-4 pt-4 border-t border-[#262E3D] text-[11px] text-[#64748B] text-center">
+      💡 أو يمكنك تشغيل ملف <code class="text-[#FFB800] bg-[#161B22] px-1.5 py-0.5 rounded">تشغيل_لوحة_الادمن.bat</code> للفتح الفوري بصلاحيات كاملة بدون تسجيل دخول!
+      <br>
+      <span class="text-[#94A3B8]">🔧 أو شغّل: <code class="text-[#FFB800]">node admin-server.js</code> ثم افتح <code class="text-[#FFB800]">http://localhost:3333</code></span>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content (Visible when authenticated or local server is active) -->
+  <main id="dashboardContent">
+    <!-- Notice Bar for RLS Setup if needed -->
+    <div id="rlsBanner" class="hidden mb-6 p-4 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="text-base">⚡</span>
+        <span>لتفعيل الصلاحيات الإدارية الكاملة في Supabase، اضغط هنا لنسخ كود الـ SQL وتشغيله في المتصفح بنقرة واحدة:</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="copyRlsSql()" class="px-3 py-1.5 rounded-lg bg-[#FFB800] text-black font-black text-xs hover:bg-[#FFC72C] transition">
+          📋 نسخ كود الـ SQL
+        </button>
+        <a href="https://supabase.com/dashboard/project/juhhqychhdhxonmvkvpt/sql/new" target="_blank" class="px-3 py-1.5 rounded-lg bg-[#161B22] border border-amber-500/40 text-amber-300 text-xs font-bold hover:bg-[#262E3D] transition">
+          فتح SQL Editor ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="glass-card rounded-2xl p-5">
+        <div class="text-xs text-[#94A3B8] font-bold mb-1">إجمالي العملاء / التراخيص</div>
+        <div id="statTotal" class="text-2xl md:text-3xl font-black text-[#F8FAFC]">0</div>
+        <div class="text-[11px] text-[#64748B] mt-1">المحلات المسجلة بالنظام</div>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-[#10B981]">
+        <div class="text-xs text-[#94A3B8] font-bold mb-1">التراخيص النشطة</div>
+        <div id="statActive" class="text-2xl md:text-3xl font-black text-[#34D399]">0</div>
+        <div class="text-[11px] text-[#64748B] mt-1">تعمل بسلاسة ومفعّلة</div>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-[#EF4444]">
+        <div class="text-xs text-[#94A3B8] font-bold mb-1">التراخيص الموقوفة</div>
+        <div id="statRevoked" class="text-2xl md:text-3xl font-black text-[#F87171]">0</div>
+        <div class="text-[11px] text-[#64748B] mt-1">تم إيقافها أو معطلة</div>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-[#FFB800]">
+        <div class="text-xs text-[#94A3B8] font-bold mb-1">إجمالي النسخ السحابية</div>
+        <div id="statBackups" class="text-2xl md:text-3xl font-black text-[#FFB800]">0</div>
+        <div id="statBackupsSize" class="text-[11px] text-[#64748B] mt-1">0 ميجابايت مستخدمة</div>
+      </div>
+    </div>
+
+    <!-- Actions & Filter Bar -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
+      <div class="flex flex-wrap items-center gap-3">
+        <button onclick="openNewLicenseModal()" class="btn-gold px-5 py-2.5 rounded-xl text-sm font-black flex items-center gap-2 shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          إضافة زبون / ترخيص جديد
+        </button>
+
+        <select id="statusFilter" onchange="renderLicensesTable()" class="h-10 px-3 rounded-xl bg-[#161B22] border border-[#262E3D] text-xs font-bold text-[#CBD5E1] outline-none">
+          <option value="all">جميع الحالات</option>
+          <option value="active">النشطة فقط</option>
+          <option value="revoked">الموقوفة فقط</option>
+          <option value="unbound">غير المربوطة بجهاز (جديدة)</option>
+        </select>
+      </div>
+
+      <div class="relative flex-1 max-w-md">
+        <input type="text" id="searchInput" oninput="renderLicensesTable()" placeholder="بحث باسم العميل، الهاتف، أو حساب جوجل..." class="w-full h-10 pr-10 pl-4 rounded-xl bg-[#161B22] border border-[#262E3D] focus:border-[#FFB800] text-xs text-[#F8FAFC] outline-none transition">
+        <svg class="w-4 h-4 text-[#64748B] absolute right-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+    </div>
+
+    <!-- Licenses Table -->
+    <div class="glass-card rounded-2xl overflow-hidden border border-[#262E3D]">
+      <div class="overflow-x-auto">
+        <table class="w-full text-right text-xs">
+          <thead class="bg-[#12161F] text-[#94A3B8] font-bold border-b border-[#262E3D]">
+            <tr>
+              <th class="py-3.5 px-5">اسم المحل / العميل</th>
+              <th class="py-3.5 px-5">حساب جوجل المعتمد (Google Account)</th>
+              <th class="py-3.5 px-5">الجهاز المربوط (Machine)</th>
+              <th class="py-3.5 px-5">الصلاحية حتى</th>
+              <th class="py-3.5 px-5">الحالة</th>
+              <th class="py-3.5 px-5 text-center">النسخ السحابية</th>
+              <th class="py-3.5 px-5 text-center">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="licensesTableBody" class="divide-y divide-[#262E3D]/50 text-[#CBD5E1]">
+            <tr>
+              <td colspan="7" class="py-12 text-center text-[#94A3B8]">
+                جاري سحب بيانات التراخيص والعملاء...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: New License -->
+  <div id="newLicenseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass-card w-full max-w-lg rounded-2xl p-6 border-[#FFB800]/40 shadow-2xl animate-in fade-in duration-200">
+      <div class="flex items-center justify-between pb-4 border-b border-[#262E3D] mb-5">
+        <h3 class="text-base font-black text-[#F8FAFC] flex items-center gap-2">
+          <span>✨</span>
+          إصدار ترخيص / اعتماد حساب جوجل لعميل جديد
+        </h3>
+        <button onclick="closeNewLicenseModal()" class="text-[#94A3B8] hover:text-white text-lg">✕</button>
+      </div>
+
+      <form onsubmit="handleCreateLicense(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-[#CBD5E1] mb-1">اسم المحل / صاحب التوكيل: *</label>
+          <input type="text" id="modalCustomerName" required placeholder="مثال: سنتر النور للإلكترونيات" class="w-full h-10 px-3.5 rounded-xl bg-[#0B0E14] border border-[#262E3D] focus:border-[#FFB800] text-xs text-[#F8FAFC] outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#CBD5E1] mb-1">حساب جوجل المعتمد للعميل (Google Account / Gmail): *</label>
+          <input type="email" id="modalCustomerEmail" required placeholder="example@gmail.com" class="w-full h-10 px-3.5 rounded-xl bg-[#0B0E14] border border-[#262E3D] focus:border-[#FFB800] text-xs font-bold text-[#FFB800] outline-none font-mono-code dir-ltr">
+          <p class="text-[11px] text-[#94A3B8] mt-1">💡 يزودك صاحب المحل بحسابه على جوجل، وتضيفه هنا، ليسجل به مباشرة في البرنامج دون أي كود تفعيل.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#CBD5E1] mb-1">رقم هاتف العميل (واتساب):</label>
+          <input type="text" id="modalCustomerPhone" placeholder="010xxxxxxxx" class="w-full h-10 px-3.5 rounded-xl bg-[#0B0E14] border border-[#262E3D] focus:border-[#FFB800] text-xs text-[#F8FAFC] outline-none font-mono-code">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-[#CBD5E1] mb-1">مدة الصلاحية والتحديثات:</label>
+            <select id="modalDuration" class="w-full h-10 px-3 rounded-xl bg-[#0B0E14] border border-[#262E3D] text-xs text-[#CBD5E1] outline-none">
+              <option value="1">سنة واحدة (1 Year)</option>
+              <option value="2">سنتان (2 Years)</option>
+              <option value="3">3 سنوات (3 Years)</option>
+              <option value="5" selected>5 سنوات (5 Years - ترخيص ذهبي)</option>
+              <option value="10">مدى الحياة (10 Years)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-[#CBD5E1] mb-1">الحالة المبدئية:</label>
+            <select id="modalStatus" class="w-full h-10 px-3 rounded-xl bg-[#0B0E14] border border-[#262E3D] text-xs text-[#CBD5E1] outline-none">
+              <option value="active" selected>نشط (Active)</option>
+              <option value="revoked">موقوف (Revoked)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-[#CBD5E1] mb-2">الميزات المشمولة في الترخيص:</label>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-[#0B0E14] border border-[#262E3D] cursor-pointer hover:border-[#FFB800]">
+              <input type="checkbox" id="featCloudBackup" checked class="accent-[#FFB800]">
+              <span>النسخ الاحتياطي السحابي ☁️</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-[#0B0E14] border border-[#262E3D] cursor-pointer hover:border-[#FFB800]">
+              <input type="checkbox" id="featRepairs" checked class="accent-[#FFB800]">
+              <span>قسم الصيانة واستلام الأجهزة 🔧</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-[#0B0E14] border border-[#262E3D] cursor-pointer hover:border-[#FFB800]">
+              <input type="checkbox" id="featInventory" checked class="accent-[#FFB800]">
+              <span>إدارة المخزن والباركود 📦</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-[#0B0E14] border border-[#262E3D] cursor-pointer hover:border-[#FFB800]">
+              <input type="checkbox" id="featReports" checked class="accent-[#FFB800]">
+              <span>التقارير والأرباح المتقدمة 📊</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-[#262E3D]">
+          <button type="button" onclick="closeNewLicenseModal()" class="px-4 h-10 rounded-xl bg-[#161B22] hover:bg-[#262E3D] text-xs font-bold text-[#CBD5E1] transition">
+            إلغاء
+          </button>
+          <button type="submit" id="saveBtn" class="btn-gold px-6 h-10 rounded-xl text-xs font-black shadow-lg">
+            حفظ وإصدار الترخيص الآن
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Share / WhatsApp message -->
+  <div id="shareModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass-card w-full max-w-md rounded-2xl p-6 border-[#FFB800]/40 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[#262E3D] mb-4">
+        <h3 class="text-sm font-black text-[#F8FAFC] flex items-center gap-2">
+          <span>📱</span>
+          رسالة التفعيل للعميل (واتساب)
+        </h3>
+        <button onclick="closeShareModal()" class="text-[#94A3B8] hover:text-white text-lg">✕</button>
+      </div>
+
+      <textarea id="shareMessage" rows="7" readonly class="w-full p-3 rounded-xl bg-[#0B0E14] border border-[#262E3D] text-xs text-[#CBD5E1] font-mono leading-relaxed select-all mb-4 outline-none"></textarea>
+
+      <div class="flex items-center gap-2">
+        <button onclick="copyShareText()" class="btn-gold flex-1 h-10 rounded-xl text-xs font-black flex items-center justify-center gap-2">
+          <span>نسخ الرسالة بالكامل للواتساب</span>
+          <span>📋</span>
+        </button>
+        <button onclick="closeShareModal()" class="px-4 h-10 rounded-xl bg-[#161B22] text-[#CBD5E1] text-xs font-bold">
+          تم
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Customer Backups -->
+  <div id="backupsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass-card w-full max-w-2xl rounded-2xl p-6 border-[#FFB800]/40 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-[#262E3D] mb-4">
+        <div>
+          <h3 class="text-base font-black text-[#F8FAFC]">النسخ الاحتياطية المشفرة للعميل</h3>
+          <p id="backupsModalSubtitle" class="text-xs text-[#94A3B8] mt-0.5">تفاصيل النسخ المرفوعة على السحابة</p>
+        </div>
+        <button onclick="closeBackupsModal()" class="text-[#94A3B8] hover:text-white text-lg">✕</button>
+      </div>
+
+      <div class="max-h-80 overflow-y-auto rounded-xl border border-[#262E3D] mb-4">
+        <table class="w-full text-right text-xs">
+          <thead class="bg-[#12161F] text-[#94A3B8] font-bold border-b border-[#262E3D]">
+            <tr>
+              <th class="py-2.5 px-3">التاريخ والوقت</th>
+              <th class="py-2.5 px-3">الحجم</th>
+              <th class="py-2.5 px-3">إصدار التطبيق</th>
+              <th class="py-2.5 px-3">مسار التخزين المشفر</th>
+            </tr>
+          </thead>
+          <tbody id="backupsModalTableBody" class="divide-y divide-[#262E3D]/50 text-[#CBD5E1]"></tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="closeBackupsModal()" class="px-5 h-9 rounded-xl bg-[#161B22] hover:bg-[#262E3D] text-xs font-bold text-[#CBD5E1] transition">
+          إغلاق
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Config / Settings -->
+  <div id="configModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass-card w-full max-w-md rounded-2xl p-6 border-[#FFB800]/40 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[#262E3D] mb-4">
+        <h3 class="text-sm font-black text-[#F8FAFC]">إعدادات الاتصال بـ Supabase</h3>
+        <button onclick="closeConfigModal()" class="text-[#94A3B8] hover:text-white text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-[#CBD5E1] mb-1">SUPABASE_URL:</label>
+          <input type="text" id="cfgUrl" class="w-full h-10 px-3 rounded-lg bg-[#0B0E14] border border-[#262E3D] font-mono-code text-xs text-[#F8FAFC]">
+        </div>
+        <div>
+          <label class="block font-bold text-[#CBD5E1] mb-1">SUPABASE_PUBLISHABLE_KEY (Anon):</label>
+          <input type="text" id="cfgPub" class="w-full h-10 px-3 rounded-lg bg-[#0B0E14] border border-[#262E3D] font-mono-code text-xs text-[#FFB800]">
+        </div>
+        <div class="p-3 rounded-lg bg-[#0B0E14] border border-[#262E3D] text-[11px] text-[#94A3B8] leading-relaxed">
+          💡 المفتاح العام (Publishable) مخصص للمتصفح وهو آمن 100% ولا يتعرض للحظر من قبل السيرفر.
+        </div>
+        <div class="flex items-center gap-2 pt-2">
+          <button onclick="saveConfig()" class="btn-gold flex-1 h-10 rounded-lg font-bold text-xs">
+            حفظ وإعادة الاتصال
+          </button>
+          <button onclick="closeConfigModal()" class="px-4 h-10 rounded-lg bg-[#1C222D] text-[#CBD5E1] text-xs">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 px-4 py-3 rounded-xl bg-[#161B22] border border-[#FFB800] text-sm text-white flex items-center gap-2 shadow-2xl">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">تمت العملية بنجاح</span>
+  </div>
+
+  <script>
+    // Configuration defaults
+    const DEFAULT_URL = 'https://juhhqychhdhxonmvkvpt.supabase.co';
+    const DEFAULT_PUB_KEY = 'sb_publishable_t1HPhjfv2bE90mV4VTedVw_XGuoM0qk';
+
+    let supabaseUrl = localStorage.getItem('JKR_ADMIN_SUPABASE_URL') || DEFAULT_URL;
+    let supabasePubKey = localStorage.getItem('JKR_ADMIN_SUPABASE_PUB') || DEFAULT_PUB_KEY;
+
+    let isLocalServerMode = false;
+    let supabaseClient = null;
+    let currentAdminSession = null;
+    let allLicenses = [];
+    let allBackups = [];
+
+    // Initialize application
+    async function initApp() {
+      // 1. Check if running through Local Server (node admin-server.js on port 3333)
+      try {
+        const ping = await fetch('/api/health');
+        if (ping.ok) {
+          const res = await ping.json();
+          if (res.mode === 'local-server') {
+            isLocalServerMode = true;
+            updateStatus(true, 'متصل محلياً (صلاحيات كاملة ⚡)');
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            await fetchLicenses();
+            return;
+          }
+        }
+      } catch (e) {
+        // Not local server, proceed to Supabase Client mode
+      }
+
+      // 2. Browser Direct Supabase Mode
+      initSupabaseClient();
+    }
+
+    function initSupabaseClient() {
+      try {
+        supabaseClient = supabase.createClient(supabaseUrl, supabasePubKey, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true
+          }
+        });
+
+        // اختبار فوري للاتصال بقاعدة البيانات
+        supabaseClient.from('licenses').select('id', { count: 'exact', head: true }).then(({ error }) => {
+          if (error) {
+            console.warn('[Supabase] فشل اختبار الاتصال بالجداول:', error.message);
+            if (error.message.includes('Invalid API key') || error.message.includes('apikey')) {
+              updateStatus(false, 'مفتاح API غير صالح — تحقق من الإعدادات');
+            }
+          }
+        }).catch(() => {});
+
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+          currentAdminSession = session;
+          if (session) {
+            updateStatus(true, 'متصل كمسؤول ✅');
+            document.getElementById('userEmail').innerText = session.user.email;
+            document.getElementById('userBadge').classList.remove('hidden');
+            document.getElementById('loginCard').classList.add('hidden');
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            fetchLicenses();
+          } else {
+            updateStatus(false, 'يرجى تسجيل الدخول');
+            document.getElementById('userBadge').classList.add('hidden');
+            document.getElementById('loginCard').classList.remove('hidden');
+            document.getElementById('dashboardContent').classList.add('hidden');
+          }
+        });
+
+        // Check active session
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+          if (!session) {
+            document.getElementById('loginCard').classList.remove('hidden');
+            document.getElementById('dashboardContent').classList.add('hidden');
+            updateStatus(false, 'يرجى تسجيل الدخول');
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        updateStatus(false, 'خطأ في الاتصال');
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const btn = document.getElementById('loginSubmitBtn');
+      const errBox = document.getElementById('loginError');
+
+      btn.disabled = true;
+      btn.innerText = 'جاري التحقق...';
+      errBox.classList.add('hidden');
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        showToast('مرحباً بك يا مسؤول النظام!', '👋');
+      } catch (err) {
+        let errorMsg = '';
+        const errCode = err.message || '';
+        if (errCode.includes('Invalid login credentials')) {
+          errorMsg = 'بيانات الدخول غير صحيحة. تأكد أن هذا الحساب مسجل في Supabase Authentication أولاً.\n\nلتسجيل حساب أدمن جديد:\n1. افتح لوحة Supabase → Authentication → Users\n2. أضف مستخدم جديد بالبريد وكلمة المرور\n3. أو شغّل ملف admin-server.js للدخول بدون تسجيل';
+        } else if (errCode.includes('Email not confirmed')) {
+          errorMsg = 'البريد الإلكتروني غير مؤكد. يرجى تأكيد البريد من Supabase أو تعطيل Email Confirmation.';
+        } else if (errCode.includes('Network') || errCode.includes('fetch')) {
+          errorMsg = 'لا يوجد اتصال بالإنترنت. تأكد من الاتصال أو شغّل admin-server.js للعمل محلياً.';
+        } else {
+          errorMsg = 'فشل تسجيل الدخول: ' + (err.message || 'تأكد من البريد وكلمة المرور');
+        }
+        errBox.innerText = errorMsg;
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>تسجيل الدخول كمسؤول</span><span>⚡</span>';
+      }
+    }
+
+    async function handleLogout() {
+      if (!confirm('هل تريد تسجيل الخروج من لوحة الإدارة؟')) return;
+      if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+        showToast('تم تسجيل الخروج', '🔒');
+      }
+    }
+
+    function updateStatus(isOk, text) {
+      const el = document.getElementById('connectionStatus');
+      if (isOk) {
+        el.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-950/60 border border-emerald-500/30 text-emerald-400';
+        el.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>' + text + '</span>';
+      } else {
+        el.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-950/60 border border-rose-500/30 text-rose-400';
+        el.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>' + text + '</span>';
+      }
+    }
+
+    // Fetch Licenses & Backups
+    async function fetchLicenses() {
+      const tbody = document.getElementById('licensesTableBody');
+      tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-[#94A3B8]">جاري سحب بيانات التراخيص والعملاء...</td></tr>';
+
+      try {
+        if (isLocalServerMode) {
+          const [licRes, bkpRes] = await Promise.all([
+            fetch('/api/licenses').then(r => r.json()),
+            fetch('/api/backups').then(r => r.json())
+          ]);
+          allLicenses = Array.isArray(licRes) ? licRes : [];
+          allBackups = Array.isArray(bkpRes) ? bkpRes : [];
+        } else if (supabaseClient) {
+          const [licRes, bkpRes] = await Promise.all([
+            supabaseClient.from('licenses').select('*').order('created_at', { ascending: false }),
+            supabaseClient.from('backups').select('id, license_id, size_bytes, created_at, storage_path, app_version').order('created_at', { ascending: false })
+          ]);
+
+          if (licRes.error) throw licRes.error;
+
+          allLicenses = licRes.data || [];
+          allBackups = bkpRes.data || [];
+
+          // If logged in but empty, display RLS notice banner
+          if (allLicenses.length === 0) {
+            document.getElementById('rlsBanner').classList.remove('hidden');
+          } else {
+            document.getElementById('rlsBanner').classList.add('hidden');
+          }
+        }
+
+        updateStats();
+        renderLicensesTable();
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-rose-400 font-bold">تعذر جلب التراخيص: ' + (err.message || 'خطأ غير معروف') + '</td></tr>';
+        showToast('فشل جلب البيانات: ' + err.message, '⚠️');
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('statTotal').innerText = allLicenses.length;
+      document.getElementById('statActive').innerText = allLicenses.filter(l => l.status === 'active').length;
+      document.getElementById('statRevoked').innerText = allLicenses.filter(l => l.status === 'revoked').length;
+
+      document.getElementById('statBackups').innerText = allBackups.length;
+      const totalBytes = allBackups.reduce((sum, b) => sum + (b.size_bytes || 0), 0);
+      document.getElementById('statBackupsSize').innerText = (totalBytes / (1024 * 1024)).toFixed(2) + ' ميجابايت مستخدمة';
+    }
+
+    function renderLicensesTable() {
+      const tbody = document.getElementById('licensesTableBody');
+      const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      let filtered = allLicenses.filter(l => {
+        const matchesSearch =
+          (l.customer_name || '').toLowerCase().includes(search) ||
+          (l.license_key || '').toLowerCase().includes(search) ||
+          (l.id || '').toLowerCase().includes(search) ||
+          (l.customer_phone || '').toLowerCase().includes(search) ||
+          (l.customer_email || '').toLowerCase().includes(search);
+
+        if (!matchesSearch) return false;
+
+        if (statusFilter === 'active') return l.status === 'active';
+        if (statusFilter === 'revoked') return l.status === 'revoked';
+        if (statusFilter === 'unbound') return !l.machine_id;
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-[#64748B]">لا توجد نتائج تطابق شروط البحث</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(l => {
+        const displayKey = l.license_key || l.id;
+        const bkpCount = allBackups.filter(b => b.license_id === l.id).length;
+        const isActive = l.status === 'active';
+
+        const machineCol = l.machine_id
+          ? `<div class="flex items-center gap-2">
+               <span class="px-2 py-0.5 rounded bg-[#1C222D] border border-[#30394A] font-mono-code text-[11px] text-[#38BDF8]" title="${l.machine_id}">
+                 💻 ${l.machine_id.slice(0, 16)}...
+               </span>
+               <button onclick="handleResetMachine('${l.id}', '${l.customer_name}')" title="فك ربط الجهاز (نقل الترخيص لجهاز جديد)" class="p-1 rounded hover:bg-rose-950/60 text-[#F87171] hover:text-white transition">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+               </button>
+             </div>`
+          : `<span class="px-2 py-0.5 rounded bg-blue-950/60 border border-blue-500/30 text-blue-400 text-[11px] font-bold">
+               🔵 جاهز للتفعيل لأول مرة
+             </span>`;
+
+        return `
+          <tr class="hover:bg-[#161B22]/70 transition">
+            <td class="py-3.5 px-5">
+              <div class="font-bold text-[#F8FAFC]">${l.customer_name}</div>
+              <div class="text-xs text-[#94A3B8] font-mono-code">${l.customer_phone || 'بدون هاتف'}</div>
+              ${l.customer_email ? `<div class="text-[11px] text-[#38BDF8] font-mono-code">${l.customer_email}</div>` : ''}
+            </td>
+            <td class="py-3.5 px-5">
+              <div class="flex items-center gap-2">
+                <span class="font-mono-code font-bold text-[#FFB800] bg-[#0B0E14] px-2.5 py-1 rounded-lg border border-[#262E3D] select-all dir-ltr" title="${displayKey}">
+                  ${l.customer_email || displayKey}
+                </span>
+                <button onclick="copyText('${l.customer_email || displayKey}', 'تم نسخ حساب جوجل')" title="نسخ حساب جوجل" class="p-1.5 rounded-lg hover:bg-[#262E3D] text-[#94A3B8] hover:text-white transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </button>
+              </div>
+            </td>
+            <td class="py-3.5 px-5">${machineCol}</td>
+            <td class="py-3.5 px-5 font-mono-code text-xs text-[#CBD5E1]">${l.updates_until || 'غير محدد'}</td>
+            <td class="py-3.5 px-5">
+              ${isActive
+                ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">نشط</span>'
+                : '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">موقوف</span>'
+              }
+            </td>
+            <td class="py-3.5 px-5 text-center">
+              <button onclick="viewCustomerBackups('${l.id}', '${l.customer_name}')" class="px-2.5 py-1 rounded-lg bg-[#0B0E14] border border-[#262E3D] hover:border-[#FFB800] text-xs font-bold text-[#FFB800] transition">
+                📂 ${bkpCount} نسخ
+              </button>
+            </td>
+            <td class="py-3.5 px-5 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="handleToggleStatus('${l.id}', '${l.status}')" class="px-2.5 py-1 rounded-lg text-xs font-bold ${isActive ? 'bg-rose-950/50 hover:bg-rose-900 border border-rose-800 text-rose-300' : 'bg-emerald-950/50 hover:bg-emerald-900 border border-emerald-800 text-emerald-300'} transition">
+                  ${isActive ? 'إيقاف' : 'تفعيل'}
+                </button>
+                <button onclick="handleDeleteLicense('${l.id}', '${l.customer_name}')" title="حذف الترخيص" class="p-1.5 rounded-lg hover:bg-rose-950/50 text-[#64748B] hover:text-rose-400 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openNewLicenseModal() {
+      document.getElementById('modalCustomerName').value = '';
+      document.getElementById('modalCustomerPhone').value = '';
+      document.getElementById('modalCustomerEmail').value = '';
+      document.getElementById('newLicenseModal').classList.remove('hidden');
+    }
+
+    function closeNewLicenseModal() {
+      document.getElementById('newLicenseModal').classList.add('hidden');
+    }
+
+    // Create New License with Google Account
+    async function handleCreateLicense(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.innerText = 'جاري الحفظ والإنشاء...';
+
+      try {
+        const customerName = document.getElementById('modalCustomerName').value.trim();
+        const customerPhone = document.getElementById('modalCustomerPhone').value.trim();
+        const customerEmail = (document.getElementById('modalCustomerEmail').value || '').trim().toLowerCase();
+        const years = parseInt(document.getElementById('modalDuration').value, 10);
+        const status = document.getElementById('modalStatus').value;
+
+        if (!customerName) {
+          alert('يرجى إدخال اسم المحل أو صاحب التوكيل');
+          return;
+        }
+
+        if (!customerEmail) {
+          alert('يرجى إدخال حساب جوجل المعتمد للعميل (Gmail)');
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(customerEmail)) {
+          alert('يرجى إدخال عنوان بريد إلكتروني صحيح لحساب جوجل (مثال: example@gmail.com)');
+          return;
+        }
+
+        // تحذير في حال تكرار الحساب (فحص محلي)
+        const existingAcc = allLicenses.find(l => (l.customer_email || '').toLowerCase() === customerEmail);
+        if (existingAcc) {
+          if (!confirm(`⚠️ تنبيه: حساب جوجل (${customerEmail}) مسجل بالفعل للعميل "${existingAcc.customer_name}". هل أنت متأكد من رغبتك في إضافته مرة أخرى؟`)) {
+            return;
+          }
+        }
+
+        // فحص إضافي من قاعدة البيانات مباشرة للتأكد
+        if (supabaseClient && !isLocalServerMode) {
+          try {
+            const { data: existingRow } = await supabaseClient
+              .from('licenses')
+              .select('id, customer_name')
+              .ilike('customer_email', customerEmail)
+              .maybeSingle();
+            if (existingRow && !existingAcc) {
+              if (!confirm(`⚠️ تنبيه من قاعدة البيانات: حساب (${customerEmail}) مسجل للعميل "${existingRow.customer_name}". هل تريد الإضافة مرة أخرى؟`)) {
+                return;
+              }
+            }
+          } catch (dbErr) {
+            console.warn('فحص التكرار من قاعدة البيانات فشل:', dbErr);
+          }
+        }
+
+        const expiryDate = new Date();
+        expiryDate.setFullYear(expiryDate.getFullYear() + years);
+        const updatesUntil = expiryDate.toISOString().split('T')[0];
+
+        const features = [];
+        if (document.getElementById('featCloudBackup').checked) features.push('cloud_backup');
+        if (document.getElementById('featRepairs').checked) features.push('repairs');
+        if (document.getElementById('featInventory').checked) features.push('inventory');
+        if (document.getElementById('featReports').checked) features.push('reports');
+
+        // توليد معرف داخلي فريد لقاعدة البيانات لمنع أخطاء الـ Constraints
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let p1 = '', p2 = '';
+        for (let i = 0; i < 4; i++) p1 += chars.charAt(Math.floor(Math.random() * chars.length));
+        for (let i = 0; i < 4; i++) p2 += chars.charAt(Math.floor(Math.random() * chars.length));
+        const internalKey = `JKR-${new Date().getFullYear()}-${p1}-${p2}`;
+
+        const payload = {
+          customer_name: customerName,
+          customer_phone: customerPhone || null,
+          customer_email: customerEmail,
+          license_key: internalKey,
+          machine_id: null,
+          features: features,
+          updates_until: updatesUntil,
+          status: status
+        };
+
+        if (isLocalServerMode) {
+          const res = await fetch('/api/licenses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const resData = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            throw new Error(resData?.error || resData?.message || 'فشل الحفظ عبر السيرفر المحلي');
+          }
+        } else if (supabaseClient) {
+          const { error } = await supabaseClient.from('licenses').insert(payload);
+          if (error) throw error;
+        }
+
+        closeNewLicenseModal();
+        showToast('تم اعتماد حساب جوجل وترخيص العميل بنجاح!', '🎉');
+        await fetchLicenses();
+
+        // Open share modal
+        const shareMsg =
+`مرحباً بك في نظام موبيكس | Mobix 🏪
+تم اعتماد وترخيص نسختك بنجاح بحساب جوجل:
+━━━━━━━━━━━━━━━━━
+• المحل / العميل: ${customerName}
+• حساب جوجل المعتمد: ${customerEmail}
+• مدة الصلاحية حتى: ${updatesUntil}
+━━━━━━━━━━━━━━━━━
+طريقة التفعيل السريع:
+1- افتح البرنامج على جهاز الكمبيوتر لأول مرة.
+2- أدخل بيانات متجرك وحساب المدير.
+3- في خطوة التفعيل، أدخل حساب جوجل: (${customerEmail})
+4- اضغط تفعيل وسيعمل البرنامج فوراً بدون الحاجة لأي أكواد!`;
+
+        document.getElementById('shareMessage').value = shareMsg;
+        document.getElementById('shareModal').classList.remove('hidden');
+      } catch (err) {
+        console.error('Create License Error:', err);
+        const msg = err.message || '';
+        if (msg.includes('customer_phone') || msg.includes('license_key') || msg.includes('customer_email')) {
+          copyRlsSql();
+          alert('⚠️ قاعدة البيانات في Supabase ينقصها تحديث الأعمدة.\n\nتم نسخ كود الحل تلقائياً للحافظة (Clipboard)!\nافتح Supabase SQL Editor والصقه واضغط RUN وسيعمل الحفظ فوراً وبدون أي مشكلة.');
+        } else {
+          alert('خطأ أثناء حفظ الترخيص: ' + (err.message || err));
+        }
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = 'حفظ وإصدار الترخيص الآن';
+      }
+    }
+
+    // Reset Machine ID (Allow customer to transfer software to new PC)
+    async function handleResetMachine(licenseId, customerName) {
+      if (!confirm(`هل أنت متأكد من فك ربط جهاز الكمبيوتر عن محل: (${customerName})؟\n\nهذا الإجراء سيسمح للعميل بنقل وتشغيل برنامجه على جهاز كمبيوتر جديد بأمان.`)) {
+        return;
+      }
+
+      try {
+        if (isLocalServerMode) {
+          const res = await fetch(`/api/licenses/${licenseId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ machine_id: null })
+          });
+          if (!res.ok) throw new Error('فشل فك الربط');
+        } else if (supabaseClient) {
+          const { error } = await supabaseClient.from('licenses').update({ machine_id: null }).eq('id', licenseId);
+          if (error) throw error;
+        }
+        showToast('تم فك ربط الجهاز، الترخيص جاهز للتفعيل على الجهاز الجديد!', '🔄');
+        await fetchLicenses();
+      } catch (err) {
+        alert('فشل فك ربط الجهاز: ' + err.message);
+      }
+    }
+
+    // Toggle Active / Revoked Status
+    async function handleToggleStatus(licenseId, currentStatus) {
+      const nextStatus = currentStatus === 'active' ? 'revoked' : 'active';
+      const actionTitle = nextStatus === 'revoked' ? 'إيقاف هذا الترخيص' : 'إعادة تفعيل هذا الترخيص';
+
+      if (!confirm(`هل أنت متأكد من رغبتك في ${actionTitle}؟`)) return;
+
+      try {
+        if (isLocalServerMode) {
+          const res = await fetch(`/api/licenses/${licenseId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: nextStatus })
+          });
+          if (!res.ok) throw new Error('فشل تعديل الحالة');
+        } else if (supabaseClient) {
+          const { error } = await supabaseClient.from('licenses').update({ status: nextStatus }).eq('id', licenseId);
+          if (error) throw error;
+        }
+        showToast(nextStatus === 'active' ? 'تم تفعيل الترخيص' : 'تم إيقاف الترخيص', '⚡');
+        await fetchLicenses();
+      } catch (err) {
+        alert('فشل تعديل الحالة: ' + err.message);
+      }
+    }
+
+    // Delete License
+    async function handleDeleteLicense(licenseId, customerName) {
+      if (!confirm(`⚠️ تحذير نهائي:\nهل تريد حذف ترخيص (${customerName}) وجميع سجلاته نهائياً من السيرفر؟`)) return;
+
+      try {
+        if (isLocalServerMode) {
+          const res = await fetch(`/api/licenses/${licenseId}`, { method: 'DELETE' });
+          if (!res.ok) throw new Error('فشل الحذف');
+        } else if (supabaseClient) {
+          const { error } = await supabaseClient.from('licenses').delete().eq('id', licenseId);
+          if (error) throw error;
+        }
+        showToast('تم حذف الترخيص', '🗑️');
+        await fetchLicenses();
+      } catch (err) {
+        alert('فشل الحذف: ' + err.message);
+      }
+    }
+
+    // View customer backups
+    function viewCustomerBackups(licenseId, customerName) {
+      const backups = allBackups.filter(b => b.license_id === licenseId);
+      document.getElementById('backupsModalSubtitle').innerText = `المحل: ${customerName} (${backups.length} نسخ)`;
+
+      const tbody = document.getElementById('backupsModalTableBody');
+      if (backups.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-[#64748B]">لا توجد نسخ سحابية مرفوعة لهذا العميل بعد</td></tr>';
+      } else {
+        tbody.innerHTML = backups.map(b => `
+          <tr class="hover:bg-[#161B22]/60">
+            <td class="py-2.5 px-3 font-mono-code">${new Date(b.created_at).toLocaleString('ar-EG')}</td>
+            <td class="py-2.5 px-3 font-mono-code text-[#FFB800]">${(b.size_bytes / (1024 * 1024)).toFixed(2)} MB</td>
+            <td class="py-2.5 px-3 font-mono-code">${b.app_version || '2.0.0'}</td>
+            <td class="py-2.5 px-3 font-mono-code text-[11px] text-[#94A3B8]">${b.storage_path}</td>
+          </tr>
+        `).join('');
+      }
+
+      document.getElementById('backupsModal').classList.remove('hidden');
+    }
+
+    function closeBackupsModal() {
+      document.getElementById('backupsModal').classList.add('hidden');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.add('hidden');
+    }
+
+    function copyShareText() {
+      const text = document.getElementById('shareMessage').value;
+      copyText(text, 'تم نسخ الرسالة بالكامل للواتساب!');
+    }
+
+    function copyText(str, successMsg) {
+      navigator.clipboard.writeText(str).then(() => {
+        showToast(successMsg, '📋');
+      });
+    }
+
+    function copyRlsSql() {
+      const sql =
+`-- 1. إضافة أعمدة كود التفعيل ورقم الهاتف وحساب جوجل
+ALTER TABLE public.licenses ADD COLUMN IF NOT EXISTS customer_email TEXT;
+ALTER TABLE public.licenses ADD COLUMN IF NOT EXISTS customer_phone TEXT;
+ALTER TABLE public.licenses ADD COLUMN IF NOT EXISTS license_key TEXT UNIQUE;
+
+CREATE INDEX IF NOT EXISTS idx_licenses_customer_email ON public.licenses(LOWER(customer_email));
+CREATE INDEX IF NOT EXISTS idx_licenses_license_key ON public.licenses(license_key);
+
+-- 2. دالة التحقق verify_license لحساب جوجل وكود التفعيل
+CREATE OR REPLACE FUNCTION public.verify_license(
+    p_license_key TEXT,
+    p_machine_id TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS \$\$
+DECLARE
+    v_rec RECORD;
+    v_clean TEXT;
+BEGIN
+    v_clean := TRIM(p_license_key);
+
+    SELECT * INTO v_rec 
+    FROM public.licenses 
+    WHERE (customer_email IS NOT NULL AND LOWER(customer_email) = LOWER(v_clean))
+       OR (license_key IS NOT NULL AND UPPER(license_key) = UPPER(v_clean))
+       OR (id::text = v_clean)
+    LIMIT 1;
+
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object(
+            'error', 'LICENSE_NOT_FOUND',
+            'message', 'هذا الحساب أو الكود غير مسجل لدى الإدارة. يرجى إضافة حسابك أو كود التفعيل أولاً في لوحة التحكم.'
+        );
+    END IF;
+
+    IF v_rec.status = 'revoked' THEN
+        RETURN jsonb_build_object(
+            'error', 'LICENSE_REVOKED',
+            'status', 'revoked',
+            'updates_until', v_rec.updates_until,
+            'message', 'هذا الترخيص تم إيقافه من قبل إدارة النظام.'
+        );
+    END IF;
+
+    IF v_rec.machine_id IS NULL OR v_rec.machine_id = '' THEN
+        UPDATE public.licenses
+        SET machine_id = p_machine_id
+        WHERE id = v_rec.id;
+        
+        v_rec.machine_id := p_machine_id;
+    ELSIF v_rec.machine_id <> p_machine_id THEN
+        RETURN jsonb_build_object(
+            'error', 'MACHINE_MISMATCH',
+            'message', 'هذا الحساب مرخص ومفعل بالفعل على جهاز كمبيوتر آخر! لا يمكن استخدامه على هذا الجهاز إلا بعد فك ربط الجهاز القديم من لوحة الأدمن.'
+        );
+    END IF;
+
+    RETURN jsonb_build_object(
+        'valid', true,
+        'license_id', v_rec.id,
+        'license_key', v_rec.license_key,
+        'customer_name', v_rec.customer_name,
+        'customer_email', v_rec.customer_email,
+        'machine_id', v_rec.machine_id,
+        'features', v_rec.features,
+        'updates_until', v_rec.updates_until,
+        'status', v_rec.status
+    );
+END;
+\$\$;
+
+GRANT EXECUTE ON FUNCTION public.verify_license(TEXT, TEXT) TO anon, authenticated;
+
+-- 3. صلاحيات الأمان
+DROP POLICY IF EXISTS "Admin full access to licenses" ON public.licenses;
+CREATE POLICY "Admin full access to licenses" ON public.licenses FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin full access to backups" ON public.backups;
+CREATE POLICY "Admin full access to backups" ON public.backups FOR ALL TO authenticated USING (true) WITH CHECK (true);`;
+      copyText(sql, 'تم نسخ كود الـ SQL المحدث بنجاح! الصقه في Supabase واضغط RUN');
+    }
+
+    function showToast(msg, icon) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon || '✨';
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    }
+
+    // Config modal
+    function openConfigModal() {
+      document.getElementById('cfgUrl').value = supabaseUrl;
+      document.getElementById('cfgPub').value = supabasePubKey;
+      document.getElementById('configModal').classList.remove('hidden');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.add('hidden');
+    }
+
+    function saveConfig() {
+      supabaseUrl = document.getElementById('cfgUrl').value.trim();
+      supabasePubKey = document.getElementById('cfgPub').value.trim();
+      localStorage.setItem('JKR_ADMIN_SUPABASE_URL', supabaseUrl);
+      localStorage.setItem('JKR_ADMIN_SUPABASE_PUB', supabasePubKey);
+      closeConfigModal();
+      initApp();
+    }
+
+    // Start
+    initApp();
+  </script>
+</body>
+</html>

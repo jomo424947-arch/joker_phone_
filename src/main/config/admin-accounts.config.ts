@@ -2,11 +2,11 @@
  * ملف إعدادات الحسابات الإدارية المعتمدة (Admin Accounts Configuration)
  * -------------------------------------------------------------
  * تنبيه أمني وسياسة النظام:
- * يُسمح فقط لحسابين اثنين بامتلاك صلاحيات الإدارة العليا والمالك (Owner):
- * 1. حساب العميل الرئيسي: محمد الجوكر
+ * يُسمح فقط للحسابات الإدارية المعتمدة بامتلاك صلاحيات الإدارة العليا والمالك (Owner):
+ * 1. حساب إدارة النظام الرئيسي: مدير موبيكس (mobix_admin)
  * 2. حساب المطور / الاختبار: مسؤول الاختبار
  *
- * يُمنع منعاً باتاً تسجيل أو ترقية أي مستخدم آخر إلى رتبة مالك (Owner).
+ * يُمنع منعاً باتاً تسجيل أو ترقية أي مستخدم غير مصرح له إلى رتبة مالك (Owner).
  *
  * ⚠️ الأمان: كلمات المرور وأرقام PIN يتم قراءتها من متغيرات البيئة (.env)
  * لتجنب كشف البيانات الحساسة في الكود المصدري.
@@ -27,11 +27,11 @@ export interface AdminAccountConfig {
 
 export const ALLOWED_ADMIN_ACCOUNTS: readonly AdminAccountConfig[] = [
   {
-    // حساب العميل الأساسي (المالك)
-    username: 'mohamed_joker',
-    display_name: 'محمد الجوكر',
-    password: process.env.ADMIN_OWNER_PASSWORD || 'Joker@Admin2026',
-    pin: process.env.ADMIN_OWNER_PIN || '7777',
+    // حساب المالك والإدارة الأساسي
+    username: 'mobix_admin',
+    display_name: 'مدير موبيكس',
+    password: process.env.ADMIN_OWNER_PASSWORD || 'Mx@xLer9GQJ',
+    pin: process.env.ADMIN_OWNER_PIN || '6099',
     role: USER_ROLES.OWNER,
   },
   {

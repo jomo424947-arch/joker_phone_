@@ -3,6 +3,7 @@ import {
   Store,
   Users,
   HardDriveDownload,
+  Cloud,
   ShieldCheck,
   Save,
   CheckCircle2,
@@ -15,12 +16,13 @@ import { GlassIcon, GlassIconVariant } from '../../components/common/GlassIcon';
 import { UsersPage } from '../users/UsersPage';
 import { BackupPage } from '../backup/BackupPage';
 import { AuditLogPage } from '../audit/AuditLogPage';
+import { CloudSettingsPage } from './CloudSettingsPage';
 import { sounds } from '../../lib/sounds';
 import { useToast } from '../../components/common/ToastContext';
 import { MESSAGES } from '../../lib/messages';
 import logoImg from '../../assets/logo.png';
 
-type SettingsTab = 'store' | 'users' | 'backup' | 'audit';
+type SettingsTab = 'store' | 'users' | 'backup' | 'cloud' | 'audit';
 
 interface TabDef {
   id: SettingsTab;
@@ -33,6 +35,7 @@ const tabs: TabDef[] = [
   { id: 'store', label: 'بيانات المحل والترويسة', icon: Store, variant: 'brand' },
   { id: 'users', label: 'المستخدمون والصلاحيات', icon: Users, variant: 'primary' },
   { id: 'backup', label: 'النسخ الاحتياطي والأمان', icon: HardDriveDownload, variant: 'gold' },
+  { id: 'cloud', label: 'الخدمات السحابية والترخيص', icon: Cloud, variant: 'brand' },
   { id: 'audit', label: 'سجل التدقيق والرقابة', icon: ShieldCheck, variant: 'rose' },
 ];
 
@@ -41,11 +44,11 @@ export function SettingsScreen(): React.ReactElement {
   const [activeSubTab, setActiveSubTab] = useState<SettingsTab>('store');
 
   // بيانات المحل
-  const [storeName, setStoreName] = useState('الجوكر فون - JOKER PHONE');
-  const [storeAddress, setStoreAddress] = useState('إدارة محلات التليفونات واكسسواراتها وصيانة');
+  const [storeName, setStoreName] = useState('موبيكس - Mobix');
+  const [storeAddress, setStoreAddress] = useState('شريكك الذكي لإدارة محلات الموبايلات');
   const [storePhone, setStorePhone] = useState('01000000000');
   const [taxNumber, setTaxNumber] = useState('');
-  const [receiptFooter, setReceiptFooter] = useState('شكراً لتعاملكم مع الجوكر فون - ضمان وجودة في كل جهاز');
+  const [receiptFooter, setReceiptFooter] = useState('شكراً لتعاملكم مع موبيكس - ضمان وجودة في كل جهاز');
 
   // سياسات الأمان
   const [autoLockMinutes, setAutoLockMinutes] = useState('5');
@@ -220,7 +223,7 @@ export function SettingsScreen(): React.ReactElement {
                   >
                     <img
                       src={logoImg}
-                      alt="الجوكر فون - JOKER PHONE"
+                      alt="موبيكس - Mobix"
                       style={{
                         width: '100%',
                         height: '100%',
@@ -232,7 +235,7 @@ export function SettingsScreen(): React.ReactElement {
                   </div>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 800, color: '#FFB800' }}>
-                      الشعار المعتمد: الجوكر فون (JOKER PHONE)
+                      الشعار المعتمد: موبيكس (Mobix)
                     </div>
                     <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>
                       مدمج كأيقونة وهوية معتمدة للتطبيق، ملف الـ .exe، إيصالات الصيانة والمبيعات
@@ -365,6 +368,8 @@ export function SettingsScreen(): React.ReactElement {
         {activeSubTab === 'users' && <UsersPage />}
 
         {activeSubTab === 'backup' && <BackupPage />}
+
+        {activeSubTab === 'cloud' && <CloudSettingsPage />}
 
         {activeSubTab === 'audit' && <AuditLogPage />}
       </div>

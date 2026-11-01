@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Drawing
 
 $baseDir = Split-Path -Parent $PSScriptRoot
-$srcPath = "$baseDir\src\renderer\assets\joker-logo.jpg"
+$srcPath = "$baseDir\src\renderer\assets\mobix-logo.jpg"
 
 # Ensure directories exist
 $dirs = @(

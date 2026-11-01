@@ -20,6 +20,7 @@ import { registerBackupIpcHandlers } from './handlers/backup.ipc';
 import { registerDbInspectorIpcHandlers } from './handlers/db-inspector.ipc';
 import { registerRepairsIpcHandlers } from './handlers/repairs.ipc';
 import { registerSerialsIpcHandlers } from './handlers/serials.ipc';
+import { registerCloudIpcHandlers } from './handlers/cloud.ipc';
 import { autoLockService } from '../services/autolock.service';
 
 export function registerAllIpcHandlers(): void {
@@ -39,6 +40,7 @@ export function registerAllIpcHandlers(): void {
   registerDbInspectorIpcHandlers();
   registerRepairsIpcHandlers();
   registerSerialsIpcHandlers();
+  registerCloudIpcHandlers();
 
   // معالجات قفل الشاشة والنشاط
   ipcMain.handle(IPC_CHANNELS.SYSTEM_LOCK, () => {

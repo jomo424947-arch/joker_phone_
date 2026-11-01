@@ -40,7 +40,7 @@ function resolveUserId(db: Database.Database, userId?: number | null): number {
   try {
     db.prepare(`
       INSERT OR IGNORE INTO users (id, username, password_hash, display_name, role, is_active, created_at)
-      VALUES (1, 'system', 'system', 'نظام الجوكر فون', 'admin', 1, datetime('now'))
+      VALUES (1, 'system', 'system', 'نظام موبيكس', 'admin', 1, datetime('now'))
     `).run();
     return 1;
   } catch {

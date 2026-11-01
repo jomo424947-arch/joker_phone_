@@ -1,48 +1,64 @@
 @import './fonts.css';
 
 /* ==========================================================================
-   Design System — نظام الجوكر فون | JOKER PHONE (UX/UI RTL)
+   Design System — نظام موبيكس | Mobix (UX/UI RTL)
    نظام إدارة محلات التليفونات والاكسسوارات والصيانة
    ========================================================================== */
 
 :root {
   /* ==========================================================================
-     هوية الجوكر فون الفاخرة — JOKER PHONE Dark Cyber & Gold Theme
+     هوية موبيكس الفاخرة — Mobix Dark Cyber & Amber Theme
      الأساس: الأسود التقني الفاحم (#0B0E14) والأسطح الكربونية (#161B22)
      اللون الثانوي والمميز: الذهبي الكهربائي الساطع (#FFB800) مع تدرج (#FFA800)
      عناوين فائقة الوضوح: الأبيض الكريستالي (#FFFFFF) والرمادي التقني (#94A3B8)
      ========================================================================== */
 
-  /* ألوان الهوية الرئيسية (Joker Phone Cyber Gold Palette) */
-  --color-primary: #FFB800;              /* اللون الذهبي المميز المعتمد */
+  /* ألوان الهوية الرئيسية (Mobix Cyber Amber Palette) */
+  --color-primary: #FFB800;
+  /* اللون الذهبي المميز المعتمد */
   --color-primary-rgb: 255, 184, 0;
-  --color-primary-hover: #FFC72C;        /* تفاعل التمرير */
-  --color-primary-active: #E5A600;       /* تفاعل الضغط */
-  --color-primary-light: rgba(255, 184, 0, 0.14); /* خلفية العناصر المختارة والشارات الذهبية */
-  --color-primary-dark: #FFB800;         /* للنصوص الذهبية عالية التباين والوضوح */
+  --color-primary-hover: #FFC72C;
+  /* تفاعل التمرير */
+  --color-primary-active: #E5A600;
+  /* تفاعل الضغط */
+  --color-primary-light: rgba(255, 184, 0, 0.14);
+  /* خلفية العناصر المختارة والشارات الذهبية */
+  --color-primary-dark: #FFB800;
+  /* للنصوص الذهبية عالية التباين والوضوح */
 
-  --color-brand-deep: #F8FAFC;           /* العناوين البارزة الكريستالية فائقة التباين والوضوح */
+  --color-brand-deep: #F8FAFC;
+  /* العناوين البارزة الكريستالية فائقة التباين والوضوح */
   --color-brand-deep-rgb: 248, 250, 252;
   --color-brand-gold: #FFB800;
 
   /* خلفيات النظام — الأساس الداكن التقني */
-  --bg-app: #0B0E14;                     /* خلفية التطبيق العامة فائقة النقاء */
-  --bg-surface: #161B22;                 /* البطاقات والقوائم والجداول */
+  --bg-app: #0B0E14;
+  /* خلفية التطبيق العامة فائقة النقاء */
+  --bg-surface: #161B22;
+  /* البطاقات والقوائم والجداول */
   --bg-surface-glass: rgba(22, 27, 34, 0.94);
-  --bg-surface-soft: #1C222D;            /* خلفيات خفيفة كربونية راقية للترويسات */
+  --bg-surface-soft: #1C222D;
+  /* خلفيات خفيفة كربونية راقية للترويسات */
 
   /* الحدود والفواصل */
-  --border-light: #262E3D;               /* فواصل وترويسة ناعمة بلمسة تكنولوجية */
-  --border-input: #30394A;               /* حدود حقول الإدخال */
-  --border-focus: #FFB800;               /* تركيز الحقول */
+  --border-light: #262E3D;
+  /* فواصل وترويسة ناعمة بلمسة تكنولوجية */
+  --border-input: #30394A;
+  /* حدود حقول الإدخال */
+  --border-focus: #FFB800;
+  /* تركيز الحقول */
   --border-glass: rgba(255, 184, 0, 0.18);
   --border-accent: rgba(255, 184, 0, 0.35);
 
   /* النصوص فائقة التباين والسطوع والوضوح الكريستالي */
-  --text-main: #FFFFFF;                  /* نصوص أساسية بيضاء ناصعة وفائقة الوضوح */
-  --text-muted: #CBD5E1;                 /* رمادي فضي ساطع فائق المقروئية على الخلفيات الداكنة */
-  --text-secondary: #E2E8F0;             /* نصوص فرعية مشرقة */
-  --text-brand: #FFB800;                 /* نصوص وهوية ذهبية مشعة */
+  --text-main: #FFFFFF;
+  /* نصوص أساسية بيضاء ناصعة وفائقة الوضوح */
+  --text-muted: #CBD5E1;
+  /* رمادي فضي ساطع فائق المقروئية على الخلفيات الداكنة */
+  --text-secondary: #E2E8F0;
+  /* نصوص فرعية مشرقة */
+  --text-brand: #FFB800;
+  /* نصوص وهوية ذهبية مشعة */
 
   /* الشارات والتنبيهات */
   --badge-warn-bg: rgba(245, 158, 11, 0.15);
@@ -270,7 +286,7 @@ select option {
   padding: 8px 12px;
 }
 
-/* سمات المحتوى داخل النوافذ المنبثقة المتطابقة مع هوية الجوكر فون */
+/* سمات المحتوى داخل النوافذ المنبثقة المتطابقة مع هوية موبيكس */
 .modal-beige-content {
   color: #F8FAFC !important;
 }
@@ -526,9 +542,21 @@ tr:last-child td {
 
 /* حركة الاهتزاز عند الخطأ */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-6px); }
-  40%, 80% { transform: translateX(6px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
 }
 
 .animate-shake {
@@ -537,8 +565,13 @@ tr:last-child td {
 
 /* حركة الظهور التدريجي السلس */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-fade-in {
@@ -551,6 +584,7 @@ tr:last-child td {
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -567,6 +601,7 @@ tr:last-child td {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -579,10 +614,13 @@ tr:last-child td {
 
 /* وميض الحالة الحي */
 @keyframes pulseGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.4;
     transform: scale(0.85);
@@ -634,9 +672,12 @@ tr:last-child td {
   body * {
     visibility: hidden;
   }
-  #receipt-print-area, #receipt-print-area * {
+
+  #receipt-print-area,
+  #receipt-print-area * {
     visibility: visible;
   }
+
   #receipt-print-area {
     position: absolute;
     left: 0;
@@ -653,4 +694,3 @@ tr:last-child td {
     print-color-adjust: exact;
   }
 }
-
